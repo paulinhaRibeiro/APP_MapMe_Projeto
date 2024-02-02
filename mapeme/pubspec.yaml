@@ -36,10 +36,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.7
 
 
 
-
+#para add o icon
 flutter_launcher_icons:
   image_path: "assets/images_logo/icon_logo.png"
   ios: true
@@ -49,6 +50,19 @@ flutter_launcher_icons:
   android: "launcher_icon"
   #backgroud branco
   adaptive_icon_background: "#ffffff"
+
+
+# Para a logo da tela de abertura
+flutter_native_splash:
+  image: assets/images_logo/logo.png
+  # cor de fundo
+  color: "#FFFFFF"
+  #plataformas para gerar o splash. Para gerar os tamanhos para essas duas plataformas
+  android: true
+  ios: true
+  # Para android 12 ou superior precisa indicar esse comando
+  android_12:
+    image: assets/images_logo/logo.png
 
 
 
