@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mapeme/pagTeste.dart';
 
+// arquivos
+import 'package:mapeme/pages/authtentication/signup_page.dart';
+import 'package:mapeme/pag_teste.dart';
 
 class PageLogin extends StatefulWidget {
   const PageLogin({super.key});
@@ -41,10 +43,14 @@ class _PageLoginState extends State<PageLogin> {
                   const SizedBox(
                     height: 40,
                   ),
+
                   // --------------- EMAIL -------------
                   TextFormField(
                     controller: emailController,
+
+                    // validar o que foi passado no formulario
                     validator: (value) {
+                      // se o campo for vazio
                       if (value!.isEmpty) {
                         return "Campo Obrigatório!";
                       }
@@ -60,6 +66,9 @@ class _PageLoginState extends State<PageLogin> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+                    
+                    // Para definir o tipo de teclado para email
+                    keyboardType: TextInputType.emailAddress,
                   ),
 
                   const SizedBox(
@@ -69,6 +78,8 @@ class _PageLoginState extends State<PageLogin> {
                   // --------------- SENHA -------------
                   TextFormField(
                     controller: passwordController,
+                    
+                    // validar o que foi passado no formulario
                     validator: (value) {
                       if (value!.isEmpty) {
                         return "Campo Obrigatório!";
@@ -81,7 +92,7 @@ class _PageLoginState extends State<PageLogin> {
                       label: const Text("Senha"),
                       suffixIcon: IconButton(
                         onPressed: () {
-                          // mudar o icone do botão do icone da senha
+                          // mudar o estado do icone do botão de senha
                           // para alterar entre visivel e não visivel
                           setState(() {
                             isVisible = !isVisible;
@@ -145,7 +156,7 @@ class _PageLoginState extends State<PageLogin> {
                               MaterialPageRoute(
                                   builder: (context) => const Teste()));
                         },
-                        child: const Text("Esqueceu a senha?"),
+                        child: const Text("Esqueceu a senha?", style: TextStyle(fontWeight: FontWeight.w700),),
                       ),
                     ],
                   ),
@@ -166,16 +177,19 @@ class _PageLoginState extends State<PageLogin> {
           children: [
             const Text(
               "Não tem uma conta?",
-              // style: TextStyle(fontSize: 15),
+              style: TextStyle(fontWeight: FontWeight.w700),
             ),
             TextButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Teste()),//PageSignUp()),
+                  MaterialPageRoute(builder: (context) => const PageSignUp()),
                 );
               },
-              child: const Text("Cadastre-se."),
+              child: const Text(
+                "Cadastre-se.",
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
             ),
           ],
         ),

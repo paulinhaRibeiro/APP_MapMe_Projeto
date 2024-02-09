@@ -15,12 +15,10 @@ class MyApp extends StatelessWidget {
         // Define a cor primária personalizada do APP
         // tema gerado apartir do Material 3
         useMaterial3: true,
-        // colorSchemeSeed:  const Color(0xFF00910E),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF00910E),
-          brightness: Brightness.light,
-          primary:  const Color(0xFF00910E),
-          
+          seedColor: const Color(0xFF00610A), 
+          // brightness: Brightness.light,
+          primary:  const Color(0xFF00610A),
         ),
 
         //tema escuro
