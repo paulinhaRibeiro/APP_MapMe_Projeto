@@ -28,6 +28,7 @@ class _PageSignUpState extends State<PageSignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(title: const Text("Cadastro"),),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
