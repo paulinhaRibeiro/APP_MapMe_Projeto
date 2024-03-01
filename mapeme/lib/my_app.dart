@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mapeme/pages/authtentication/login_page.dart';
+import 'package:mapeme/Screens/authtentication/login_page.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

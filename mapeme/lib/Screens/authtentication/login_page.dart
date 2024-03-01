@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // arquivos
-import 'package:mapeme/pages/authtentication/signup_page.dart';
+import 'package:mapeme/Screens/authtentication/signup_page.dart';
+import 'package:mapeme/Screens/listagem_point.dart';
 import 'package:mapeme/pag_teste.dart';
 
 class PageLogin extends StatefulWidget {
@@ -123,7 +124,7 @@ class _PageLoginState extends State<PageLogin> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const Teste()));
+                                builder: (context) => const ListagemDados()));
                       }
                       debugPrint("Email: ${emailController.text}");
                       debugPrint("Senha: ${passwordController.text}");

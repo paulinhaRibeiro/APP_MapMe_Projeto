@@ -39,6 +39,15 @@ dependencies:
   flutter_native_splash: ^2.3.7
   font_awesome_flutter: ^10.7.0
 
+  # Para o bd
+  sqflite:
+  path:
+  get_it:
+
+  # para a geolocalização
+  geolocator: ^11.0.0
+
+
 
 
 #para add o icon
