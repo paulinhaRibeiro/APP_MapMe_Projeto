@@ -67,7 +67,7 @@ class _PageLoginState extends State<PageLogin> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    
+
                     // Para definir o tipo de teclado para email
                     keyboardType: TextInputType.emailAddress,
                   ),
@@ -79,7 +79,7 @@ class _PageLoginState extends State<PageLogin> {
                   // --------------- SENHA -------------
                   TextFormField(
                     controller: passwordController,
-                    
+
                     // validar o que foi passado no formulario
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -132,13 +132,17 @@ class _PageLoginState extends State<PageLogin> {
                     style: ElevatedButton.styleFrom(
                       // shape: RoundedRectangleBorder(
                       //   borderRadius: BorderRadius.circular(10),),
+                      backgroundColor: const Color.fromARGB(255, 0, 63, 6),
                       elevation: 10,
                       minimumSize: const Size.fromHeight(55),
                     ),
                     child: const Text(
                       "Entrar",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
 
@@ -157,7 +161,10 @@ class _PageLoginState extends State<PageLogin> {
                               MaterialPageRoute(
                                   builder: (context) => const Teste()));
                         },
-                        child: const Text("Esqueceu a senha?", style: TextStyle(fontWeight: FontWeight.w700),),
+                        child: const Text(
+                          "Esqueceu a senha?",
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
                       ),
                     ],
                   ),

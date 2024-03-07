@@ -17,14 +17,14 @@ class AtualizarCadastroPoi extends StatefulWidget {
 
 class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
 
-  final nome = TextEditingController();
-  final desc = TextEditingController();
-  final latitude = TextEditingController();
-  final longitude = TextEditingController();
-  final img1 = TextEditingController();
-  final img2 = TextEditingController();
-  final pontoTuristico = TextEditingController();
-  final sicronizado = TextEditingController();
+  final nomeController = TextEditingController();
+  final descController = TextEditingController();
+  final latitudeController = TextEditingController();
+  final longitudeController = TextEditingController();
+  final img1Controller = TextEditingController();
+  final img2Controller = TextEditingController();
+  final pontoTuristicoController = TextEditingController();
+  final sicronizadoController = TextEditingController();
 
   //
 
@@ -35,14 +35,14 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
   // Isso é chamado sempre que criar a tela
   void initState(){
     super.initState();
-    nome.text = widget.p.name;
-    desc.text = widget.p.description;
-    latitude.text = widget.p.latitude.toString();
-    longitude.text = widget.p.longitude.toString();
-    img1.text = widget.p.img1;
-    img2.text = widget.p.img2;
-    pontoTuristico.text = widget.p.turisticPoint.toString();
-    sicronizado.text = widget.p.synced.toString();
+    nomeController.text = widget.p.name;
+    descController.text = widget.p.description;
+    latitudeController.text = widget.p.latitude.toString();
+    longitudeController.text = widget.p.longitude.toString();
+    img1Controller.text = widget.p.img1;
+    img2Controller.text = widget.p.img2;
+    pontoTuristicoController.text = widget.p.turisticPoint.toString();
+    sicronizadoController.text = widget.p.synced.toString();
 
   }
 
@@ -53,14 +53,14 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
   _atualizarPoi() async {
     var p = PointInterest(
         id: widget.p.id, // recebe o id quando abriu a tela - Construtor
-        name: nome.text,
-        description: desc.text,
-        latitude: double.parse(latitude.text),
-        longitude: double.parse(longitude.text),
-        img1: img1.text,
-        img2: img2.text,
-        turisticPoint: int.parse(pontoTuristico.text),
-        synced: int.parse(sicronizado.text));
+        name: nomeController.text,
+        description: descController.text,
+        latitude: double.parse(latitudeController.text),
+        longitude: double.parse(longitudeController.text),
+        img1: img1Controller.text,
+        img2: img2Controller.text,
+        turisticPoint: int.parse(pontoTuristicoController.text),
+        synced: int.parse(sicronizadoController.text));
     await db.updatePointInterest(p);
     widget.onUpdateList();
     _voltarScreen();
@@ -96,7 +96,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
                       border: OutlineInputBorder(),
                       label: Text("informe o nome"),
                     ),
-                    controller: nome,
+                    controller: nomeController,
                   ),
                 ),
 
@@ -110,7 +110,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
                       border: OutlineInputBorder(),
                       label: Text("informe a Descrição"),
                     ),
-                    controller: desc,
+                    controller: descController,
                   ),
                 ),
 
@@ -126,7 +126,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
                       border: OutlineInputBorder(),
                       label: Text("informe a longitude"),
                     ),
-                    controller: latitude,
+                    controller: latitudeController,
                   ),
                 ),
 
@@ -141,7 +141,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
                       border: OutlineInputBorder(),
                       label: Text("informe a latitude"),
                     ),
-                    controller: longitude,
+                    controller: longitudeController,
                   ),
                 ),
 
@@ -155,7 +155,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
                       border: OutlineInputBorder(),
                       label: Text("informe a img1"),
                     ),
-                    controller: img1,
+                    controller: img1Controller,
                   ),
                 ),
 
@@ -169,7 +169,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
                       border: OutlineInputBorder(),
                       label: Text("informe a img2"),
                     ),
-                    controller: img2,
+                    controller: img2Controller,
                   ),
                 ),
 
@@ -183,7 +183,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
                       border: OutlineInputBorder(),
                       label: Text("É ponto turistico?"),
                     ),
-                    controller: pontoTuristico,
+                    controller: pontoTuristicoController,
                   ),
                 ),
 
@@ -197,7 +197,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
                       border: OutlineInputBorder(),
                       label: Text("Esta sincronizado com o banco remoto?"),
                     ),
-                    controller: sicronizado,
+                    controller: sicronizadoController,
                   ),
                 ),
 

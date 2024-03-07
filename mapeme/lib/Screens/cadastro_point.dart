@@ -51,11 +51,14 @@ class _CadastroPoiState extends State<CadastroPoi> {
 
     // Obtém a localização atual ao iniciar a tela
     Position? position = await obterLocalizacaoAtual();
+
     if (position != null) {
       setState(() {
         latitude.text = position.latitude.toString();
         longitude.text = position.longitude.toString();
       });
+    } else {
+      debugPrint("position é null $errorLocation");
     }
   }
 
@@ -95,7 +98,9 @@ class _CadastroPoiState extends State<CadastroPoi> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Novo POI"),
+        // retirar o icone da seta que é gerado automaticamente
+        automaticallyImplyLeading: false,
+        title: const Text("Cadastro de Rota/POI"),
       ),
       body: SingleChildScrollView(
         child: SizedBox(
