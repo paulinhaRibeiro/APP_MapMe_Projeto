@@ -42,6 +42,7 @@ class _ListagemDadosState extends State<ListagemDados> {
     var appBar = AppBar(
       // retirar o icone da seta que é gerado automaticamente
       automaticallyImplyLeading: false,
+      centerTitle: true,
       // icone de Seta para voltar
       // leading: IconButton(
       //   icon: const Icon(Icons.arrow_back), // Ícone de seta de volta
@@ -62,6 +63,8 @@ class _ListagemDadosState extends State<ListagemDados> {
         IconButton(
           onPressed: () {},
           icon: const Icon(Icons.search),
+          // quando clicar e segurar aparecer o nome buscar
+          tooltip: 'Buscar',
         )
       ],
       //
@@ -85,7 +88,7 @@ class _ListagemDadosState extends State<ListagemDados> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(
-                // altura de 400 onde a lista vai ta sendo exibida
+                // altura - pegar 89% da tela disponivel
                 height: screenHeight * .89,
                 width: size.width,
                 child: FutureBuilder<List<PointInterest>>(

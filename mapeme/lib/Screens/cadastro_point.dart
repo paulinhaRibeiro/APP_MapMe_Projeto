@@ -19,7 +19,10 @@ class CadastroPoi extends StatefulWidget {
   State<CadastroPoi> createState() => _CadastroPoiState();
 }
 
-class _CadastroPoiState extends State<CadastroPoi> {
+class _CadastroPoiState extends State<CadastroPoi>
+    with SingleTickerProviderStateMixin {
+  // para controlar o TabBar
+  late TabController _tabController;
   // variaveis para pegar o q for digitado nas caixinhas de texto
   final nome = TextEditingController();
   final desc = TextEditingController();
@@ -41,6 +44,7 @@ class _CadastroPoiState extends State<CadastroPoi> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     _initLocation();
   }
 
@@ -52,7 +56,7 @@ class _CadastroPoiState extends State<CadastroPoi> {
     // Obtém a localização atual ao iniciar a tela
     Position? position = await obterLocalizacaoAtual();
 
-    if (position != null) {
+    if (position != null && mounted) {
       setState(() {
         latitude.text = position.latitude.toString();
         longitude.text = position.longitude.toString();
@@ -64,6 +68,9 @@ class _CadastroPoiState extends State<CadastroPoi> {
 
   // Fecha a tela
   _voltarScreen() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Cadastrado com sucesso')),
+    );
     Navigator.of(context).pop();
   }
 
@@ -89,6 +96,7 @@ class _CadastroPoiState extends State<CadastroPoi> {
     await db.insertPointInterest(p); // converte para toMap e grava no sqlite
     // acessa a função de callback - executa a funcao do outro arquivo - Atualiza a lista de pontos de interesse
     widget.onUpdateList();
+
     // Fecha a tela
     // Navigator.of(context).pop();
     _voltarScreen();
@@ -100,143 +108,252 @@ class _CadastroPoiState extends State<CadastroPoi> {
       appBar: AppBar(
         // retirar o icone da seta que é gerado automaticamente
         automaticallyImplyLeading: false,
+        centerTitle: true,
+
         title: const Text("Cadastro de Rota/POI"),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(
+              icon: Icon(Icons.info),
+              text: 'Sobre a Rota',
+            ),
+            Tab(
+              icon: Icon(Icons.location_on),
+              text: 'Localização',
+            ),
+          ],
+        ),
       ),
-      body: SingleChildScrollView(
-        child: SizedBox(
-          child: Center(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 16,
-                  ),
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text("informe o nome"),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // Primeira Aba -> a de Sobre a Rota
+          SingleChildScrollView(
+            child: SizedBox(
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    const SizedBox(
+                      height: 40,
                     ),
-                    // controlada pela variavel nome
-                    controller: nome,
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 16,
-                  ),
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text("informe a Descrição"),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 10,
+                      ),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          label: const Text("Nome"),
+                        ),
+                        // controlada pela variavel nome
+                        controller: nome,
+                      ),
                     ),
-                    controller: desc,
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 16,
-                  ),
-                  child: TextField(
-                    readOnly: true,
-                    // enabled: false, // para evitar a edição
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text("informe a longitude"),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 10,
+                      ),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          label: const Text("Descrição"),
+                        ),
+                        controller: desc,
+                      ),
                     ),
-                    controller: latitude,
-                  ),
-                ),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 16,
-                  ),
-                  child: TextField(
-                    readOnly: true,
-                    // enabled: false, // para evitar a edição
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text("informe a latitude"),
+                    //
+                    // img1
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 10,
+                      ),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          label: const Text("informe a img1"),
+                        ),
+                        controller: img1,
+                      ),
                     ),
-                    controller: longitude,
-                  ),
-                ),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 16,
-                  ),
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text("informe a img1"),
+                    //
+                    // img2
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 10,
+                      ),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          label: const Text("informe a img2"),
+                        ),
+                        controller: img2,
+                      ),
                     ),
-                    controller: img1,
-                  ),
-                ),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 16,
-                  ),
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      label: Text("informe a img2"),
+                    const SizedBox(
+                      height: 10,
                     ),
-                    controller: img2,
-                  ),
-                ),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 16,
-                  ),
-                  child: Row(
-                    children: [
-                      Checkbox(
-                          value: clickPontoTuristico,
-                          onChanged: (value) {
-                            setState(() {
-                              clickPontoTuristico = value!;
-                            });
-                          }),
-                      const Text("É um ponto turistico")
-                    ],
-                  ),
-                ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 16,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            width: 150,
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 0, 63, 6),
+                              border: Border.all(
+                                color: const Color.fromARGB(
+                                    255, 0, 49, 5), // Cor da borda
+                                // width: 2, // Largura da borda
+                              ),
 
-                // Botão
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 16,
-                  ),
-                  child: SizedBox(
-                    height: 40,
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _cadastrarPoi();
-                        // _localizacaoAtual();
-                      },
-                      child: const Text("Salvar"),
+                              borderRadius:
+                                  BorderRadius.circular(50), // Raio da borda
+                            ),
+                            child: TextButton(
+                              onPressed: () {
+                                _tabController.animateTo(
+                                    1); // Navegar para a aba "Localização"
+                              },
+                              child: const Text(
+                                "Avançar",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+
+//
+
+          // Segunda Aba -> a de Localização
+          SingleChildScrollView(
+            child: SizedBox(
+              child: Center(
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    // latitude
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 10,
+                      ),
+                      child: TextField(
+                        readOnly: true,
+                        // enabled: false, // para evitar a edição
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          label: const Text("Longitude"),
+                        ),
+                        controller: latitude,
+                      ),
+                    ),
+
+                    // Longitude
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 10,
+                      ),
+                      child: TextField(
+                        readOnly: true,
+                        // enabled: false, // para evitar a edição
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          label: const Text("Latitude"),
+                        ),
+                        controller: longitude,
+                      ),
+                    ),
+
+                    // se é rota ou ponto turistico
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 10,
+                      ),
+                      child: Row(
+                        children: [
+                          Checkbox(
+                              value: clickPontoTuristico,
+                              onChanged: (value) {
+                                setState(() {
+                                  clickPontoTuristico = value!;
+                                });
+                              }),
+                          const Text("É Ponto Turistico")
+                        ],
+                      ),
+                    ),
+
+                    // Botão para cadastrar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 16),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _cadastrarPoi();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+                          elevation: 10,
+                          minimumSize: const Size.fromHeight(50),
+                        ),
+                        child: const Text(
+                          "Salvar",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            // color: Color.fromARGB(255, 0, 63, 6),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
