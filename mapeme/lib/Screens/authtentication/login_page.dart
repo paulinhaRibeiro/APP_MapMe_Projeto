@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mapeme/Screens/Widgets/text_button.dart';
 
 // arquivos
 import 'package:mapeme/Screens/authtentication/signup_page.dart';
@@ -71,6 +72,7 @@ class _PageLoginState extends State<PageLogin> {
                     // Para definir o tipo de teclado para email
                     keyboardType: TextInputType.emailAddress,
                   ),
+                  // --------------- END EMAIL -------------
 
                   const SizedBox(
                     height: 20,
@@ -136,14 +138,8 @@ class _PageLoginState extends State<PageLogin> {
                       elevation: 10,
                       minimumSize: const Size.fromHeight(55),
                     ),
-                    child: const Text(
-                      "Entrar",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
+                    child: const ScreenTextButtonStyle(text: "Entrar"),
+                    
                   ),
 
                   const SizedBox(

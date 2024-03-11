@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 
-// para geolocalizacao
-import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mapeme/BD/table_point_interest.dart';
+import 'package:mapeme/Localization/geolocation_teste.dart';
 import 'package:mapeme/Models/point_interest.dart';
-
+import 'package:mapeme/Screens/Widgets/divide_text.dart';
+import 'package:mapeme/Screens/Widgets/image_input.dart';
 //
-import 'package:mapeme/Localization/geolocalization.dart';
-
+import 'package:mapeme/Screens/Widgets/text_button.dart';
+import 'package:provider/provider.dart';
 //
+import 'dart:io';
+
+// import 'Widgets/var_global.dart';
+
+// File? imgFile1;
+// File? imgteste2;
+
 class CadastroPoi extends StatefulWidget {
   const CadastroPoi({super.key, required this.onUpdateList});
   // recebe a função de atualizar a lista da classe de listagem
@@ -21,20 +28,43 @@ class CadastroPoi extends StatefulWidget {
 
 class _CadastroPoiState extends State<CadastroPoi>
     with SingleTickerProviderStateMixin {
+  File? _pickedImage1;
+  File? _pickedImage2;
+
+
+  void _selectImageAula(
+      {File? pickedImage, required int indexImg, bool apagar = false}) {
+    setState(() {
+      if (indexImg == 1) {
+        _pickedImage1 = pickedImage;
+      } else if (indexImg == 2) {
+        _pickedImage2 = pickedImage;
+
+        // para remover a imagem
+      } else if (apagar == true) {
+        if (indexImg == 1) {
+          _pickedImage1 = pickedImage;
+        } else if (indexImg == 2) {
+          _pickedImage2 = pickedImage;
+        }
+      }
+    });
+  }
+
   // para controlar o TabBar
   late TabController _tabController;
   // variaveis para pegar o q for digitado nas caixinhas de texto
-  final nome = TextEditingController();
-  final desc = TextEditingController();
-  final latitude = TextEditingController();
-  final longitude = TextEditingController();
-  final img1 = TextEditingController();
-  final img2 = TextEditingController();
+  final nomeController = TextEditingController();
+  final descController = TextEditingController();
+  final latitudeController = TextEditingController();
+  final longitudeController = TextEditingController();
+  final img1Controller = TextEditingController();
+  final img2Controller = TextEditingController();
   // final pontoTuristico = TextEditingController();
 
   // Para controlar o evento do clique do usuario
   bool clickPontoTuristico = false;
-  final sicronizado = TextEditingController();
+  // final sicronizadoController = TextEditingController();
   //
 
   // Obtem a instancia da tabela do bd
@@ -45,25 +75,6 @@ class _CadastroPoiState extends State<CadastroPoi>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _initLocation();
-  }
-
-  void _initLocation() async {
-    // Inicializa os controladores com "Carregando..."
-    latitude.text = "Carregando...";
-    longitude.text = "Carregando...";
-
-    // Obtém a localização atual ao iniciar a tela
-    Position? position = await obterLocalizacaoAtual();
-
-    if (position != null && mounted) {
-      setState(() {
-        latitude.text = position.latitude.toString();
-        longitude.text = position.longitude.toString();
-      });
-    } else {
-      debugPrint("position é null $errorLocation");
-    }
   }
 
   // Fecha a tela
@@ -80,12 +91,14 @@ class _CadastroPoiState extends State<CadastroPoi>
     // Cria um novo obj PointInterest
     var p = PointInterest(
       id: 0, // para q o sqlite gerencie o id
-      name: nome.text,
-      description: desc.text,
-      latitude: double.parse(latitude.text),
-      longitude: double.parse(longitude.text),
-      img1: img1.text,
-      img2: img2.text,
+      name: nomeController.text,
+      description: descController.text,
+      latitude: double.parse(latitudeController.text),
+      longitude: double.parse(longitudeController.text),
+      // img1:  imgFile1 != null ? _pickedImage.toString() : "",
+      img1: _pickedImage1 != null ? _pickedImage1.toString() : "",
+      img2: _pickedImage2 != null ? _pickedImage2.toString() : "",
+      // img2: img2Controller.text,
       // turisticPoint: int.parse(pontoTuristico.text),
       turisticPoint: clickPontoTuristico ? 1 : 0,
 
@@ -125,235 +138,249 @@ class _CadastroPoiState extends State<CadastroPoi>
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // Primeira Aba -> a de Sobre a Rota
-          SingleChildScrollView(
-            child: SizedBox(
-              child: Center(
-                child: Column(
-                  children: <Widget>[
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 10,
-                      ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+      body: ChangeNotifierProvider<GeolocationUser>(
+        create: (context) => GeolocationUser(),
+        child: Builder(
+          builder: (context) {
+            final local = context.watch<GeolocationUser>();
+            if (local.lat == 0.0 && local.long == 0.0) {
+              latitudeController.text = "Carregando...";
+              longitudeController.text = "Carregando...";
+            } else {
+              // Latitude
+              latitudeController.text =
+                  local.erro == "" ? "${local.lat}" : local.erro;
+              // Longitude
+              longitudeController.text =
+                  local.erro == "" ? "${local.long}" : local.erro;
+            }
+
+            return TabBarView(
+              controller: _tabController,
+              children: [
+                // Primeira Aba -> a de Sobre a Rota
+                SingleChildScrollView(
+                  child: SizedBox(
+                    child: Center(
+                      child: Column(
+                        children: <Widget>[
+                          const SizedBox(
+                            height: 30,
                           ),
-                          label: const Text("Nome"),
-                        ),
-                        // controlada pela variavel nome
-                        controller: nome,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 10,
-                      ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          label: const Text("Descrição"),
-                        ),
-                        controller: desc,
-                      ),
-                    ),
-
-                    //
-                    // img1
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 10,
-                      ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          label: const Text("informe a img1"),
-                        ),
-                        controller: img1,
-                      ),
-                    ),
-
-                    //
-                    // img2
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 10,
-                      ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          label: const Text("informe a img2"),
-                        ),
-                        controller: img2,
-                      ),
-                    ),
-
-                    const SizedBox(
-                      height: 10,
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 16,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            width: 150,
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 0, 63, 6),
-                              border: Border.all(
-                                color: const Color.fromARGB(
-                                    255, 0, 49, 5), // Cor da borda
-                                // width: 2, // Largura da borda
-                              ),
-
-                              borderRadius:
-                                  BorderRadius.circular(50), // Raio da borda
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 10,
                             ),
-                            child: TextButton(
-                              onPressed: () {
-                                _tabController.animateTo(
-                                    1); // Navegar para a aba "Localização"
-                              },
-                              child: const Text(
-                                "Avançar",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
+                            child: TextField(
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
+                                label: const Text("Nome"),
                               ),
+                              // controlada pela variavel nome
+                              controller: nomeController,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 10,
+                            ),
+                            child: TextField(
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                label: const Text("Descrição"),
+                              ),
+                              controller: descController,
+                            ),
+                          ),
+
+                          // Dividir a tela para a parte das imagens
+                          const DividerText(),
+
+                          // passa uma referencia do metodo para o componente
+                          ImageInput(onSelectImage: _selectImageAula),
+
+                          //
+                          // img1
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(
+                          //     horizontal: 15,
+                          //     vertical: 10,
+                          //   ),
+                          //   child: TextField(
+                          //     decoration: InputDecoration(
+                          //       border: OutlineInputBorder(
+                          //         borderRadius: BorderRadius.circular(10),
+                          //       ),
+                          //       label: const Text("informe a img1"),
+                          //     ),
+                          //     controller: img1Controller,
+                          //   ),
+                          // ),
+
+                          //
+                          // img2
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(
+                          //     horizontal: 15,
+                          //     vertical: 10,
+                          //   ),
+                          //   child: TextField(
+                          //     decoration: InputDecoration(
+                          //       border: OutlineInputBorder(
+                          //         borderRadius: BorderRadius.circular(10),
+                          //       ),
+                          //       label: const Text("informe a img2"),
+                          //     ),
+                          //     controller: img2Controller,
+                          //   ),
+                          // ),
+
+                          const SizedBox(
+                            height: 10,
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 16,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    _tabController.animateTo(
+                                        1); // Navegar para a aba "Localização"
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 30,
+                                      vertical: 12,
+                                    ),
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 0, 63, 6),
+                                    // shape: RoundedRectangleBorder(
+                                    //   borderRadius: BorderRadius.circular(10),),
+                                    elevation: 10,
+                                  ),
+                                  child: const ScreenTextButtonStyle(
+                                      text: "Avançar"),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ),
+                // END Parte 1
 
-//
+                //
 
-          // Segunda Aba -> a de Localização
-          SingleChildScrollView(
-            child: SizedBox(
-              child: Center(
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    // latitude
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 10,
-                      ),
-                      child: TextField(
-                        readOnly: true,
-                        // enabled: false, // para evitar a edição
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          label: const Text("Longitude"),
-                        ),
-                        controller: latitude,
-                      ),
-                    ),
-
-                    // Longitude
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 10,
-                      ),
-                      child: TextField(
-                        readOnly: true,
-                        // enabled: false, // para evitar a edição
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          label: const Text("Latitude"),
-                        ),
-                        controller: longitude,
-                      ),
-                    ),
-
-                    // se é rota ou ponto turistico
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 10,
-                      ),
-                      child: Row(
+                // Segunda Aba -> a de Localização
+                SingleChildScrollView(
+                  child: SizedBox(
+                    child: Center(
+                      child: Column(
                         children: [
-                          Checkbox(
-                              value: clickPontoTuristico,
-                              onChanged: (value) {
-                                setState(() {
-                                  clickPontoTuristico = value!;
-                                });
-                              }),
-                          const Text("É Ponto Turistico")
+                          const SizedBox(
+                            height: 40,
+                          ),
+                          // latitude
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 10,
+                            ),
+                            child: TextField(
+                              readOnly: true,
+                              // enabled: false, // para evitar a edição
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                label: const Text("Longitude"),
+                              ),
+                              controller: latitudeController,
+                            ),
+                          ),
+
+                          // Longitude
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 10,
+                            ),
+                            child: TextField(
+                              readOnly: true,
+                              // enabled: false, // para evitar a edição
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                label: const Text("Latitude"),
+                              ),
+                              controller: longitudeController,
+                            ),
+                          ),
+
+                          // se é rota ou ponto turistico
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 10,
+                            ),
+                            child: Row(
+                              children: [
+                                Checkbox(
+                                    value: clickPontoTuristico,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        clickPontoTuristico = value!;
+                                      });
+                                    }),
+                                const Text("É Ponto Turistico")
+                              ],
+                            ),
+                          ),
+
+                          // Botão para cadastrar
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 16),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                _cadastrarPoi();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromARGB(255, 0, 63, 6),
+                                elevation: 10,
+                                minimumSize: const Size.fromHeight(50),
+                              ),
+                              child:
+                                  const ScreenTextButtonStyle(text: "Salvar"),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-
-                    // Botão para cadastrar
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 16),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _cadastrarPoi();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 0, 63, 6),
-                          elevation: 10,
-                          minimumSize: const Size.fromHeight(50),
-                        ),
-                        child: const Text(
-                          "Salvar",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            // color: Color.fromARGB(255, 0, 63, 6),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ),
-        ],
+                //
+                // END Parte Dois
+                //
+              ],
+            );
+          },
+        ),
       ),
     );
   }
