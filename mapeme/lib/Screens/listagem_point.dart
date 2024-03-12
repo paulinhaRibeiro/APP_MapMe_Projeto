@@ -2,11 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mapeme/BD/table_point_interest.dart';
 import 'package:mapeme/Models/point_interest.dart';
+// tela de atualiza
 import 'package:mapeme/Screens/atualiza_point.dart';
+// tela de cadastro
 import 'package:mapeme/Screens/cadastro_point.dart';
-
-// // para geolocalizacao
-// import 'package:geolocator/geolocator.dart';
+// texto do botão
+import 'package:mapeme/Screens/Widgets/text_button.dart';
+// widgets especificos da listagem
+import 'Widgets/listagem_widgets.dart/circulo_progresso_widget.dart';
+import 'Widgets/listagem_widgets.dart/descricao_point_widget.dart';
+import 'Widgets/listagem_widgets.dart/imagem_point_widget.dart';
+import 'Widgets/listagem_widgets.dart/nome_point_widget.dart';
+import 'Widgets/listagem_widgets.dart/turistico_widget.dart';
 
 class ListagemDados extends StatefulWidget {
   const ListagemDados({super.key});
@@ -43,16 +50,6 @@ class _ListagemDadosState extends State<ListagemDados> {
       // retirar o icone da seta que é gerado automaticamente
       automaticallyImplyLeading: false,
       centerTitle: true,
-      // icone de Seta para voltar
-      // leading: IconButton(
-      //   icon: const Icon(Icons.arrow_back), // Ícone de seta de volta
-      //   onPressed: () {
-      //     // Ação ao pressionar o botão de volta
-      //     Navigator.pop(context); // Volta para a tela anterior
-      //   },
-      // ),
-      //
-
       title: const Text(
         "Pontos de interesse",
         textAlign: TextAlign.center,
@@ -91,6 +88,7 @@ class _ListagemDadosState extends State<ListagemDados> {
                 // altura - pegar 89% da tela disponivel
                 height: screenHeight * .89,
                 width: size.width,
+                //
                 child: FutureBuilder<List<PointInterest>>(
                   // cria o obj em cima da variavel items
                   future: items,
@@ -104,12 +102,10 @@ class _ListagemDadosState extends State<ListagemDados> {
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           return Card(
-                            // color: const Color.fromARGB(255, 255, 255, 255),
-                            // shadowColor: const Color.fromARGB(255, 255, 255, 255),
                             surfaceTintColor:
                                 const Color.fromARGB(255, 255, 255, 255),
-                            elevation:
-                                5, // Adicionando uma elevação para dar uma sombra ao Card
+                            // Adicionando uma elevação para dar uma sombra ao Card
+                            elevation: 5,
                             child: InkWell(
                               // Usando InkWell para adicionar interatividade ao Card
                               onTap: () {
@@ -124,6 +120,8 @@ class _ListagemDadosState extends State<ListagemDados> {
                                   ),
                                 );
                               },
+
+                              // nome do ponto
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
@@ -131,79 +129,41 @@ class _ListagemDadosState extends State<ListagemDados> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
                                     // Texto do nome centralizado
-                                    Text(
-                                      data[index].name,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Color.fromARGB(255, 0, 63, 6),
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
+                                    NomePoint(
+                                      nomePoint: data[index].name,
                                     ),
-                                    const SizedBox(
-                                        height:
-                                            8), // Espaçamento entre os elementos
 
+                                    // Espaçamento entre os elementos
+                                    const SizedBox(height: 8),
+
+                                    // Para índices pares, imagem à esquerda e descrição à direita
                                     index.isEven
                                         ? Row(
-                                            // Para índices pares, imagem à esquerda e descrição à direita
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
-
                                             children: <Widget>[
-                                              Expanded(
-                                                flex:
-                                                    2, // Define a largura da imagem
-                                                child: Container(
-                                                  width: 100,
-                                                  height: 100,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8), // Define as bordas arredondadas
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.grey
-                                                            .withOpacity(
-                                                                0.5), // Cor da sombra
-                                                        spreadRadius:
-                                                            2, // Espalhamento da sombra
-                                                        blurRadius:
-                                                            5, // Raio de desfoque da sombra
-                                                        offset: const Offset(0,
-                                                            3), // Deslocamento da sombra em x e y
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8), // Adiciona bordas arredondadas à imagem
-                                                    child: Image.asset(
-                                                      "assets/images_geral/gritador_teste.png",
-                                                      // width: 100,
-                                                      // height: 100,
-                                                      fit: BoxFit
-                                                          .cover, // Ajusta o tamanho da imagem
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                  width:
-                                                      8), // Espaçamento entre a imagem e a descrição
-                                              Expanded(
-                                                flex:
-                                                    3, // Define a largura da descrição
-                                                child: Text(
-                                                  data[index].description,
-                                                  textAlign: TextAlign.center,
-                                                  style: const TextStyle(
-                                                      fontSize: 16),
-                                                ),
-                                              ),
+                                              // campo da imagem
+
+                                              data[index].img1 != ""
+                                                  ? ImagemPoint(
+                                                      nomeImagem:
+                                                          data[index].img1)
+                                                  : ImagemPoint(
+                                                      nomeImagem:
+                                                          data[index].img2),
+                                              // const ImagemPoint(
+                                              //     nomeImagem:
+                                              //         "assets/images_geral/gritador_teste.png"),
+
+                                              // Espaçamento entre a imagem e a descrição
+                                              const SizedBox(width: 8),
+
+                                              // descrição
+                                              DescriptonPoint(
+                                                  description:
+                                                      data[index].description),
                                             ],
                                           )
                                         : Row(
@@ -214,78 +174,33 @@ class _ListagemDadosState extends State<ListagemDados> {
                                                 CrossAxisAlignment.center,
 
                                             children: <Widget>[
+                                              //
+                                              // descrição
+                                              DescriptonPoint(
+                                                  description:
+                                                      data[index].description),
+
                                               // Espaçamento entre a imagem e a descrição
-                                              Expanded(
-                                                flex:
-                                                    3, // Define a largura da descrição
-                                                child: Text(
-                                                  data[index].description,
-                                                  textAlign: TextAlign.center,
-                                                  style: const TextStyle(
-                                                      fontSize: 16),
-                                                ),
-                                              ),
                                               const SizedBox(width: 8),
-                                              Expanded(
-                                                flex:
-                                                    2, // Define a largura da imagem
-                                                child: Container(
-                                                  width: 100,
-                                                  height: 100,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8), // Define as bordas arredondadas
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.grey
-                                                            .withOpacity(
-                                                                0.5), // Cor da sombra
-                                                        spreadRadius:
-                                                            2, // Espalhamento da sombra
-                                                        blurRadius:
-                                                            5, // Raio de desfoque da sombra
-                                                        offset: const Offset(0,
-                                                            3), // Deslocamento da sombra em x e y
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8), // Adiciona bordas arredondadas à imagem
-                                                    child: Image.asset(
-                                                      "assets/images_geral/gritador_teste.png",
-                                                      // width: 100,
-                                                      // height: 100,
-                                                      fit: BoxFit
-                                                          .cover, // Ajusta o tamanho da imagem
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
+
+                                              // campo da imagem
+                                              ImagemPoint(
+                                                  nomeImagem: data[index].img1),
                                             ],
                                           ),
-                                    const SizedBox(
-                                        height:
-                                            8), // Espaçamento entre os elementos
+                                    // Espaçamento entre os elementos
+                                    const SizedBox(height: 8),
 
                                     // Texto de ponto turístico centralizado
-                                    Text(
-                                      data[index].turisticPoint == 1
-                                          ? "Ponto Turístico"
-                                          : "",
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          // fontStyle: FontStyle.italic,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color.fromARGB(255, 0, 93, 9)),
+                                    TuristicPoint(
+                                      pontoTuristico: data[index].turisticPoint,
                                     ),
                                   ],
                                 ),
                               ),
                             ),
                           );
+                        
                         },
                         padding: const EdgeInsets.all(10),
                       );
@@ -293,16 +208,9 @@ class _ListagemDadosState extends State<ListagemDados> {
                       // se o snapshot possuir um erro
                       Text("${snapshot.error}"); //exibi na tela o erro
                     }
+
                     //caso contrario retorna o circulo de progresso
-                    return const Center(
-                      child: SizedBox(
-                        height:
-                            80, // define a altura desejada para o CircularProgressIndicator
-                        width:
-                            80, // define a largura desejada para o CircularProgressIndicator
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
+                    return const Circulo();
                   },
                 ),
               ),
@@ -311,7 +219,6 @@ class _ListagemDadosState extends State<ListagemDados> {
                     const EdgeInsets.symmetric(vertical: 2.0, horizontal: 5.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    // _localizacaoAtual();
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -320,75 +227,17 @@ class _ListagemDadosState extends State<ListagemDados> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 0, 63, 6),
-                    // shape: RoundedRectangleBorder(
-                    //   borderRadius: BorderRadius.circular(10),),
                     elevation: 10,
                     minimumSize: const Size.fromHeight(55),
                   ),
-                  child: const Text(
-                    "Cadastrar Nova Rota",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      // color: Color.fromARGB(255, 0, 63, 6),
-                    ),
-                  ),
+                  child:
+                      const ScreenTextButtonStyle(text: "Cadastrar Nova Rota"),
                 ),
               ),
-
-              // // // Botão
-              // Padding(
-              //   padding:
-              //       const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-
-              //   child: SizedBox(
-              //     height: 40,
-              //     width: double.infinity,
-              //     child: ElevatedButton(
-              //       style: ElevatedButton.styleFrom(
-              //         // shape: RoundedRectangleBorder(
-              //         //   borderRadius: BorderRadius.circular(10),),
-              //         elevation: 10,
-              //         minimumSize: const Size.fromHeight(55),
-              //       ),
-              //       child: const Text("add novo point"),
-              //       onPressed: () {
-              //         // _localizacaoAtual();
-              //         Navigator.push(
-              //             context,
-              //             MaterialPageRoute(
-              //                 builder: (context) =>
-              //                     CadastroPoi(onUpdateList: atualizarDados)));
-              //       },
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ),
       ),
-      // bottomNavigationBar: Container(
-      //   width: double.infinity,
-      //   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-      //   // color: const Color.fromARGB(255, 255, 255, 255),
-      //   child: SizedBox(
-      //     height: 40,
-      //     width: double.infinity,
-      //     child: ElevatedButton(
-      //       child: const Text("add novo point"),
-      //       onPressed: () {
-      //         // _localizacaoAtual();
-      //         Navigator.push(
-      //             context,
-      //             MaterialPageRoute(
-      //                 builder: (context) =>
-      //                     CadastroPoi(onUpdateList: atualizarDados)));
-      //       },
-      //     ),
-      //   ),
-      // ),
     );
   }
 }

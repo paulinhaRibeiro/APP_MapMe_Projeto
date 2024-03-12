@@ -6,8 +6,15 @@ import 'package:path_provider/path_provider.dart' as syspaths;
 
 class ImageInput extends StatefulWidget {
   final Function onSelectImage;
+  final File? storedImageSalva1;
+  final File? storedImageSalva2;
 
-  const ImageInput({Key? key, required this.onSelectImage}) : super(key: key);
+  const ImageInput(
+      {Key? key,
+      required this.onSelectImage,
+      required this.storedImageSalva1,
+      required this.storedImageSalva2})
+      : super(key: key);
 
   @override
   State<ImageInput> createState() => _ImageInputState();
@@ -16,10 +23,10 @@ class ImageInput extends StatefulWidget {
 class _ImageInputState extends State<ImageInput> {
   final imagePicker = ImagePicker();
 
-  File? _storedImageAula;
-  File? _storedImageAula2;
+  File? _storedImage1;
+  File? _storedImage2;
 
-  _takePictureAula(ImageSource source, int index) async {
+  _takePicture(ImageSource source, int index) async {
     final imageFile = await imagePicker.pickImage(source: source);
 
     if (imageFile == null) return;
@@ -29,22 +36,24 @@ class _ImageInputState extends State<ImageInput> {
 
     setState(() {
       if (index == 1) {
-        _storedImageAula = File(imageFile.path);
+        _storedImage1 = File(imageFile.path);
       } else if (index == 2) {
-        _storedImageAula2 = File(imageFile.path);
+        _storedImage2 = File(imageFile.path);
       }
     });
 
+    // Para salvar a primeira imagem
     if (index == 1) {
-      String fileName = path.basename(_storedImageAula!.path);
-      final savedImage = await _storedImageAula!.copy(
+      String fileName = path.basename(_storedImage1!.path);
+      final savedImage = await _storedImage1!.copy(
         '${appDir.path}/$fileName',
       );
       widget.onSelectImage(pickedImage: savedImage, indexImg: 1);
-    } else if (index == 2) {
+    } // Para salvar a segunda imagem
+    else if (index == 2) {
       // Para pegar a pasta que pode armazenar docs na aplicação
-      String fileName2 = path.basename(_storedImageAula2!.path);
-      final savedImage2 = await _storedImageAula2!.copy(
+      String fileName2 = path.basename(_storedImage2!.path);
+      final savedImage2 = await _storedImage2!.copy(
         '${appDir.path}/$fileName2',
       );
       widget.onSelectImage(pickedImage: savedImage2, indexImg: 2);
@@ -60,8 +69,7 @@ class _ImageInputState extends State<ImageInput> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-
-              // 
+              //
               // Galeria
               ListTile(
                 leading: CircleAvatar(
@@ -79,7 +87,7 @@ class _ImageInputState extends State<ImageInput> {
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _takePictureAula(ImageSource.gallery, index);
+                  _takePicture(ImageSource.gallery, index);
                 },
               ),
 
@@ -101,11 +109,11 @@ class _ImageInputState extends State<ImageInput> {
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _takePictureAula(ImageSource.camera, index);
+                  _takePicture(ImageSource.camera, index);
                 },
               ),
 
-              // 
+              //
               // Remover
               ListTile(
                 leading: CircleAvatar(
@@ -125,15 +133,14 @@ class _ImageInputState extends State<ImageInput> {
                   Navigator.of(context).pop();
                   setState(() {
                     if (index == 1) {
-                      widget.onSelectImage(pickedImage: null, indexImg: 1, apagar: true);
-                      _storedImageAula = null;
-
+                      widget.onSelectImage(
+                          pickedImage: null, indexImg: 1, apagar: true);
+                      _storedImage1 = null;
                     } else if (index == 2) {
-                      widget.onSelectImage(pickedImage: null, indexImg: 2, apagar: true);
-                      _storedImageAula2 = null;
+                      widget.onSelectImage(
+                          pickedImage: null, indexImg: 2, apagar: true);
+                      _storedImage2 = null;
                     }
-
-                    
                   });
                 },
               ),
@@ -153,7 +160,7 @@ class _ImageInputState extends State<ImageInput> {
           children: [
             // Primeira imagem
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(10.0),
               child: Stack(
                 children: [
                   CircleAvatar(
@@ -162,8 +169,8 @@ class _ImageInputState extends State<ImageInput> {
                     child: CircleAvatar(
                       radius: 65,
                       backgroundColor: Colors.grey[300],
-                      backgroundImage: _storedImageAula != null
-                          ? FileImage(_storedImageAula!)
+                      backgroundImage: widget.storedImageSalva1 != null
+                          ? FileImage(widget.storedImageSalva1!)
                           : null,
                     ),
                   ),
@@ -187,7 +194,7 @@ class _ImageInputState extends State<ImageInput> {
 
             // Segunda Imagem
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(10.0),
               child: Stack(
                 children: [
                   CircleAvatar(
@@ -196,8 +203,8 @@ class _ImageInputState extends State<ImageInput> {
                     child: CircleAvatar(
                       radius: 65,
                       backgroundColor: Colors.grey[300],
-                      backgroundImage: _storedImageAula2 != null
-                          ? FileImage(_storedImageAula2!)
+                      backgroundImage: widget.storedImageSalva2 != null
+                          ? FileImage(widget.storedImageSalva2!)
                           : null,
                     ),
                   ),

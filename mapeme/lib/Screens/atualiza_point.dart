@@ -124,7 +124,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
                     readOnly: true,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      label: Text("informe a longitude"),
+                      label: Text("informe a Latitude"),
                     ),
                     controller: latitudeController,
                   ),
@@ -139,7 +139,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
                     readOnly: true,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      label: Text("informe a latitude"),
+                      label: Text("informe a Longitude"),
                     ),
                     controller: longitudeController,
                   ),

@@ -14,6 +14,8 @@ class MyApp extends StatelessWidget {
         // tema gerado apartir do Material 3
         useMaterial3: true,
 
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+
         // Layout do AppBar
         appBarTheme: AppBarTheme.of(context).copyWith(
           backgroundColor: Colors.white,

@@ -23,12 +23,13 @@ class GeolocationUser extends ChangeNotifier {
 
   Future<Position> _positionAtual() async {
     LocationPermission locationPermission;
-    // bool locationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    bool locationServiceEnabled = await Geolocator.isLocationServiceEnabled();
 
-    // if (!locationServiceEnabled) {
-    //   // Se o serviço de localização estiver desativado, define a mensagem de erro
-    //   return Future.error('Por favor, habilite a localização no smartphone');
-    // }
+    if (!locationServiceEnabled) {
+      Geolocator.openLocationSettings(); // Abre as configurações de localização
+      // Se o serviço de localização estiver desativado, define a mensagem de erro
+      // return Future.error('Por favor, habilite a localização no smartphone');
+    }
 
     locationPermission = await Geolocator.checkPermission();
     if (locationPermission == LocationPermission.denied) {
