@@ -9,42 +9,36 @@ class ImagemPoint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      // Define a largura da imagem
-      flex: 2,
-      child: Container(
-        width: 100,
-        height: 100,
-        
-        decoration: BoxDecoration(
-          color:  Colors.grey[200],
-          // Define as bordas arredondadas
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              // Cor da sombra
-              color: Colors.grey.withOpacity(0.5),
-              // Espalhamento da sombra
-              spreadRadius: 2,
-              // Raio de desfoque da sombra
-              blurRadius: 5,
-              // Deslocamento da sombra em x e y
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius:
-              // Adiciona bordas arredondadas à imagem
-              BorderRadius.circular(8),
-          child: nomeImagem != ""
-              ? Image.file(
-                  File(nomeImagem),
-                  fit: BoxFit.cover,
-                )
-              : const Center(child: Text("Sem Imagem!", textAlign: TextAlign.center,)),//Icon(Icons.info),//Image.asset("assets/images_geral/gritador_teste.png"),
-        ),
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16),
       ),
+      child: nomeImagem != ""
+          ? Image.file(
+              File(nomeImagem),
+              height: 150,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            )
+          : Container(
+              height: 150,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+              ),
+              child: const Center(
+                child: Text(
+                  "Não há imagem disponível!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.grey,
+                    // color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
     );
   }
 }

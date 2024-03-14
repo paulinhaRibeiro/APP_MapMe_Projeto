@@ -6,11 +6,19 @@ class TuristicPoint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      pontoTuristico == 1 ? "Ponto Turístico" : "",
-      textAlign: TextAlign.center,
-      style: const TextStyle(
-          fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 93, 9)),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Align(
+        alignment: Alignment.center,
+        child: Text(
+          pontoTuristico == 1 ? "Ponto Turístico" : "",
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Roboto',
+            color: Color.fromARGB(255, 0, 93, 9),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -4,19 +4,20 @@ import 'package:mapeme/BD/table_point_interest.dart';
 import 'package:mapeme/Models/point_interest.dart';
 
 class AtualizarCadastroPoi extends StatefulWidget {
-  const AtualizarCadastroPoi({super.key, required this.onUpdateList, required this.p});
-
-  final VoidCallback onUpdateList;
-
+  // final VoidCallback onUpdateList;
+  final Function(PointInterest) onUpdate;
   // Para quando abrir a tela já ter o obj carregado
-  final PointInterest p; 
+  final PointInterest p;
+
+  // const AtualizarCadastroPoi({super.key, required this.onUpdateList, required this.p});
+  const AtualizarCadastroPoi(
+      {super.key, required this.p, required this.onUpdate});
 
   @override
   State<AtualizarCadastroPoi> createState() => _AtualizarCadastroPoiState();
 }
 
 class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
-
   final nomeController = TextEditingController();
   final descController = TextEditingController();
   final latitudeController = TextEditingController();
@@ -33,7 +34,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
   @override
   // Função que joga nas caixas de texto o que ja veio do Objeto
   // Isso é chamado sempre que criar a tela
-  void initState(){
+  void initState() {
     super.initState();
     nomeController.text = widget.p.name;
     descController.text = widget.p.description;
@@ -43,10 +44,9 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
     img2Controller.text = widget.p.img2;
     pontoTuristicoController.text = widget.p.turisticPoint.toString();
     sicronizadoController.text = widget.p.synced.toString();
-
   }
 
-  _voltarScreen(){
+  _voltarScreen() {
     Navigator.of(context).pop();
   }
 
@@ -62,24 +62,24 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
         turisticPoint: int.parse(pontoTuristicoController.text),
         synced: int.parse(sicronizadoController.text));
     await db.updatePointInterest(p);
-    widget.onUpdateList();
+    widget.onUpdate(p);
+    // widget.onUpdateList();
     _voltarScreen();
   }
 
+  // _apagarPoi() async {
+  //   await db.deletePointInterest(widget.p.id); // recebe o id quando abriu a tela - Construtor
+  //   // widget.onUpdateList();
+  //   // Navigator.of(context).pop();
+  //   _voltarScreen();
 
-  _apagarPoi() async {
-    await db.deletePointInterest(widget.p.id); // recebe o id quando abriu a tela - Construtor
-    widget.onUpdateList();
-    // Navigator.of(context).pop();
-    _voltarScreen();
-
-  }
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Novo POI"),
+        title: const Text("Editar Ponto de Interesse"),
       ),
       body: SingleChildScrollView(
         child: SizedBox(
@@ -214,26 +214,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi> {
                       onPressed: () {
                         _atualizarPoi();
                       },
-                      child: const Text("Alterar"),
-                    ),
-                  ),
-                ),
-
-
-                // Botão
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 16,
-                  ),
-                  child: SizedBox(
-                    height: 40,
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _apagarPoi();
-                      },
-                      child: const Text("Remover"),
+                      child: const Text("Salvar Alterações"),
                     ),
                   ),
                 ),

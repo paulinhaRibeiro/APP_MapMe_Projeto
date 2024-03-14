@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-
+// Arquivos
+import 'dart:io';
+// Gerenciador de depen
 import 'package:get_it/get_it.dart';
 import 'package:mapeme/BD/table_point_interest.dart';
 import 'package:mapeme/Localization/geolocation_teste.dart';
@@ -9,8 +11,6 @@ import 'package:mapeme/Screens/Widgets/image_input.dart';
 //
 import 'package:mapeme/Screens/Widgets/text_button.dart';
 import 'package:provider/provider.dart';
-// 
-import 'dart:io';
 
 class CadastroPoi extends StatefulWidget {
   const CadastroPoi({super.key, required this.onUpdateList});
@@ -34,7 +34,7 @@ class _CadastroPoiState extends State<CadastroPoi>
   final longitudeController = TextEditingController();
 
   // Para controlar o evento do clique do usuario
-  bool clickPontoTuristico = false;
+  bool isTouristPoint = false;
 
   // variaveis para pegar as imagem escolhidas
   File? _pickedImage1;
@@ -93,7 +93,7 @@ class _CadastroPoiState extends State<CadastroPoi>
       img1: _pickedImage1 != null ? _pickedImage1!.path : "",
       img2: _pickedImage2 != null ? _pickedImage2!.path : "",
       // turisticPoint: int.parse(pontoTuristico.text),
-      turisticPoint: clickPontoTuristico ? 1 : 0,
+      turisticPoint: isTouristPoint ? 1 : 0,
 
       // é zero pq sempre quando cadastrar via verificar se possui conexão com a internet, se tiver, vai mandar para o bd remoto e marcar com 1 (sincronizado)
       synced: 0, //int.parse(sicronizado.text),
@@ -116,7 +116,16 @@ class _CadastroPoiState extends State<CadastroPoi>
 
   _aviso(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg)),
+      SnackBar(
+        content: Center(
+          child: Text(
+            msg,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -317,10 +326,10 @@ class _CadastroPoiState extends State<CadastroPoi>
                           child: Row(
                             children: [
                               Checkbox(
-                                  value: clickPontoTuristico,
+                                  value: isTouristPoint,
                                   onChanged: (value) {
                                     setState(() {
-                                      clickPontoTuristico = value!;
+                                      isTouristPoint = value!;
                                     });
                                   }),
                               const Text("É Ponto Turistico")

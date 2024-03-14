@@ -4,7 +4,7 @@ import 'package:mapeme/Screens/Widgets/text_button.dart';
 
 // arquivos
 import 'package:mapeme/Screens/authtentication/signup_page.dart';
-import 'package:mapeme/Screens/listagem_point.dart';
+import 'package:mapeme/Screens/CRUD_Screens/listagem_point.dart';
 import 'package:mapeme/pag_teste.dart';
 
 class PageLogin extends StatefulWidget {
