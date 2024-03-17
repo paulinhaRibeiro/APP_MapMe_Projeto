@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
 
 class DividerText extends StatelessWidget {
-  const DividerText({super.key});
+  final String text;
+  const DividerText({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(
+    return Padding(
+      padding: const EdgeInsets.symmetric(
         horizontal: 15,
         vertical: 10,
       ),
       child: Row(
         children: [
-          Expanded(
+          const Expanded(
             child: Divider(),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              'Cadastrar Imagem',
-              style: TextStyle(fontSize: 16),
+              text,
+              style: const TextStyle(fontSize: 16, color: Color.fromARGB(255, 122, 122, 122)),
             ),
           ),
-          Expanded(
+          const Expanded(
             child: Divider(),
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mapeme/Screens/authtentication/login_page.dart';
 
 class MyApp extends StatelessWidget {
@@ -6,9 +7,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Para usar somente modo retrato
+    SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp],
+    );
     return MaterialApp(
       title: "MapMe",
       debugShowCheckedModeBanner: false,
+      // tema
       theme: ThemeData(
         // Define a cor primária personalizada do APP
         // tema gerado apartir do Material 3
@@ -36,18 +42,18 @@ class MyApp extends StatelessWidget {
           labelStyle:
               const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         ),
-        
+
         // Color.fromARGB(255, 174, 229, 179),),
         // Color(0xFF00610A),
 
         // Cores do aplicativo
         colorScheme: ColorScheme.fromSeed(
-          seedColor:const Color.fromARGB(255, 0, 63, 6),
+          seedColor: const Color.fromARGB(255, 0, 63, 6),
           primary: const Color.fromARGB(255, 0, 63, 6),
-          ).copyWith(
-            surfaceTint: Colors.transparent,
-            background: Colors.grey[50]!,
-          ),
+        ).copyWith(
+          surfaceTint: Colors.transparent,
+          background: Colors.grey[50]!,
+        ),
       ),
       home: const PageLogin(),
     );

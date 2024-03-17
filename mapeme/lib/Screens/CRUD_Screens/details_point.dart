@@ -6,6 +6,7 @@ import 'package:mapeme/Screens/CRUD_Screens/atualiza_point.dart';
 
 // para imagem de slide
 import 'package:mapeme/Screens/Widgets/image_slider_details.dart';
+import 'package:mapeme/Screens/Widgets/listagem_widgets.dart/turistico_widget.dart';
 
 import '../Widgets/listagem_widgets.dart/descricao_point_widget.dart';
 import '../Widgets/listagem_widgets.dart/nome_point_widget.dart';
@@ -131,16 +132,25 @@ class _DetailsPointState extends State<DetailsPoint> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  NomePoint(
-                    nomePoint: _updatedPoint.name,
-                    numLines: 50,
+                  Row(
+                    children: [
+                      NomePoint(
+                        nomePoint: _updatedPoint.name,
+                        numLines: 50,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: TuristicPoint(
+                          pontoTuristico: _updatedPoint.turisticPoint,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   DescriptonPoint(
                     description: _updatedPoint.description,
                     numLines: 50,
                   ),
-                  const SizedBox(height: 12),
                 ],
               ),
             ),
@@ -150,7 +160,7 @@ class _DetailsPointState extends State<DetailsPoint> {
 
 //
 //
-      // Botão de editar e apagar
+      // Botôes de editar e apagar
       bottomNavigationBar: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(10.0),
@@ -179,8 +189,6 @@ class _DetailsPointState extends State<DetailsPoint> {
               label: const Text('Editar'),
               style: ElevatedButton.styleFrom(
                 elevation: 10,
-                // backgroundColor: Colors.white,
-                // foregroundColor: Colors.black,
               ),
             ),
             const SizedBox(width: 15),

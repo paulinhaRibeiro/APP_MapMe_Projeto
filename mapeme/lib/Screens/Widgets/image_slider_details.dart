@@ -14,28 +14,6 @@ class ImagemDetailsScreen extends StatefulWidget {
 }
 
 class _ImagemDetailsScreenState extends State<ImagemDetailsScreen> {
-  List imgList = [];
-  // List<Map<String, dynamic>> imgList = [];
-
-  @override
-  // método disparado quando criar essa tela
-  void initState() {
-    super.initState();
-    if (widget.img1.isNotEmpty) {
-      imgList.add({"id": 1, "img_path": File(widget.img1)});
-    }
-
-    if (widget.img2.isNotEmpty) {
-      imgList.add({"id": 2, "img_path": File(widget.img2)});
-    }
-    // debugPrint("${imgList.length}");
-  }
-  // List imgList = [
-  //   {"id": 1, "img_path": "assets/images_logo/logo1.png"},
-  //   {"id": 2, "img_path": "assets/images_geral/gritador_teste.png"},
-  //   // {"id": 3, "img_path": "assets/images_logo/logo1.png"},
-  // ];
-
   final CarouselController carouselController = CarouselController();
   int currentIndex = 0;
 
@@ -45,22 +23,28 @@ class _ImagemDetailsScreenState extends State<ImagemDetailsScreen> {
       children: [
         Stack(
           children: [
-            imgList.isNotEmpty
+            (widget.img1.isNotEmpty || widget.img2.isNotEmpty)
                 ? InkWell(
                     onTap: () {
                       // print(currentIndex);
                     },
                     child: CarouselSlider(
-                      items: imgList
-                          .map(
-                            (item) => Image.file(
-                              item['img_path'],
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                            ),
-                          )
-                          .toList(),
-                      carouselController: carouselController,
+                      items: [
+                        if (widget.img1.isNotEmpty)
+                          Image.file(
+                            File(widget.img1),
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                        if (widget.img2.isNotEmpty)
+                          Image.file(
+                            File(widget.img2),
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                      ],
+
+                      // carouselController: carouselController,
                       options: CarouselOptions(
                         scrollPhysics: const BouncingScrollPhysics(),
                         autoPlay: true,
@@ -75,7 +59,7 @@ class _ImagemDetailsScreenState extends State<ImagemDetailsScreen> {
                     ),
                   )
                 : Container(
-                    color: Colors.grey[200],// Cor de fundo do container
+                    color: Colors.grey[200], // Cor de fundo do container
                     height: MediaQuery.of(context).size.width *
                         .5, // Mesma altura da imagem
                     child: const Center(
@@ -95,23 +79,48 @@ class _ImagemDetailsScreenState extends State<ImagemDetailsScreen> {
               right: 0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: imgList.asMap().entries.map((entry) {
-                  // print(entry);
-                  // print(entry.key);
-                  return GestureDetector(
-                    onTap: () => carouselController.animateToPage(entry.key),
-                    child: Container(
-                      width: currentIndex == entry.key ? 17 : 7,
-                      height: 7.0,
-                      margin: const EdgeInsets.symmetric(horizontal: 3.0),
-                      decoration: BoxDecoration(
+                children: [
+                  if (widget.img1.isNotEmpty)
+                    GestureDetector(
+                      onTap: () {
+                        carouselController.animateToPage(0);
+                      },
+                      child: Container(
+                        width: currentIndex == 0 ? 17 : 7,
+                        height: 7.0,
+                        margin: const EdgeInsets.symmetric(horizontal: 3.0),
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: currentIndex == entry.key
-                              ? const Color.fromARGB(255, 92, 205, 0) //Colors.grey[200] // const Color.fromARGB(255, 0, 150, 62) // Colors.teal
-                              : Colors.red),//Colors.grey[400]),//Colors.red),
+                          color: currentIndex == 0
+                              ? Colors
+                                  .white //const Color.fromARGB(255, 92, 205, 0)
+                              : Colors.grey,
+                        ),
+                      ),
                     ),
-                  );
-                }).toList(),
+                  if (widget.img2.isNotEmpty)
+                    GestureDetector(
+                      onTap: () {
+                        carouselController
+                            .animateToPage(widget.img1.isNotEmpty ? 1 : 0);
+                      },
+                      child: Container(
+                        width: currentIndex == (widget.img1.isNotEmpty ? 1 : 0)
+                            ? 17
+                            : 7,
+                        height: 7.0,
+                        margin: const EdgeInsets.symmetric(horizontal: 3.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: currentIndex ==
+                                  (widget.img1.isNotEmpty ? 1 : 0)
+                              ? Colors
+                                  .white //const Color.fromARGB(255, 92, 205, 0)
+                              : Colors.grey,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             )
           ],

@@ -6,12 +6,8 @@ class Teste extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Column(
-        children: [
-          Center(
-            child: Text('TELA DE TESTE'),
-          ),
-        ],
+      body: Center(
+        child: Text('TELA DE TESTE'),
       ),
     );
   }

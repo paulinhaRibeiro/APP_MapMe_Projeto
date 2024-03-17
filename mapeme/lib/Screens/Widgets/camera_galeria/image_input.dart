@@ -176,6 +176,16 @@ class _ImageInputState extends State<ImageInput> {
                       backgroundImage: widget.storedImageSalva1 != null
                           ? FileImage(widget.storedImageSalva1!)
                           : null,
+                      child: widget.storedImageSalva1 == null
+                          ? const Text(
+                              'Sem Imagem!',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                // color: Colors.white,
+                                fontSize: 15,
+                              ),
+                            )
+                          : null,
                     ),
                   ),
                   Positioned(
@@ -209,6 +219,16 @@ class _ImageInputState extends State<ImageInput> {
                       backgroundColor: Colors.grey[300],
                       backgroundImage: widget.storedImageSalva2 != null
                           ? FileImage(widget.storedImageSalva2!)
+                          : null,
+                      child: widget.storedImageSalva2 == null
+                          ? const Text(
+                              'Sem Imagem!',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                // color: Colors.white,
+                                fontSize: 15,
+                              ),
+                            )
                           : null,
                     ),
                   ),

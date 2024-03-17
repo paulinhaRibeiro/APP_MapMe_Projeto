@@ -7,10 +7,12 @@ import 'package:mapeme/BD/table_point_interest.dart';
 import 'package:mapeme/Localization/geolocation_teste.dart';
 import 'package:mapeme/Models/point_interest.dart';
 import 'package:mapeme/Screens/Widgets/divide_text.dart';
-import 'package:mapeme/Screens/Widgets/image_input.dart';
+import 'package:mapeme/Screens/Widgets/camera_galeria/image_input.dart';
 //
 import 'package:mapeme/Screens/Widgets/text_button.dart';
 import 'package:provider/provider.dart';
+
+import '../Widgets/text_field_register.dart';
 
 class CadastroPoi extends StatefulWidget {
   const CadastroPoi({super.key, required this.onUpdateList});
@@ -23,7 +25,8 @@ class CadastroPoi extends StatefulWidget {
 
 class _CadastroPoiState extends State<CadastroPoi>
     with SingleTickerProviderStateMixin {
-  //
+  // Obtem a instancia da tabela do bd
+  var db = GetIt.I.get<ManipuTablePointInterest>();
   // para controlar o TabBar
   late TabController _tabController;
 
@@ -59,21 +62,29 @@ class _CadastroPoiState extends State<CadastroPoi>
     });
   }
 
-  // Obtem a instancia da tabela do bd
-  var db = GetIt.I.get<ManipuTablePointInterest>();
-
   //
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    latitudeController.text = "Carregando...";
+    longitudeController.text = "Carregando...";
   }
 
-  void _subimitForm() {
+  void _submitForm() {
+    // ignore: unused_local_variable
+    double posiLat;
+
     if (nomeController.text.isEmpty ||
         latitudeController.text.isEmpty ||
         longitudeController.text.isEmpty) {
       _aviso("Os Campos Nome, Latitude e Longitude são obrigatórios");
+      return;
+    } 
+    try {
+      posiLat = double.parse(latitudeController.text);
+    } catch (e) {
+      _aviso("Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
       return;
     }
     // chama a função de cadastrar
@@ -82,7 +93,6 @@ class _CadastroPoiState extends State<CadastroPoi>
 
   // Operação de cadastrar BD
   _cadastrarPoi() async {
-    // Operação assincrona
     // Cria um novo obj PointInterest
     var p = PointInterest(
       id: 0, // para q o sqlite gerencie o id
@@ -92,7 +102,6 @@ class _CadastroPoiState extends State<CadastroPoi>
       longitude: double.parse(longitudeController.text),
       img1: _pickedImage1 != null ? _pickedImage1!.path : "",
       img2: _pickedImage2 != null ? _pickedImage2!.path : "",
-      // turisticPoint: int.parse(pontoTuristico.text),
       turisticPoint: isTouristPoint ? 1 : 0,
 
       // é zero pq sempre quando cadastrar via verificar se possui conexão com a internet, se tiver, vai mandar para o bd remoto e marcar com 1 (sincronizado)
@@ -104,13 +113,12 @@ class _CadastroPoiState extends State<CadastroPoi>
     widget.onUpdateList();
 
     // Fecha a tela
-    // Navigator.of(context).pop();
     _voltarScreen();
   }
 
   // Fecha a tela e mostrar mensagem de sucesso
   _voltarScreen() {
-    _aviso("Cadastrado com sucesso");
+    _aviso("Cadastrado com Sucesso");
     Navigator.of(context).pop();
   }
 
@@ -157,10 +165,7 @@ class _CadastroPoiState extends State<CadastroPoi>
         child: Builder(
           builder: (context) {
             final local = context.watch<GeolocationUser>();
-            if (local.lat == 0.0 && local.long == 0.0) {
-              latitudeController.text = "Carregando...";
-              longitudeController.text = "Carregando...";
-            } else {
+            if (local.lat != null && local.long != null) {
               // Latitude
               latitudeController.text =
                   local.erro == "" ? "${local.lat}" : local.erro;
@@ -168,6 +173,7 @@ class _CadastroPoiState extends State<CadastroPoi>
               longitudeController.text =
                   local.erro == "" ? "${local.long}" : local.erro;
             }
+            
 
             return TabBarView(
               controller: _tabController,
@@ -175,63 +181,40 @@ class _CadastroPoiState extends State<CadastroPoi>
                 // Primeira Aba -> a de Sobre a Rota
                 Center(
                   child: SingleChildScrollView(
-                    // child: SizedBox(
-                    // child: Center(
                     child: Column(
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 10,
-                          ),
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              label: const Text("Nome"),
-                            ),
-                            // controlada pela variavel nome
-                            controller: nomeController,
-                            // validar o que foi passado no formulario
-                            validator: (value) {
-                              // se o campo for vazio
-                              if (value!.isEmpty) {
-                                return "Campo Obrigatório!";
-                              }
-                              return null;
-                            },
-                          ),
+                        const SizedBox(height: 10),
+                        // campo NOME do ponto de interesse
+                        CustomTextField(
+                          controller: nomeController,
+                          label: "Nome *",
+                          maxLength: 50,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Campo Obrigatório!";
+                            }
+                            return null;
+                          },
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 10,
-                          ),
-                          child: TextField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              label: const Text("Descrição"),
-                            ),
-                            controller: descController,
-                          ),
+
+                        // campo DESCRIÇÂO do ponto de interesse
+                        CustomTextField(
+                          controller: descController,
+                          label: "Descrição",
+                          maxLength: 200,
                         ),
 
                         // Dividir a tela para a parte das imagens
-                        const DividerText(),
+                        const DividerText(text: "Cadastrar Imagem",),
 
-                        // passa uma referencia do metodo para o componente - callback
+                        // IMAGEM passa uma referencia do metodo para o componente - callback
                         ImageInput(
                           onSelectImage: _selectImage,
                           storedImageSalva1: _pickedImage1,
                           storedImageSalva2: _pickedImage2,
                         ),
 
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 5),
 
                         Padding(
                           padding: const EdgeInsets.symmetric(
@@ -253,8 +236,6 @@ class _CadastroPoiState extends State<CadastroPoi>
                                   ),
                                   backgroundColor:
                                       const Color.fromARGB(255, 0, 63, 6),
-                                  // shape: RoundedRectangleBorder(
-                                  //   borderRadius: BorderRadius.circular(10),),
                                   elevation: 10,
                                 ),
                                 child: const ScreenTextButtonStyle(
@@ -267,61 +248,29 @@ class _CadastroPoiState extends State<CadastroPoi>
                     ),
                   ),
                 ),
-                // END Parte 1
-
-                //
 
                 // Segunda Aba -> a de Localização
                 Center(
                   child: SingleChildScrollView(
-                    // child: SizedBox(
-                    // child: Center(
                     child: Column(
                       children: [
-                        //
-                        // latitude
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 10,
-                          ),
-                          child: TextField(
-                            readOnly: true,
-                            // enabled: false, // para evitar a edição
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              label: const Text("Latitude"),
-                            ),
-                            controller: latitudeController,
-                          ),
+                        // LATITUDE e LONGITUDE são parametros sem o usuário poder alterar (automatico)
+                        // campo LATITUDE do ponto de interesse
+                        CustomTextField(
+                          controller: latitudeController,
+                          label: "Latitude *",
                         ),
 
-                        // Longitude
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 10,
-                          ),
-                          child: TextField(
-                            readOnly: true,
-                            // enabled: false, // para evitar a edição
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              label: const Text("Longitude"),
-                            ),
-                            controller: longitudeController,
-                          ),
+                        // campo LONGITUDE do ponto de interesse
+                        CustomTextField(
+                          controller: longitudeController,
+                          label: "Longitude *",
                         ),
 
                         // se é rota ou ponto turistico
                         Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 15,
-                            // vertical: 8,
                           ),
                           child: Row(
                             children: [
@@ -332,14 +281,12 @@ class _CadastroPoiState extends State<CadastroPoi>
                                       isTouristPoint = value!;
                                     });
                                   }),
-                              const Text("É Ponto Turistico")
+                              const Text("É Ponto Turistico.")
                             ],
                           ),
                         ),
 
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 10),
 
                         // Botão para cadastrar
                         Padding(
@@ -347,7 +294,7 @@ class _CadastroPoiState extends State<CadastroPoi>
                               vertical: 15, horizontal: 16),
                           child: ElevatedButton(
                             onPressed: () {
-                              _subimitForm();
+                              _submitForm();
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
@@ -362,9 +309,6 @@ class _CadastroPoiState extends State<CadastroPoi>
                     ),
                   ),
                 ),
-                //
-                // END Parte Dois
-                //
               ],
             );
           },
