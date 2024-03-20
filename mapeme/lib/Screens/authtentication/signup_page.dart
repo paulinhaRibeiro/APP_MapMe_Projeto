@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mapeme/Screens/Widgets/text_button.dart';
 import 'package:mapeme/Screens/authtentication/login_page.dart';
 import 'package:mapeme/pag_teste.dart';
 
@@ -171,16 +172,11 @@ class _PageSignUpState extends State<PageSignUp> {
                       debugPrint("Repetir Senha: ${confirmPasswordControllerSignUp.text}");
                     },
                     style: ElevatedButton.styleFrom(
-                      // shape: RoundedRectangleBorder(
-                      //   borderRadius: BorderRadius.circular(10),),
+                      backgroundColor: const Color.fromARGB(255, 0, 63, 6),
                       elevation: 10,
                       minimumSize: const Size.fromHeight(55),
                     ),
-                    child: const Text(
-                      "Criar Conta",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                    ),
+                    child: const ScreenTextButtonStyle(text: "Criar Conta"),
                   ),
                 ],
               ),

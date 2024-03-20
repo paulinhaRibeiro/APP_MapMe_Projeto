@@ -7,7 +7,9 @@ import 'package:mapeme/Screens/CRUD_Screens/atualiza_point.dart';
 // para imagem de slide
 import 'package:mapeme/Screens/Widgets/image_slider_details.dart';
 import 'package:mapeme/Screens/Widgets/listagem_widgets.dart/turistico_widget.dart';
+import 'package:mapeme/Screens/Widgets/connection_web.dart';
 
+import '../Widgets/divide_text.dart';
 import '../Widgets/listagem_widgets.dart/descricao_point_widget.dart';
 import '../Widgets/listagem_widgets.dart/nome_point_widget.dart';
 
@@ -150,6 +152,24 @@ class _DetailsPointState extends State<DetailsPoint> {
                   DescriptonPoint(
                     description: _updatedPoint.description,
                     numLines: 50,
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Dividir a tela para a parte da localização
+                  const DividerText(
+                    text: "Localização",
+                  ),
+                  // const SizedBox(height: 8),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 25,
+                      vertical: 20,
+                    ),
+                    child: WebPageSite(
+                      lat: _updatedPoint.latitude.toString(),
+                      long: _updatedPoint.longitude.toString(),
+                    ),
                   ),
                 ],
               ),
