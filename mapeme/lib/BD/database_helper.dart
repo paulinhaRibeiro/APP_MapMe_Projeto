@@ -17,9 +17,9 @@ class DataBaseHelper {
         // o onCreate é executado apenas uma vez quando é executado a primeira vez o bd
             onCreate: (db, version) async {
       await db.execute(
-        "CREATE TABLE IF NOT EXISTS tablepointInterest(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, latitude DOUBLE, longitude DOUBLE, img1 TEXT, img2 TEXT, turisticPoint INTEGER, synced INTEGER)",
+        "CREATE TABLE IF NOT EXISTS tablepointInterest(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, latitude DOUBLE, longitude DOUBLE, img1 TEXT, img2 TEXT, typePointInterest Text, synced INTEGER)",
       );
-    }, version: 1);
+    }, version: 3);
     return database;
   }
 }

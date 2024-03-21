@@ -5,12 +5,13 @@ class CustomTextField extends StatelessWidget {
   final String label;
   final String? Function(String?)? validator;
   final int? maxLength;
+  final String? exampleText;
 
   const CustomTextField(
       {super.key,
       required this.controller,
       required this.label,
-      this.validator, this.maxLength});
+      this.validator, this.maxLength, this.exampleText});
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +24,7 @@ class CustomTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           labelText: label,
+          helperText: exampleText ?? "",
         ),
         controller: controller,
         validator: validator,

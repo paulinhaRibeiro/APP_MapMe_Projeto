@@ -35,6 +35,20 @@ class ManipuTablePointInterest {
 
   //
 
+  // Método para obter os tipos de ponto de interesse
+  Future<List<String>> getPointInterestTypes() async {
+    var db = await GetIt.I.get<DataBaseHelper>().getDB();
+    final List<Map<String, dynamic>> maps =
+        await db.rawQuery("SELECT DISTINCT typePointInterest FROM tablepointInterest ORDER BY typePointInterest");
+    await db.close();
+
+    // Extrair os tipos de ponto de interesse da lista de mapas
+    List<String> types = maps.map((map) => map['typePointInterest'] as String).toList();
+    return types;
+  }
+
+  //
+
   // UPDATE
   Future<void> updatePointInterest(PointInterest point) async {
     // Resgata a conexão com bd - instancia da classe DataBaseHelper que é gerenciada pelo getIt

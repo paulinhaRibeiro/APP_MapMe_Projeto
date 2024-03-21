@@ -142,8 +142,8 @@ class _DetailsPointState extends State<DetailsPoint> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(4.0),
-                        child: TuristicPoint(
-                          pontoTuristico: _updatedPoint.turisticPoint,
+                        child: NameTypePointInteresse(
+                          nameTypePoint: _updatedPoint.typePointInterest,
                         ),
                       ),
                     ],

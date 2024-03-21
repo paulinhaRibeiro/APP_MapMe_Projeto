@@ -9,7 +9,7 @@ import 'package:mapeme/Screens/CRUD_Screens/cadastro_point.dart';
 // texto do botão
 import 'package:mapeme/Screens/Widgets/text_button.dart';
 import 'package:mapeme/Screens/CRUD_Screens/details_point.dart';
-// widgets especificos da listagem
+// widgets especificas da listagem
 import '../Widgets/listagem_widgets.dart/circulo_progresso_widget.dart';
 import '../Widgets/listagem_widgets.dart/descricao_point_widget.dart';
 import '../Widgets/listagem_widgets.dart/imagem_point_widget.dart';
@@ -43,6 +43,60 @@ class _ListagemDadosState extends State<ListagemDados> {
     setState(() {
       items = bd.getPointInterest();
     });
+  }
+
+  _escolhaRotaPoint() async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            // textAlign: TextAlign.center,
+            "Faz parte de uma Rota?",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          actions: <Widget>[
+            // Se não fizer parte de uma rota vai para a tela de cadastrar um ponto de interesse que é algum ponto turistico por exemplo: sem tá ligado a uma rota
+            TextButton(
+              onPressed: () {
+                // Fechar e navegar para a proxima pagina
+                Navigator.of(context).pop(true);
+                Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                CadastroPoi(onUpdateList: atualizarDados)));
+              },
+              child: const Text(
+                "Não",
+                style: TextStyle(
+                  fontSize: 16.0,
+                  // color: Color.fromARGB(255, 91, 91, 91),
+                ),
+              ),
+            ),
+
+            // Caso clicar em sim vai ser direcionado a tela de escolher a rota ou criar uma
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+                // Chamar a pag da rota
+              },
+              style: ElevatedButton.styleFrom(
+                elevation: 10,
+                
+                backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text(
+                "Sim",
+                style: TextStyle(fontSize: 16.0),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -118,21 +172,12 @@ class _ListagemDadosState extends State<ListagemDados> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => DetailsPoint(
-                                       onUpdateLista: atualizarDados,
+                                      onUpdateLista: atualizarDados,
                                       p: data[index],
                                     ),
                                   ),
                                 );
-                                
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) => AtualizarCadastroPoi(
-                                //       onUpdateList: atualizarDados,
-                                //       p: data[index],
-                                //     ),
-                                //   ),
-                                // );
+
                               },
                               borderRadius: BorderRadius.circular(16.0),
 
@@ -161,9 +206,9 @@ class _ListagemDadosState extends State<ListagemDados> {
                                                 data[index].description),
                                         const SizedBox(height: 12),
                                         // Texto de ponto turístico
-                                        TuristicPoint(
-                                          pontoTuristico:
-                                              data[index].turisticPoint,
+                                        NameTypePointInteresse(
+                                          nameTypePoint:
+                                              data[index].typePointInterest,
                                         ),
                                       ],
                                     ),
@@ -190,19 +235,16 @@ class _ListagemDadosState extends State<ListagemDados> {
                     const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                CadastroPoi(onUpdateList: atualizarDados)));
+                    _escolhaRotaPoint();
                   },
+                  
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 0, 63, 6),
                     elevation: 10,
                     minimumSize: const Size.fromHeight(55),
                   ),
                   child:
-                      const ScreenTextButtonStyle(text: "Cadastrar Nova Rota"),
+                      const ScreenTextButtonStyle(text: "Cadastrar Novo Ponto"),
                 ),
               ),
             ],

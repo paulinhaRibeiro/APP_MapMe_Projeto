@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class TuristicPoint extends StatelessWidget {
-  final int pontoTuristico;
-  const TuristicPoint({super.key, required this.pontoTuristico});
+class NameTypePointInteresse extends StatelessWidget {
+  final String nameTypePoint;
+  const NameTypePointInteresse({super.key, required this.nameTypePoint});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +11,7 @@ class TuristicPoint extends StatelessWidget {
       child: Align(
         alignment: Alignment.center,
         child: Text(
-          pontoTuristico == 1 ? "Ponto Turístico" : "",
+          nameTypePoint,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontFamily: 'Roboto',

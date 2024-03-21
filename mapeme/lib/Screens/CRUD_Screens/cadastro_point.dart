@@ -36,8 +36,17 @@ class _CadastroPoiState extends State<CadastroPoi>
   final latitudeController = TextEditingController();
   final longitudeController = TextEditingController();
 
+  // Type do point
+  // para pegar a escola ou o valor digitado
+  final typePointController = TextEditingController();
+  final dropValue = ValueNotifier("");
+  // Lista vazia para ser preenchida posteriormente
+  List<String> dropOpcoes = [];
+  bool showOutroTextField = false;
+  //
+
   // Para controlar o evento do clique do usuario
-  bool isTouristPoint = false;
+  // bool isTouristPoint = false;
 
   // variaveis para pegar as imagem escolhidas
   File? _pickedImage1;
@@ -66,9 +75,31 @@ class _CadastroPoiState extends State<CadastroPoi>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
+    // Carrega os tipos de ponto de interesse ao inicializar o estado
+    loadPointInterestTypes();
     latitudeController.text = "Carregando...";
     longitudeController.text = "Carregando...";
+  }
+
+  void loadPointInterestTypes() async {
+    try {
+      List<String> types = await db.getPointInterestTypes();
+      setState(() {
+        // Limpar a lista atual
+        dropOpcoes.clear();
+        // Adicionar os tipos recuperados do banco de dados
+        dropOpcoes.addAll(types.map((type) =>
+            type.substring(0, 1).toUpperCase() +
+            type.substring(1).toLowerCase()));
+        // dropOpcoes.addAll(types);
+
+        // Adicionar o campo Outro
+        dropOpcoes.add("Outro");
+      });
+    } catch (e) {
+      debugPrint("Erro ao carregar tipos de ponto de interesse: $e");
+    }
   }
 
   void _submitForm() {
@@ -77,14 +108,16 @@ class _CadastroPoiState extends State<CadastroPoi>
 
     if (nomeController.text.isEmpty ||
         latitudeController.text.isEmpty ||
-        longitudeController.text.isEmpty) {
-      _aviso("Os Campos Nome, Latitude e Longitude são obrigatórios");
+        longitudeController.text.isEmpty ||
+        dropValue.value == "") {
+      _aviso("Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
       return;
-    } 
+    }
     try {
       posiLat = double.parse(latitudeController.text);
     } catch (e) {
-      _aviso("Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
+      _aviso(
+          "Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
       return;
     }
     // chama a função de cadastrar
@@ -102,7 +135,10 @@ class _CadastroPoiState extends State<CadastroPoi>
       longitude: double.parse(longitudeController.text),
       img1: _pickedImage1 != null ? _pickedImage1!.path : "",
       img2: _pickedImage2 != null ? _pickedImage2!.path : "",
-      turisticPoint: isTouristPoint ? 1 : 0,
+      typePointInterest: dropValue.value != "Outro"
+          ? dropValue.value.toUpperCase()
+          : typePointController.text.toUpperCase(),
+      // turisticPoint: isTouristPoint ? 1 : 0,
 
       // é zero pq sempre quando cadastrar via verificar se possui conexão com a internet, se tiver, vai mandar para o bd remoto e marcar com 1 (sincronizado)
       synced: 0, //int.parse(sicronizado.text),
@@ -145,13 +181,17 @@ class _CadastroPoiState extends State<CadastroPoi>
         automaticallyImplyLeading: false,
         centerTitle: true,
 
-        title: const Text("Cadastro de Rota/POI"),
+        title: const Text("Cadastro de Ponto de Interesse"),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
             Tab(
               icon: Icon(Icons.info),
-              text: 'Sobre a Rota',
+              text: 'Sobre o Ponto',
+            ),
+            Tab(
+              icon: Icon(Icons.category),
+              text: 'Tipo do Ponto',
             ),
             Tab(
               icon: Icon(Icons.location_on),
@@ -173,11 +213,15 @@ class _CadastroPoiState extends State<CadastroPoi>
               longitudeController.text =
                   local.erro == "" ? "${local.long}" : local.erro;
             }
-            
 
             return TabBarView(
               controller: _tabController,
               children: [
+//
+
+                // ------ Primeira
+
+//
                 // Primeira Aba -> a de Sobre a Rota
                 Center(
                   child: SingleChildScrollView(
@@ -205,7 +249,9 @@ class _CadastroPoiState extends State<CadastroPoi>
                         ),
 
                         // Dividir a tela para a parte das imagens
-                        const DividerText(text: "Cadastrar Imagem",),
+                        const DividerText(
+                          text: "Cadastrar Imagem",
+                        ),
 
                         // IMAGEM passa uma referencia do metodo para o componente - callback
                         ImageInput(
@@ -227,7 +273,7 @@ class _CadastroPoiState extends State<CadastroPoi>
                               ElevatedButton(
                                 onPressed: () {
                                   _tabController.animateTo(
-                                      1); // Navegar para a aba "Localização"
+                                      1); // Navegar para a aba "Type Point"
                                 },
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
@@ -248,8 +294,135 @@ class _CadastroPoiState extends State<CadastroPoi>
                     ),
                   ),
                 ),
+//
 
-                // Segunda Aba -> a de Localização
+                // ------ Segunda
+
+//
+                // Segunda Aba -> escolher o tipo do ponto
+                // Para escolher qual é o Ponto
+                // DropPageTypePoint(controllerTab: _tabController),
+                Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        
+                        Center(
+                          child: ValueListenableBuilder(
+                            valueListenable: dropValue,
+                            builder: (BuildContext context, String value, _) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 10,
+                                ),
+                                child: DropdownButtonFormField<String>(
+                                  // Define o tamanho do DropdownButtonFormField para preencher o espaço disponível horizontalmente
+                                  isExpanded: true,
+                                  // Reduz a altura do DropdownButtonFormField
+                                  isDense: true, 
+
+                                  hint: const Text("Escolha o Tipo do Ponto de Interesse *"),
+                                  decoration: InputDecoration(
+                                    helperText: 'Caso o item mais condizente com o seu cadastro não estiver na lista, selecione "Outro" e insira manualmente no campo de texto.',
+                                    helperMaxLines: 5,
+                                    label: const Text("Tipo do Ponto de Interesse *"),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  value: (value.isEmpty) ? null : value,
+                                  onChanged: (escolha) {
+                                    if (escolha == "Outro") {
+                                      setState(() {
+                                        showOutroTextField = true;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        showOutroTextField = false;
+                                      });
+                                    }
+                                    dropValue.value = escolha.toString();
+                                  },
+                                  items: dropOpcoes
+                                      .map(
+                                        (op) => DropdownMenuItem(
+                                          value: op,
+                                          child: Text(op),
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        if (showOutroTextField)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: CustomTextField(
+                              controller: typePointController,
+                              label: "Digite o Tipo do Ponto de Interesse *",
+                              maxLength: 50,
+                              exampleText: "Ex: Ponto turístico",
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Campo Obrigatório!";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 16,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  if (showOutroTextField &&
+                                          typePointController.text.isEmpty ||
+                                      dropValue.value == "") {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                      content: Text(
+                                          'Por favor, digite o tipo do ponto'),
+                                    ));
+                                  } else {
+                                    _tabController.animateTo(
+                                        2); // Navegar para a aba "Localização"
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 30,
+                                    vertical: 12,
+                                  ),
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 0, 63, 6),
+                                  elevation: 10,
+                                ),
+                                child: const ScreenTextButtonStyle(
+                                    text: "Avançar"),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+//
+
+                // ------ Terceira
+
+//
+                // Terceira Aba -> a de Localização
                 Center(
                   child: SingleChildScrollView(
                     child: Column(
@@ -267,24 +440,24 @@ class _CadastroPoiState extends State<CadastroPoi>
                           label: "Longitude *",
                         ),
 
-                        // se é rota ou ponto turistico
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                          ),
-                          child: Row(
-                            children: [
-                              Checkbox(
-                                  value: isTouristPoint,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      isTouristPoint = value!;
-                                    });
-                                  }),
-                              const Text("É Ponto Turistico.")
-                            ],
-                          ),
-                        ),
+                        // // se é rota ou ponto turistico
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(
+                        //     horizontal: 15,
+                        //   ),
+                        //   child: Row(
+                        //     children: [
+                        //       Checkbox(
+                        //           value: isTouristPoint,
+                        //           onChanged: (value) {
+                        //             setState(() {
+                        //               isTouristPoint = value!;
+                        //             });
+                        //           }),
+                        //       const Text("É Ponto Turistico.")
+                        //     ],
+                        //   ),
+                        // ),
 
                         const SizedBox(height: 10),
 
