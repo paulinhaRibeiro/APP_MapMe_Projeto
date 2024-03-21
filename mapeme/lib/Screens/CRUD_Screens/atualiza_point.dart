@@ -137,7 +137,8 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
 
   _atualizarPoi() async {
     var p = PointInterest(
-      id: widget.p.id, // recebe o id quando abriu a tela - Construtor
+      id: widget.p.id,
+      foreignidRoute: null, // recebe o id quando abriu a tela - Construtor
       name: nomeController.text,
       description: descController.text,
       latitude: double.parse(latitudeController.text),

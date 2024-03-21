@@ -129,6 +129,7 @@ class _CadastroPoiState extends State<CadastroPoi>
     // Cria um novo obj PointInterest
     var p = PointInterest(
       id: 0, // para q o sqlite gerencie o id
+      foreignidRoute: null,
       name: nomeController.text,
       description: descController.text,
       latitude: double.parse(latitudeController.text),

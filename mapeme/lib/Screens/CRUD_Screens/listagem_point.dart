@@ -197,7 +197,7 @@ class _ListagemDadosState extends State<ListagemDados> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         NomePoint(
-                                          nomePoint: data[index].name,
+                                          nomePoint: "${data[index].name} - ${data[index].foreignidRoute}",
                                         ),
                                         const SizedBox(height: 8),
                                         // descrição

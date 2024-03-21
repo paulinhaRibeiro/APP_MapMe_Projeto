@@ -5,6 +5,8 @@ class PointInterest {
   // Atributos de inicializacao tardia que representam os campos da tabela
   // id
   late int id;
+  // chave estrangeira da rota
+  late int? foreignidRoute;
   // nome do ponto de interesse
   late String name;
   // descricao do ponto de interesse
@@ -26,7 +28,8 @@ class PointInterest {
 
   // Construtor da classe com parametros nomeados e campos opc 
   PointInterest({
-    required this.id, 
+    required this.id,
+    required this.foreignidRoute,
     required this.name, 
     required this.description,
     required this.latitude, 
@@ -42,6 +45,7 @@ class PointInterest {
   // Para converter um objeto dart em um Map, pq o Sqlite espera um map para aplicar as alteracoes no bd 
   Map<String, dynamic> toMap(){
     return {
+      'foreignidRoute': foreignidRoute,
       'name': name,
       'description': description,
       'latitude': latitude,
@@ -57,6 +61,7 @@ class PointInterest {
 
   // recebe um objeto do tipo map e converte para dart - (Visualizacao)
   PointInterest.fromMap(Map<String, dynamic> map){
+    foreignidRoute = map['foreignidRoute'];
     name = map['name'];
     description = map['description'];
     latitude = map['latitude'];

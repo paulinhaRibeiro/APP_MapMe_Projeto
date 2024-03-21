@@ -5,6 +5,8 @@ import 'package:mapeme/my_app.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mapeme/BD/database_helper.dart';
 import 'package:mapeme/BD/table_point_interest.dart';
+
+import 'BD/table_route.dart';
 // import 'package:mapeme/Screens/listagem_point.dart';
 
 // instancia do getIt - gerenciador de dependencia
@@ -14,8 +16,11 @@ void setConfiguration() {
   // carregamento tardio e uma unica instancia em memória
   // Registra a BD no GetIt
   getIt.registerLazySingleton(() => DataBaseHelper());
-  // Registra a tabela no GetIt
+  // Registra a tabela do PointInteresse no GetIt
   getIt.registerLazySingleton(() => ManipuTablePointInterest());
+  // Registra a tabela Route  no GetIt
+  getIt.registerLazySingleton(() => ManipuTableRoute());
+
 }
 
 void main() async {

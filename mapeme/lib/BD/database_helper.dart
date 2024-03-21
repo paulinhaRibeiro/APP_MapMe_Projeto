@@ -12,15 +12,31 @@ class DataBaseHelper {
 
   // Abertura da conexão com bd
   Future<Database> getDB() async {
-    database =
-        await openDatabase(join(await getDatabasesPath(), 'bdprojeto.db'),
+    database = await openDatabase(
+        join(await getDatabasesPath(), 'bdprojeto.db'),
         // o onCreate é executado apenas uma vez quando é executado a primeira vez o bd
-            onCreate: (db, version) async {
-      await db.execute(
-        "CREATE TABLE IF NOT EXISTS tablepointInterest(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, latitude DOUBLE, longitude DOUBLE, img1 TEXT, img2 TEXT, typePointInterest Text, synced INTEGER)",
+        onCreate: (db, version) {
+      return db.execute(
+        '''CREATE TABLE IF NOT EXISTS tablepointInterest(
+              id INTEGER PRIMARY KEY AUTOINCREMENT, 
+              foreignidRoute INTEGER, 
+              name TEXT, 
+              description TEXT, 
+              latitude DOUBLE, 
+              longitude DOUBLE, 
+              img1 TEXT, 
+              img2 TEXT, 
+              typePointInterest Text, 
+              synced INTEGER, 
+              FOREIGN KEY (foreignidRoute) REFERENCES tableroute (idRoute)
+          ); 
+          CREATE TABLE IF NOT EXISTS tableroute(
+              idRoute INTEGER PRIMARY KEY AUTOINCREMENT, 
+              nameRoute TEXT, 
+              descriptionRoute TEXT, 
+              imgRoute TEXT)''',
       );
-    }, version: 3);
+    }, version: 4);
     return database;
   }
 }
-

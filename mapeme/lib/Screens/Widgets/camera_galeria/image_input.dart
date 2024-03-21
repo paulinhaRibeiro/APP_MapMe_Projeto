@@ -130,7 +130,7 @@ class _ImageInputState extends State<ImageInput> {
                   ),
                 ),
                 title: Text(
-                  'Remover',
+                  'Remover Imagem',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 onTap: () {
