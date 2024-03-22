@@ -4,7 +4,6 @@ import 'package:mapeme/Screens/Widgets/text_button.dart';
 import 'package:mapeme/Screens/authtentication/login_page.dart';
 import 'package:mapeme/pag_teste.dart';
 
-
 class PageSignUp extends StatefulWidget {
   const PageSignUp({super.key});
 
@@ -24,7 +23,6 @@ class _PageSignUpState extends State<PageSignUp> {
 
   //para o formulario
   final formKeySignUp = GlobalKey<FormState>();
-  
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +65,7 @@ class _PageSignUpState extends State<PageSignUp> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    
+
                     // Para definir o tipo de teclado para email
                     keyboardType: TextInputType.emailAddress,
                   ),
@@ -120,9 +118,9 @@ class _PageSignUpState extends State<PageSignUp> {
                     validator: (value) {
                       if (value!.isEmpty) {
                         return "Campo Obrigatório!";
-                      } else if (passwordControllerSignUp.text != confirmPasswordControllerSignUp.text) {
+                      } else if (passwordControllerSignUp.text !=
+                          confirmPasswordControllerSignUp.text) {
                         return "Confirmação de Senha Incorreta";
-
                       }
                       return null;
                     },
@@ -135,7 +133,8 @@ class _PageSignUpState extends State<PageSignUp> {
                           // mudar o icone do botão do icone da senha
                           // para alterar entre visivel e não visivel
                           setState(() {
-                            isVisibleSignUpConfirmSenha = !isVisibleSignUpConfirmSenha;
+                            isVisibleSignUpConfirmSenha =
+                                !isVisibleSignUpConfirmSenha;
                           });
                         },
                         icon: Icon(
@@ -169,7 +168,8 @@ class _PageSignUpState extends State<PageSignUp> {
                       //imprimir os valores no console
                       debugPrint("Email: ${emailControllerSignUp.text}");
                       debugPrint("Senha: ${passwordControllerSignUp.text}");
-                      debugPrint("Repetir Senha: ${confirmPasswordControllerSignUp.text}");
+                      debugPrint(
+                          "Repetir Senha: ${confirmPasswordControllerSignUp.text}");
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 0, 63, 6),
@@ -214,5 +214,13 @@ class _PageSignUpState extends State<PageSignUp> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    emailControllerSignUp.dispose();
+    passwordControllerSignUp.dispose();
+    confirmPasswordControllerSignUp.dispose();
+    super.dispose();
   }
 }

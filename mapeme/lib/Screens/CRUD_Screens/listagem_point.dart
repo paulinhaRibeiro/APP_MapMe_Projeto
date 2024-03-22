@@ -6,6 +6,7 @@ import 'package:mapeme/Models/point_interest.dart';
 // import 'package:mapeme/Screens/atualiza_point.dart';
 // tela de cadastro
 import 'package:mapeme/Screens/CRUD_Screens/cadastro_point.dart';
+import 'package:mapeme/Screens/Route/drop_down_type_points.dart';
 // texto do botão
 import 'package:mapeme/Screens/Widgets/text_button.dart';
 import 'package:mapeme/Screens/CRUD_Screens/details_point.dart';
@@ -79,7 +80,14 @@ class _ListagemDadosState extends State<ListagemDados> {
             // Caso clicar em sim vai ser direcionado a tela de escolher a rota ou criar uma
             ElevatedButton(
               onPressed: () {
+                // const DropPageChoiceRoute();
+              
                 Navigator.of(context).pop(true);
+                Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const DropPageChoiceRoute()));
+                
                 // Chamar a pag da rota
               },
               style: ElevatedButton.styleFrom(

@@ -139,7 +139,6 @@ class _PageLoginState extends State<PageLogin> {
                       minimumSize: const Size.fromHeight(55),
                     ),
                     child: const ScreenTextButtonStyle(text: "Entrar"),
-                    
                   ),
 
                   const SizedBox(
@@ -199,5 +198,12 @@ class _PageLoginState extends State<PageLogin> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 }

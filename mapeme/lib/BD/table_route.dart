@@ -6,7 +6,7 @@ import 'package:mapeme/Models/route.dart';
 // classe de manipulação do bd
 class ManipuTableRoute {
   // CREATE - gravar as funções no bd
-  Future<void> insertRoute(Route route) async {
+  Future<void> insertRoute(RoutesPoint route) async {
     // Resgata a conexão com bd - instancia da classe DataBaseHelper que é gerenciada pelo getIt
     var db = await GetIt.I.get<DataBaseHelper>().getDB();
 
@@ -20,7 +20,7 @@ class ManipuTableRoute {
   //
 
   // READ - devolve tds os objs - lista de Routes
-  Future<List<Route>> getRoute() async {
+  Future<List<RoutesPoint>> getRoute() async {
     // Resgata a conexão com bd - instancia da classe DataBaseHelper que é gerenciada pelo getIt
     var db = await GetIt.I.get<DataBaseHelper>().getDB();
 
@@ -31,14 +31,28 @@ class ManipuTableRoute {
 
     // Cria a lista - passa o tamanho e retorna para cada elemento desta lista um obj Map que vai ser convertido para obj Dart - fromMap da classe Route - para cada elemento da lista
     return List.generate(
-        maps.length, (index) => Route.fromMapRoute(maps[index]));
+        maps.length, (index) => RoutesPoint.fromMapRoute(maps[index]));
   }
 
 
   //
 
+  // Método para obter os tipos de ponto de interesse
+  Future<List<String>> getNameRoutes() async {
+    var db = await GetIt.I.get<DataBaseHelper>().getDB();
+    final List<Map<String, dynamic>> maps =
+        await db.rawQuery("SELECT DISTINCT nameRoute FROM tableroute ORDER BY nameRoute");
+    await db.close();
+
+    // Extrair os tipos de ponto de interesse da lista de mapas
+    List<String> types = maps.map((map) => map['nameRoute'] as String).toList();
+    return types;
+  }
+
+  //
+
   // UPDATE
-  Future<void> updateRoute(Route route) async {
+  Future<void> updateRoute(RoutesPoint route) async {
     // Resgata a conexão com bd - instancia da classe DataBaseHelper que é gerenciada pelo getIt
     var db = await GetIt.I.get<DataBaseHelper>().getDB();
 

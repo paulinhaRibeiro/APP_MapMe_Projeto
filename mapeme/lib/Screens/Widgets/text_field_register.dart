@@ -24,7 +24,7 @@ class CustomTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           labelText: label,
-          helperText: exampleText ?? "",
+          helperText: exampleText,
         ),
         controller: controller,
         validator: validator,

@@ -1,6 +1,6 @@
 
 // classe que representa a tabela no bd
-class Route {
+class RoutesPoint {
 
   // Atributos de inicializacao tardia que representam os campos da tabela
   // id
@@ -15,7 +15,7 @@ class Route {
 
 
   // Construtor da classe com parametros nomeados e campos opc 
-  Route({
+  RoutesPoint({
     required this.idRoute, 
     required this.nameRoute, 
     required this.descriptionRoute,
@@ -35,7 +35,7 @@ class Route {
 
 
   // recebe um objeto do tipo map e converte para dart - (Visualizacao)
-  Route.fromMapRoute(Map<String, dynamic> map){
+  RoutesPoint.fromMapRoute(Map<String, dynamic> map){
     nameRoute = map['nameRoute'];
     descriptionRoute = map['descriptionRoute'];
     imgRoute = map['imgRoute'];

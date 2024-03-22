@@ -306,7 +306,6 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        
                         Center(
                           child: ValueListenableBuilder(
                             valueListenable: dropValue,
@@ -316,43 +315,58 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
                                   horizontal: 15,
                                   vertical: 10,
                                 ),
-                                child: DropdownButtonFormField<String>(
-                                  // Define o tamanho do DropdownButtonFormField para preencher o espaço disponível horizontalmente
-                                  isExpanded: true,
-                                  // Reduz a altura do DropdownButtonFormField
-                                  isDense: true,
+                                child: Column(
+                                  children: [
+                                    DropdownButtonFormField<String>(
+                                      // Define o tamanho do DropdownButtonFormField para preencher o espaço disponível horizontalmente
+                                      isExpanded: true,
+                                      // Reduz a altura do DropdownButtonFormField
+                                      isDense: true,
 
-                                  hint: const Text(
-                                      "Escolha o Tipo do Ponto de Interesse *"),
-                                  decoration: InputDecoration(
-                                    helperText: 'Caso o item mais condizente com o seu cadastro não estiver na lista, selecione "Outro" e insira manualmente no campo de texto.',
-                                    helperMaxLines: 5,
-                                    label: const Text("Tipo do Ponto de Interesse *"),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  value: (value.isEmpty) ? null : value,
-                                  onChanged: (escolha) {
-                                    if (escolha == "Outro") {
-                                      setState(() {
-                                        showOutroTextField = true;
-                                      });
-                                    } else {
-                                      setState(() {
-                                        showOutroTextField = false;
-                                      });
-                                    }
-                                    dropValue.value = escolha.toString();
-                                  },
-                                  items: dropOpcoes
-                                      .map(
-                                        (op) => DropdownMenuItem(
-                                          value: op,
-                                          child: Text(op),
+                                      hint: const Text(
+                                          "Escolha o Tipo do Ponto de Interesse *"),
+                                      decoration: InputDecoration(
+                                        label: const Text(
+                                            "Tipo do Ponto de Interesse *"),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                         ),
-                                      )
-                                      .toList(),
+                                      ),
+                                      value: (value.isEmpty) ? null : value,
+                                      onChanged: (escolha) {
+                                        if (escolha == "Outro") {
+                                          setState(() {
+                                            showOutroTextField = true;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            showOutroTextField = false;
+                                          });
+                                        }
+                                        dropValue.value = escolha.toString();
+                                      },
+                                      items: dropOpcoes
+                                          .map(
+                                            (op) => DropdownMenuItem(
+                                              value: op,
+                                              child: Text(op),
+                                            ),
+                                          )
+                                          .toList(),
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 13.0),
+                                      child: Text(
+                                        'Caso o item mais condizente com o seu cadastro não estiver na lista, selecione "Outro" e insira manualmente no campo de texto.',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Color.fromARGB(
+                                                255, 89, 89, 89)),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             },
@@ -437,8 +451,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
 
                             // Botão para Gerar nova localização
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.all(5),
                               child: ElevatedButton.icon(
                                 onPressed: () {
                                   if (local.lat == null && local.long == null) {
@@ -518,5 +531,16 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    nomeController.dispose();
+    descController.dispose();
+    latitudeController.dispose();
+    longitudeController.dispose();
+    typePointController.dispose();
+    _tabUpdateController.dispose();
+    super.dispose();
   }
 }

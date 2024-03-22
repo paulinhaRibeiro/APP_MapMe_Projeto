@@ -29,8 +29,8 @@ class _ImageInputState extends State<ImageInput> {
   _takePicture(ImageSource source, int index) async {
     final imageFile = await imagePicker.pickImage(
       source: source,
-      maxWidth: 600,
-      maxHeight: 600,
+      maxWidth: 500,
+      maxHeight: 500,
     );
 
     if (imageFile == null) return;
@@ -49,6 +49,15 @@ class _ImageInputState extends State<ImageInput> {
     // Para salvar a primeira imagem
     if (index == 1) {
       String fileName = path.basename(_storedImage1!.path);
+      // 
+      if (widget.storedImageSalva1 != null){
+        if (fileName != path.basename(widget.storedImageSalva1!.path)){
+          debugPrint("$fileName ${path.basename(widget.storedImageSalva1!.path)}");
+          debugPrint("\nprecisa apagar a storedImageSalva1 - naooo só se for no outro arquivo..");
+        }
+      }
+      
+      // 
       final savedImage = await _storedImage1!.copy(
         '${appDir.path}/$fileName',
       );
