@@ -6,18 +6,27 @@ import 'package:get_it/get_it.dart';
 import 'package:mapeme/BD/table_point_interest.dart';
 import 'package:mapeme/Localization/geolocation_teste.dart';
 import 'package:mapeme/Models/point_interest.dart';
+import 'package:mapeme/Models/route.dart';
 import 'package:mapeme/Screens/Widgets/divide_text.dart';
 import 'package:mapeme/Screens/Widgets/camera_galeria/image_input.dart';
 //
 import 'package:mapeme/Screens/Widgets/text_button.dart';
 import 'package:provider/provider.dart';
 
+import '../../BD/table_route.dart';
+import '../Route/name_id_route.dart';
 import '../Widgets/text_field_register.dart';
+import 'listagem_point.dart';
 
 class CadastroPoi extends StatefulWidget {
-  const CadastroPoi({super.key, required this.onUpdateList});
+  const CadastroPoi(
+      {super.key, this.onUpdateList, this.routePoint, this.idNameRoutePoint});
   // recebe a função de atualizar a lista da classe de listagem
-  final VoidCallback onUpdateList;
+  final VoidCallback? onUpdateList;
+  // Definindo um valor padrão para routePoint - cadastro da rota
+  final RoutesPoint? routePoint;
+  // armazena o nome e o id da rota
+  final RouteOption? idNameRoutePoint;
 
   @override
   State<CadastroPoi> createState() => _CadastroPoiState();
@@ -27,6 +36,8 @@ class _CadastroPoiState extends State<CadastroPoi>
     with SingleTickerProviderStateMixin {
   // Obtem a instancia da tabela do bd
   var db = GetIt.I.get<ManipuTablePointInterest>();
+
+  var dbRoute = GetIt.I.get<ManipuTableRoute>();
   // para controlar o TabBar
   late TabController _tabController;
 
@@ -37,7 +48,7 @@ class _CadastroPoiState extends State<CadastroPoi>
   final longitudeController = TextEditingController();
 
   // Type do point
-  // para pegar a escola ou o valor digitado
+  // para pegar a escolha ou o valor digitado
   final typePointController = TextEditingController();
   final dropValue = ValueNotifier("");
   // Lista vazia para ser preenchida posteriormente
@@ -80,6 +91,7 @@ class _CadastroPoiState extends State<CadastroPoi>
     loadPointInterestTypes();
     latitudeController.text = "Carregando...";
     longitudeController.text = "Carregando...";
+    // debugPrint("ID Da rota selecionada: ${widget.idNameRoutePoint!.idRoute}");
   }
 
   void loadPointInterestTypes() async {
@@ -124,12 +136,24 @@ class _CadastroPoiState extends State<CadastroPoi>
     _cadastrarPoi();
   }
 
-  // Operação de cadastrar BD
-  _cadastrarPoi() async {
+  _telalistagem() {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const ListagemDados()));
+  }
+
+  _cadastraRoutePoint() async {
+    // recebe o id se cadastrar a rota ou recebe o id de uma rota já existente
+    int routeId = widget.idNameRoutePoint != null
+        ? widget.idNameRoutePoint!.idRoute
+        : await dbRoute.insertRoute(widget.routePoint!);
+    // await dbRoute.insertRoute(widget.routePoint!);
+    debugPrint(
+        "Id da rota rota: $routeId nome da rota ${widget.idNameRoutePoint!.nameRoute}");
+
     // Cria um novo obj PointInterest
     var p = PointInterest(
       id: 0, // para q o sqlite gerencie o id
-      foreignidRoute: null,
+      foreignidRoute: routeId,
       name: nomeController.text,
       description: descController.text,
       latitude: double.parse(latitudeController.text),
@@ -147,10 +171,40 @@ class _CadastroPoiState extends State<CadastroPoi>
 
     await db.insertPointInterest(p); // converte para toMap e grava no sqlite
     // acessa a função de callback - executa a funcao do outro arquivo - Atualiza a lista de pontos de interesse
-    widget.onUpdateList();
+    _telalistagem();
+  }
 
-    // Fecha a tela
-    _voltarScreen();
+  // Operação de cadastrar BD
+  _cadastrarPoi() async {
+    if (widget.routePoint == null && widget.idNameRoutePoint == null) {
+      // Cria um novo obj PointInterest
+      var p = PointInterest(
+        id: 0, // para q o sqlite gerencie o id
+        foreignidRoute: null,
+        name: nomeController.text,
+        description: descController.text,
+        latitude: double.parse(latitudeController.text),
+        longitude: double.parse(longitudeController.text),
+        img1: _pickedImage1 != null ? _pickedImage1!.path : "",
+        img2: _pickedImage2 != null ? _pickedImage2!.path : "",
+        typePointInterest: dropValue.value != "Outro"
+            ? dropValue.value.toUpperCase()
+            : typePointController.text.toUpperCase(),
+        // turisticPoint: isTouristPoint ? 1 : 0,
+
+        // é zero pq sempre quando cadastrar via verificar se possui conexão com a internet, se tiver, vai mandar para o bd remoto e marcar com 1 (sincronizado)
+        synced: 0, //int.parse(sicronizado.text),
+      );
+
+      await db.insertPointInterest(p); // converte para toMap e grava no sqlite
+      // acessa a função de callback - executa a funcao do outro arquivo - Atualiza a lista de pontos de interesse
+      widget.onUpdateList!();
+
+      // Fecha a tela
+      _voltarScreen();
+    } else {
+      _cadastraRoutePoint();
+    }
   }
 
   // Fecha a tela e mostrar mensagem de sucesso
@@ -171,6 +225,77 @@ class _CadastroPoiState extends State<CadastroPoi>
           ),
         ),
       ),
+    );
+  }
+
+// terminar de ajeitar depois 
+  _restartRegisterRoutePoint() async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            // textAlign: TextAlign.center,
+            "Deseja Cadastrar mais um ponto a esta Rota: ${widget.idNameRoutePoint!.nameRoute}?",
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          actions: <Widget>[
+            // se clicar em não só volta para a listagem
+            TextButton(
+              onPressed: () {
+                // Fechar e navegar para a listagem
+                Navigator.of(context).pop(true);
+                // Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //             builder: (context) =>
+                //                 CadastroPoi(onUpdateList: atualizarDados)));
+              },
+              child: const Text(
+                "Não",
+                style: TextStyle(
+                  fontSize: 16.0,
+                  // color: Color.fromARGB(255, 91, 91, 91),
+                ),
+              ),
+            ),
+
+            // Caso clicar em sim vai voltar para criar um novo registro
+            ElevatedButton(
+              onPressed: () {
+                nomeController.text = "";
+                descController.text = "";
+                // latitudeController.text = "";
+                // longitudeController= "";
+
+                // imagem
+                _pickedImage1 = null;
+                _pickedImage2 = null;
+
+                // restartar a lista de tipos de pontos
+                loadPointInterestTypes();
+
+                // Navigator.of(context).pop(true);
+                // Navigator.push(
+                //             context,
+                //             MaterialPageRoute(
+                //                 builder: (context) => const DropPageChoiceRoute()));
+
+                // Chamar a pag da rota
+              },
+              style: ElevatedButton.styleFrom(
+                elevation: 10,
+                backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text(
+                "Sim",
+                style: TextStyle(fontSize: 16.0),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -484,6 +609,7 @@ class _CadastroPoiState extends State<CadastroPoi>
                           child: ElevatedButton(
                             onPressed: () {
                               _submitForm();
+                              
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:

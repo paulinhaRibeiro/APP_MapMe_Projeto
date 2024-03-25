@@ -6,15 +6,18 @@ import 'package:mapeme/Models/route.dart';
 // classe de manipulação do bd
 class ManipuTableRoute {
   // CREATE - gravar as funções no bd
-  Future<void> insertRoute(RoutesPoint route) async {
+  Future<int> insertRoute(RoutesPoint route) async {
     // Resgata a conexão com bd - instancia da classe DataBaseHelper que é gerenciada pelo getIt
     var db = await GetIt.I.get<DataBaseHelper>().getDB();
 
     // Cadastrar - como foi configurado na classe Route - pegando o obj dart e convertendo para map
-    await db.insert('tableroute', route.toMapRoute());
+    int id = await db.insert('tableroute', route.toMapRoute());
 
     // fecha conexão com o bd
     await db.close();
+    
+    // retorna o ID da rota cadastrada
+    return id;
   }
 
   //
@@ -48,6 +51,13 @@ class ManipuTableRoute {
     List<String> types = maps.map((map) => map['nameRoute'] as String).toList();
     return types;
   }
+
+  Future<List<Map<String, dynamic>>> getNameRoutesWithIds() async {
+  var db = await GetIt.I.get<DataBaseHelper>().getDB();
+  final List<Map<String, dynamic>> maps = await db.rawQuery("SELECT idRoute, nameRoute FROM tableroute ORDER BY nameRoute");
+  await db.close();
+  return maps;
+}
 
   //
 
