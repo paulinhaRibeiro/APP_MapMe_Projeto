@@ -23,9 +23,10 @@ class ManipuTablePointInterest {
     // Resgata a conexão com bd - instancia da classe DataBaseHelper que é gerenciada pelo getIt
     var db = await GetIt.I.get<DataBaseHelper>().getDB();
 
-    // lista de Maps
+    // lista de Maps 
+    // mostra apenas os ponto onde o foreignidRoute seja igual a nulo
     final List<Map<String, dynamic>> maps =
-        await db.rawQuery("SELECT * FROM tablepointInterest ORDER BY name");
+        await db.rawQuery("SELECT * FROM tablepointInterest WHERE foreignidRoute IS NULL ORDER BY name");
     await db.close();
 
     // Cria a lista - passa o tamanho e retorna para cada elemento desta lista um obj Map que vai ser convertido para obj Dart - fromMap da classe PointInterest - para cada elemento da lista
@@ -49,6 +50,35 @@ class ManipuTablePointInterest {
   }
 
   //
+
+  //Metodo para retornar todas as imagens1 que não são vazias 
+  Future<List<String>> getPointInterestImages1(int foreignidRoute) async {
+    var db = await GetIt.I.get<DataBaseHelper>().getDB();
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT img1 FROM tablepointInterest WHERE foreignidRoute = ? AND img1 != ''",
+        [foreignidRoute]);
+    await db.close();
+
+    // Extrair as imagens da lista de mapas
+    List<String> images = maps.map((map) => map['img1'] as String).toList();
+    return images;
+  }
+//
+
+  //Metodo para retornar todas as imagens1 que não são vazias 
+  Future<List<String>> getPointInterestImages2(int foreignidRoute) async {
+    var db = await GetIt.I.get<DataBaseHelper>().getDB();
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT img2 FROM tablepointInterest WHERE foreignidRoute = ? AND img2 != ''",
+        [foreignidRoute]);
+    await db.close();
+
+    // Extrair as imagens da lista de mapas
+    List<String> images = maps.map((map) => map['img2'] as String).toList();
+    return images;
+  }
+
+  // 
 
   // UPDATE
   Future<void> updatePointInterest(PointInterest point) async {

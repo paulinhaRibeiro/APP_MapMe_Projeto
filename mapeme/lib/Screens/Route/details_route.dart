@@ -1,50 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mapeme/BD/table_point_interest.dart';
-import 'package:mapeme/Models/point_interest.dart';
-import 'package:mapeme/Screens/CRUD_Screens/atualiza_point.dart';
+import 'package:mapeme/BD/table_route.dart';
+import 'package:mapeme/Models/route.dart';
 
 // para imagem de slide
-import 'package:mapeme/Screens/Widgets/image_slider_details.dart';
-import 'package:mapeme/Screens/Widgets/listagem_widgets.dart/turistico_widget.dart';
-import 'package:mapeme/Screens/Widgets/connection_web.dart';
 
+import '../../BD/table_point_interest.dart';
 import '../Widgets/divide_text.dart';
+import '../Widgets/image_slider_details.dart';
 import '../Widgets/listagem_widgets.dart/descricao_point_widget.dart';
 import '../Widgets/listagem_widgets.dart/nome_point_widget.dart';
 
-class DetailsPoint extends StatefulWidget {
+class DetailsRoute extends StatefulWidget {
   final VoidCallback onUpdateLista;
 
   // Para quando abrir a tela já ter o obj carregado
-  final PointInterest p;
-  const DetailsPoint({super.key, required this.p, required this.onUpdateLista});
+  final RoutesPoint route;
+  const DetailsRoute(
+      {super.key, required this.route, required this.onUpdateLista});
 
   @override
-  State<DetailsPoint> createState() => _DetailsPointState();
+  State<DetailsRoute> createState() => _DetailsRouteState();
 }
 
-class _DetailsPointState extends State<DetailsPoint> {
-  var db = GetIt.I.get<ManipuTablePointInterest>();
+class _DetailsRouteState extends State<DetailsRoute> {
+  var dbRoute = GetIt.I.get<ManipuTableRoute>();
+  var bdPoint = GetIt.I.get<ManipuTablePointInterest>();
 
-  late PointInterest _updatedPoint;
-
+  late RoutesPoint _updatedRoute;
   List<String> imagesPathList = [];
 
-  _addImagensList() {
-    if (_updatedPoint.img1 != "") {
-      imagesPathList.add(_updatedPoint.img1);
-    }
-    if (_updatedPoint.img2 != "") {
-      imagesPathList.add(_updatedPoint.img2);
-    }
+  Future<void> _addImagensList() async {
+    List<String> imagens1 =
+        await bdPoint.getPointInterestImages1(_updatedRoute.idRoute);
+
+    List<String> imagens2 =
+        await bdPoint.getPointInterestImages2(_updatedRoute.idRoute);
+
+    setState(() {
+      imagesPathList.addAll(imagens1);
+      imagesPathList.addAll(imagens2);
+    });
+    // debugPrint("img ${imagesPathList.length}");
   }
 
   @override
   void initState() {
     super.initState();
-    _updatedPoint = widget.p;
-    // para add as img nas lista
+    _updatedRoute = widget.route;
+    // conecta ao bd e pega todas as imagens dos pontos de interesse
     _addImagensList();
   }
 
@@ -79,7 +83,7 @@ class _DetailsPointState extends State<DetailsPoint> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           content: const Text(
-            "Tem certeza de que deseja excluir este ponto de interesse?",
+            "Tem certeza de que deseja excluir esta Rota?",
           ),
           actions: <Widget>[
             TextButton(
@@ -97,7 +101,7 @@ class _DetailsPointState extends State<DetailsPoint> {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
-                _apagarPoi();
+                _apagarRoute();
               },
               style: ElevatedButton.styleFrom(
                 elevation: 10,
@@ -115,10 +119,10 @@ class _DetailsPointState extends State<DetailsPoint> {
     );
   }
 
-  _apagarPoi() async {
+  _apagarRoute() async {
     // bool confirmDelete = await _confirmDeleteDialog();
     // if (confirmDelete) {
-    await db.deletePointInterest(widget.p.id);
+    await dbRoute.deleteRoute(widget.route.idRoute);
     widget.onUpdateLista();
     _voltarScreen();
     _aviso("Item Excluído");
@@ -132,7 +136,7 @@ class _DetailsPointState extends State<DetailsPoint> {
         // retirar o icone da seta que é gerado automaticamente
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: const Text("Detalhes do Point"),
+        title: const Text("Detalhes da Rota"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -147,43 +151,57 @@ class _DetailsPointState extends State<DetailsPoint> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: NomePoint(
-                          nomePoint: _updatedPoint.name,
-                          numLines: 50,
-                        ),
-                      ),
-                      Expanded(
-                        child: NameTypePointInteresse(
-                          nameTypePoint: _updatedPoint.typePointInterest,
-                        ),
-                      ),
-                    ],
+                  NomePoint(
+                    nomePoint: "Rota: ${_updatedRoute.nameRoute}",
+                    numLines: 50,
                   ),
                   const SizedBox(height: 8),
                   DescriptonPoint(
-                    description: _updatedPoint.description,
+                    description: _updatedRoute.descriptionRoute,
                     numLines: 50,
                   ),
                   const SizedBox(height: 12),
 
-                  // Dividir a tela para a parte da localização
+                  // Dividir a tela para a parte da Trajeto
                   const DividerText(
-                    text: "Localização",
+                    text: "Trajeto",
                   ),
-                  // const SizedBox(height: 8),
 
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 25,
                       vertical: 20,
                     ),
-                    child: WebPageSite(
-                      lat: _updatedPoint.latitude.toString(),
-                      long: _updatedPoint.longitude.toString(),
+                    child: Center(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * .60,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              width: 1,
+                              color: const Color.fromARGB(255, 195, 195, 195)),
+                          image: const DecorationImage(
+                            image: AssetImage('assets/images_geral/map_img.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 10,
+                            // backgroundColor: Colors.white.withOpacity(0.5),
+                          ),
+                          onPressed: () {},
+                          icon: const Icon(Icons.link),
+                          label: const Text("Iniciar Trajeto"),
+                        ),
+                      ),
                     ),
+                  ),
+
+                  // Dividir a tela para a parte da Trajeto
+                  const DividerText(
+                    text: "Pontos de Interesses",
                   ),
                 ],
               ),
@@ -203,34 +221,24 @@ class _DetailsPointState extends State<DetailsPoint> {
           children: [
             ElevatedButton.icon(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AtualizarCadastroPoi(
-                      p: _updatedPoint,
-                      onUpdate: (updatedPoint) {
-                        setState(() {
-                          _updatedPoint = updatedPoint;
-                          imagesPathList.clear();
-                          // if (_updatedPoint.img1 != "") {
-                          //   imagesPathList.add(_updatedPoint.img1);
-                          // }
-                          // if (_updatedPoint.img2 != "") {
-                          //   imagesPathList.add(_updatedPoint.img2);
-                          // }
-                          _addImagensList();
-                        });
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => AtualizarCadastroPoi(
+                //       p: _updatedPoint,
+                //       onUpdate: (updatedPoint) {
+                //         setState(() {
+                //           _updatedPoint = updatedPoint;
+                //         });
 
-                        // chamar a função para resetar a lista e add os novos elemento.
-
-                        widget.onUpdateLista();
-                      },
-                    ),
-                  ),
-                );
+                //         widget.onUpdateLista();
+                //       },
+                //     ),
+                //   ),
+                // );
               },
               icon: const Icon(Icons.edit),
-              label: const Text('Editar'),
+              label: const Text('Editar Rota'),
               style: ElevatedButton.styleFrom(
                 elevation: 10,
               ),
@@ -242,7 +250,7 @@ class _DetailsPointState extends State<DetailsPoint> {
                 // _apagarPoi();
               },
               icon: const Icon(Icons.delete),
-              label: const Text('Deletar'),
+              label: const Text('Deletar Rota'),
               style: ElevatedButton.styleFrom(
                 elevation: 10,
                 backgroundColor: Colors.red,

@@ -54,6 +54,8 @@ class _CadastroPoiState extends State<CadastroPoi>
   // Lista vazia para ser preenchida posteriormente
   List<String> dropOpcoes = [];
   bool showOutroTextField = false;
+  // id da rota
+  int? routeId;
   //
 
   // Para controlar o evento do clique do usuario
@@ -114,41 +116,99 @@ class _CadastroPoiState extends State<CadastroPoi>
     }
   }
 
-  void _submitForm() {
-    // ignore: unused_local_variable
-    double posiLat;
+  // restartar o cadastro
+  _restartRegisterRoutePoint() async {
+    String txt = "Deseja Cadastrar mais um ponto a esta Rota:";
+    if (widget.idNameRoutePoint != null) {
+      txt =
+          "$txt ${widget.idNameRoutePoint!.nameRoute}";
+    } else {
+      txt =
+          "$txt ${widget.routePoint!.nameRoute}";
+    }
 
-    if (nomeController.text.isEmpty ||
-        latitudeController.text.isEmpty ||
-        longitudeController.text.isEmpty ||
-        dropValue.value == "") {
-      _aviso("Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
-      return;
-    }
-    try {
-      posiLat = double.parse(latitudeController.text);
-    } catch (e) {
-      _aviso(
-          "Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
-      return;
-    }
-    // chama a função de cadastrar
-    _cadastrarPoi();
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            txt,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          actions: <Widget>[
+            // se clicar em não só volta para a listagem
+            TextButton(
+              onPressed: () {
+                // Fechar e navegar para a listagem
+                Navigator.of(context).pop(true);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ListagemDados()));
+              },
+              child: const Text(
+                "Não",
+                style: TextStyle(
+                  fontSize: 16.0,
+                  // color: Color.fromARGB(255, 91, 91, 91),
+                ),
+              ),
+            ),
+
+            // Caso clicar em sim vai voltar para criar um novo registro
+            ElevatedButton(
+              onPressed: () {
+                nomeController.text = "";
+                descController.text = "";
+                // latitudeController.text = "";
+                // longitudeController= "";
+
+                // imagem
+                _pickedImage1 = null;
+                _pickedImage2 = null;
+
+                // restartar a lista de tipos de pontos
+                loadPointInterestTypes();
+                dropValue.value = "";
+                _tabController.animateTo(0);
+
+                // para não aparecer o campo de nome e descrição do typo de point
+                showOutroTextField = false;
+                typePointController.text = "";
+
+                Navigator.of(context).pop(true);
+              },
+              style: ElevatedButton.styleFrom(
+                elevation: 10,
+                backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text(
+                "Sim",
+                style: TextStyle(fontSize: 16.0),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  _telalistagem() {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const ListagemDados()));
-  }
-
+  // Cadastrar uma rota existente ou o foreignidRoute do point recebe o id da rota
   _cadastraRoutePoint() async {
-    // recebe o id se cadastrar a rota ou recebe o id de uma rota já existente
-    int routeId = widget.idNameRoutePoint != null
-        ? widget.idNameRoutePoint!.idRoute
-        : await dbRoute.insertRoute(widget.routePoint!);
-    // await dbRoute.insertRoute(widget.routePoint!);
-    debugPrint(
-        "Id da rota rota: $routeId nome da rota ${widget.idNameRoutePoint!.nameRoute}");
+    
+    // rota existente captura só o id dela
+    if (widget.idNameRoutePoint != null) {
+      routeId = widget.idNameRoutePoint!.idRoute;
+    }
+    // cadastrar um nova rota e receber o id dela
+    else if (widget.idNameRoutePoint == null &&
+        widget.routePoint!.idRoute == 0) {
+      routeId = await dbRoute.insertRoute(widget.routePoint!);
+      debugPrint("id da nova rota $routeId");
+      // o id que era zero passa a ser o id do novo cadastro de rota 
+      widget.routePoint!.idRoute = routeId!;
+    }
 
     // Cria um novo obj PointInterest
     var p = PointInterest(
@@ -163,19 +223,17 @@ class _CadastroPoiState extends State<CadastroPoi>
       typePointInterest: dropValue.value != "Outro"
           ? dropValue.value.toUpperCase()
           : typePointController.text.toUpperCase(),
-      // turisticPoint: isTouristPoint ? 1 : 0,
-
-      // é zero pq sempre quando cadastrar via verificar se possui conexão com a internet, se tiver, vai mandar para o bd remoto e marcar com 1 (sincronizado)
-      synced: 0, //int.parse(sicronizado.text),
+      synced: 0, 
     );
 
     await db.insertPointInterest(p); // converte para toMap e grava no sqlite
-    // acessa a função de callback - executa a funcao do outro arquivo - Atualiza a lista de pontos de interesse
-    _telalistagem();
+    // chama o card para restartar o cadastro
+    _restartRegisterRoutePoint();
   }
 
   // Operação de cadastrar BD
   _cadastrarPoi() async {
+    // cria o ponto de interesse sem ser ligado a nenhuma rota
     if (widget.routePoint == null && widget.idNameRoutePoint == null) {
       // Cria um novo obj PointInterest
       var p = PointInterest(
@@ -203,6 +261,7 @@ class _CadastroPoiState extends State<CadastroPoi>
       // Fecha a tela
       _voltarScreen();
     } else {
+      // ponto de interesse ligado a uma rota já existente ou nova
       _cadastraRoutePoint();
     }
   }
@@ -228,75 +287,27 @@ class _CadastroPoiState extends State<CadastroPoi>
     );
   }
 
-// terminar de ajeitar depois 
-  _restartRegisterRoutePoint() async {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            // textAlign: TextAlign.center,
-            "Deseja Cadastrar mais um ponto a esta Rota: ${widget.idNameRoutePoint!.nameRoute}?",
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          actions: <Widget>[
-            // se clicar em não só volta para a listagem
-            TextButton(
-              onPressed: () {
-                // Fechar e navegar para a listagem
-                Navigator.of(context).pop(true);
-                // Navigator.push(
-                //         context,
-                //         MaterialPageRoute(
-                //             builder: (context) =>
-                //                 CadastroPoi(onUpdateList: atualizarDados)));
-              },
-              child: const Text(
-                "Não",
-                style: TextStyle(
-                  fontSize: 16.0,
-                  // color: Color.fromARGB(255, 91, 91, 91),
-                ),
-              ),
-            ),
+  // valida os campos e chama a função de cadastrar
+  void _submitForm() {
+    // ignore: unused_local_variable
+    double posiLat;
 
-            // Caso clicar em sim vai voltar para criar um novo registro
-            ElevatedButton(
-              onPressed: () {
-                nomeController.text = "";
-                descController.text = "";
-                // latitudeController.text = "";
-                // longitudeController= "";
-
-                // imagem
-                _pickedImage1 = null;
-                _pickedImage2 = null;
-
-                // restartar a lista de tipos de pontos
-                loadPointInterestTypes();
-
-                // Navigator.of(context).pop(true);
-                // Navigator.push(
-                //             context,
-                //             MaterialPageRoute(
-                //                 builder: (context) => const DropPageChoiceRoute()));
-
-                // Chamar a pag da rota
-              },
-              style: ElevatedButton.styleFrom(
-                elevation: 10,
-                backgroundColor: const Color.fromARGB(255, 0, 63, 6),
-                foregroundColor: Colors.white,
-              ),
-              child: const Text(
-                "Sim",
-                style: TextStyle(fontSize: 16.0),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+    if (nomeController.text.isEmpty ||
+        latitudeController.text.isEmpty ||
+        longitudeController.text.isEmpty ||
+        dropValue.value == "") {
+      _aviso("Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
+      return;
+    }
+    try {
+      posiLat = double.parse(latitudeController.text);
+    } catch (e) {
+      _aviso(
+          "Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
+      return;
+    }
+    // chama a função de cadastrar
+    _cadastrarPoi();
   }
 
   @override
@@ -609,7 +620,6 @@ class _CadastroPoiState extends State<CadastroPoi>
                           child: ElevatedButton(
                             onPressed: () {
                               _submitForm();
-                              
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:

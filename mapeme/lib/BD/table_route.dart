@@ -77,7 +77,15 @@ class ManipuTableRoute {
   // DELETE
   Future<void> deleteRoute(int idRoute) async {
     var db = await GetIt.I.get<DataBaseHelper>().getDB();
-    await db.delete('tableroute', where: 'idRoute = ?', whereArgs: [idRoute]);
+    await db.transaction((txn) async {
+      await txn.delete('tableroute', where: 'idRoute = ?', whereArgs: [idRoute]);
+      await txn.delete('tablepointInterest', where: 'foreignidRoute = ?', whereArgs: [idRoute]);
+    });
     await db.close();
   }
+  // Future<void> deleteRoute(int idRoute) async {
+  //   var db = await GetIt.I.get<DataBaseHelper>().getDB();
+  //   await db.delete('tableroute', where: 'idRoute = ?', whereArgs: [idRoute]);
+  //   await db.close();
+  // }
 }

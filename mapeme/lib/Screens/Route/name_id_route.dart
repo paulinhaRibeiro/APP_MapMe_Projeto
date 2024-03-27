@@ -1,6 +1,6 @@
 class RouteOption {
-  final int idRoute;
-  final String nameRoute;
+  late int idRoute;
+  late String nameRoute;
 
   RouteOption({required this.idRoute, required this.nameRoute});
 }
