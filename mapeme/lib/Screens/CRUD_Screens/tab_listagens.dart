@@ -6,17 +6,11 @@ import 'package:mapeme/Models/point_interest.dart';
 // import 'package:mapeme/Screens/atualiza_point.dart';
 // tela de cadastro
 import 'package:mapeme/Screens/CRUD_Screens/cadastro_point.dart';
+import 'package:mapeme/Screens/CRUD_Screens/listagem_point_interesse.dart';
 import 'package:mapeme/Screens/Route/drop_down_choice_route.dart';
 import 'package:mapeme/Screens/Route/listagem_route.dart';
 // texto do botão
 import 'package:mapeme/Screens/Widgets/text_button.dart';
-import 'package:mapeme/Screens/CRUD_Screens/details_point.dart';
-// widgets especificas da listagem
-import '../Widgets/listagem_widgets.dart/circulo_progresso_widget.dart';
-import '../Widgets/listagem_widgets.dart/descricao_point_widget.dart';
-import '../Widgets/listagem_widgets.dart/imagem_point_widget.dart';
-import '../Widgets/listagem_widgets.dart/nome_point_widget.dart';
-import '../Widgets/listagem_widgets.dart/turistico_widget.dart';
 
 // rota
 import '../../BD/table_route.dart';
@@ -42,11 +36,13 @@ class _ListagemDadosState extends State<ListagemDados>
   // para controlar o TabBar
   late TabController _tabListagemController;
 
+
   @override
   // metodo disparado quando criar essa tela
   void initState() {
     super.initState();
     _tabListagemController = TabController(length: 2, vsync: this);
+
     items = bd.getPointInterest();
     // Rota
     itemsRoute = bdRoute.getRoute();
@@ -130,7 +126,7 @@ class _ListagemDadosState extends State<ListagemDados>
       automaticallyImplyLeading: false,
       centerTitle: true,
       title: const Text(
-        "Listagem Rotas/Pontos de interesse",
+        "Listagem",
         textAlign: TextAlign.center,
       ),
       bottom: TabBar(
@@ -185,99 +181,11 @@ class _ListagemDadosState extends State<ListagemDados>
                           // altura - pegar 89% da tela disponivel
                           width: constraints.maxWidth,
                           height: constraints.maxHeight * .89,
-                          //
-                          child: FutureBuilder<List<PointInterest>>(
-                            // cria o obj em cima da variavel items
-                            future: items,
-                            // para desenhar na tela
-                            builder: (context, snapshot) {
-                              // se o print que tirar (snapshot) tiver algum dado - desenha a lista
-                              if (snapshot.hasData) {
-                                List<PointInterest> data = snapshot.data!;
-
-                                return ListView.builder(
-                                  itemCount: data.length,
-                                  itemBuilder: (context, index) {
-                                    // Card dos elementos do bd
-                                    return Card(
-                                      elevation: 4,
-                                      margin: const EdgeInsets.all(16),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(16.0),
-                                      ),
-                                      child: InkWell(
-                                        // Usando InkWell para adicionar interatividade ao Card
-
-                                        onTap: () {
-                                          // Ação ao tocar no Card
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  DetailsPoint(
-                                                onUpdateLista: atualizarDados,
-                                                p: data[index],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        borderRadius:
-                                            BorderRadius.circular(16.0),
-
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            // campo da imagem
-                                            data[index].img1 != ""
-                                                ? ImagemPoint(
-                                                    nomeImagem:
-                                                        data[index].img1)
-                                                : ImagemPoint(
-                                                    nomeImagem:
-                                                        data[index].img2),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(12.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  NomePoint(
-                                                    nomePoint:
-                                                        "${data[index].name} - ${data[index].foreignidRoute}",
-                                                  ),
-                                                  const SizedBox(height: 8),
-                                                  // descrição
-                                                  DescriptonPoint(
-                                                      description: data[index]
-                                                          .description),
-                                                  const SizedBox(height: 12),
-                                                  // Texto de ponto turístico
-                                                  NameTypePointInteresse(
-                                                    nameTypePoint: data[index]
-                                                        .typePointInterest,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  padding: const EdgeInsets.all(10),
-                                );
-                              } else if (snapshot.hasError) {
-                                // se o snapshot possuir um erro
-                                Text(
-                                    "${snapshot.error}"); //exibi na tela o erro
-                              }
-
-                              //caso contrario retorna o circulo de progresso
-                              return const Circulo();
-                            },
+                          child: Center(
+                            child: ListagemPointInteresse(
+                              itemsPoint: items,
+                              onUpdateListaPoint: atualizarDados,
+                            ),
                           ),
                         ),
                       ),
@@ -287,7 +195,7 @@ class _ListagemDadosState extends State<ListagemDados>
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16),
-                  child: ElevatedButton(
+                  child: ElevatedButton.icon(
                     onPressed: () {
                       _escolhaRotaPoint();
                     },
@@ -296,7 +204,11 @@ class _ListagemDadosState extends State<ListagemDados>
                       elevation: 10,
                       minimumSize: const Size.fromHeight(55),
                     ),
-                    child: const ScreenTextButtonStyle(
+                    icon: const Icon(
+                      Icons.add_location_alt_outlined,
+                      color: Colors.white,
+                    ),
+                    label: const ScreenTextButtonStyle(
                         text: "Cadastrar Novo Ponto"),
                   ),
                 ),

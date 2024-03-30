@@ -26,11 +26,11 @@ class WebPageSite extends StatelessWidget {
           width: MediaQuery.of(context).size.width * .50,
           height: 100,
           decoration: BoxDecoration(
-            border: Border.all(width: 1, color: const Color.fromARGB(255, 195, 195, 195)),
+            border: Border.all(
+                width: 1, color: const Color.fromARGB(255, 195, 195, 195)),
             image: const DecorationImage(
               image: AssetImage('assets/images_geral/map_img.png'),
               fit: BoxFit.cover,
-            
             ),
           ),
           alignment: Alignment.center,
@@ -41,8 +41,13 @@ class WebPageSite extends StatelessWidget {
             ),
             onPressed: () =>
                 _lauchLink("https://www.google.com/maps/search/$lat,$long/"),
-            icon: const Icon(Icons.link),
-            label: const Text("Visualizar"),
+            icon: const Icon(Icons.map_outlined),
+            label: const Text(
+              "Ver no Mapa",
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ),
         const SizedBox(width: 10),

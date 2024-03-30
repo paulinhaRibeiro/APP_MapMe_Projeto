@@ -11,7 +11,6 @@ import 'package:mapeme/Screens/Widgets/text_field_register.dart';
 
 import '../../Models/route.dart';
 
-
 class DropPageChoiceRoute extends StatefulWidget {
   const DropPageChoiceRoute({Key? key}) : super(key: key);
 
@@ -37,15 +36,16 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
     loadRoute();
   }
 
-
   // função q captura todas as rotas já cadastradas para o usuário escolher uma ou criar uma nova "Nova Rota"
   void loadRoute() async {
     try {
-      List<Map<String, dynamic>> routesWithIds = await bd.getNameRoutesWithIds();
-      
+      List<Map<String, dynamic>> routesWithIds =
+          await bd.getNameRoutesWithIds();
+
       setState(() {
         dropOpcoes.clear();
-        dropOpcoes.addAll(routesWithIds.map((route) => RouteOption(idRoute: route['idRoute'], nameRoute: route['nameRoute'])));
+        dropOpcoes.addAll(routesWithIds.map((route) => RouteOption(
+            idRoute: route['idRoute'], nameRoute: route['nameRoute'])));
         dropOpcoes.add(RouteOption(idRoute: -1, nameRoute: "Nova Rota"));
       });
     } catch (e) {
@@ -54,7 +54,7 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
   }
 
   void _cadastrarRota() async {
-    // Passa para a tela de cadastro todos os dados da rota 
+    // Passa para a tela de cadastro todos os dados da rota
     var route = RoutesPoint(
       idRoute: 0,
       nameRoute: nomeRouteController.text,
@@ -63,15 +63,21 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
     );
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CadastroPoi(routePoint: route, )),
+      MaterialPageRoute(
+          builder: (context) => CadastroPoi(
+                routePoint: route,
+              )),
     );
   }
 
   void _routeExist() async {
-    // passa para a tela de cadastro só o nome e o id da rota existente 
+    // passa para a tela de cadastro só o nome e o id da rota existente
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CadastroPoi(idNameRoutePoint: nameIdRoute,)),
+      MaterialPageRoute(
+          builder: (context) => CadastroPoi(
+                idNameRoutePoint: nameIdRoute,
+              )),
     );
   }
 
@@ -86,7 +92,8 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
       body: SingleChildScrollView(
         child: SizedBox(
           width: MediaQuery.of(context).size.width,
-          height: (MediaQuery.of(context).size.height - AppBar().preferredSize.height) -
+          height: (MediaQuery.of(context).size.height -
+                  AppBar().preferredSize.height) -
               MediaQuery.of(context).padding.top,
           child: LayoutBuilder(builder: (_, constraints) {
             return Column(
@@ -101,7 +108,8 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                       valueListenable: dropValue,
                       builder: (BuildContext context, String value, _) {
                         return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
                           child: Column(
                             children: [
                               DropdownButtonFormField<RouteOption>(
@@ -114,7 +122,11 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
-                                value: (value.isEmpty) ? null : dropOpcoes.firstWhere((option) => option.nameRoute == value, orElse: () => dropOpcoes.first),
+                                value: (value.isEmpty)
+                                    ? null
+                                    : dropOpcoes.firstWhere(
+                                        (option) => option.nameRoute == value,
+                                        orElse: () => dropOpcoes.first),
                                 onChanged: (escolha) {
                                   if (escolha!.nameRoute == "Nova Rota") {
                                     setState(() {
@@ -125,8 +137,11 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                                     setState(() {
                                       // receber o valor do id
                                       // idRoutePoint = escolha.idRoute;
-                                      nameIdRoute = RouteOption(idRoute: escolha.idRoute, nameRoute: escolha.nameRoute);
-                                      debugPrint("nome: ${nameIdRoute.nameRoute} id: ${nameIdRoute.idRoute}");
+                                      nameIdRoute = RouteOption(
+                                          idRoute: escolha.idRoute,
+                                          nameRoute: escolha.nameRoute);
+                                      debugPrint(
+                                          "nome: ${nameIdRoute.nameRoute} id: ${nameIdRoute.idRoute}");
                                       showOutroTextField = false;
                                       textButton = "Avançar";
                                     });
@@ -137,7 +152,10 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                                     .map(
                                       (op) => DropdownMenuItem<RouteOption>(
                                         value: op,
-                                        child: Text('${op.idRoute} Rota: ${op.nameRoute}'),
+                                        child: Text(op.nameRoute != "Nova Rota" ?
+                                            'Rota: ${op.nameRoute}' : op.nameRoute),
+
+                                        // child: Text('${op.idRoute} Rota: ${op.nameRoute}'),
                                       ),
                                     )
                                     .toList(),
@@ -146,7 +164,9 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                                 padding: EdgeInsets.symmetric(horizontal: 13.0),
                                 child: Text(
                                   'Caso a Rota mais condizente com o seu cadastro não estiver na lista, selecione "Nova Rota" e prossiga com o cadastro',
-                                  style: TextStyle(fontSize: 12, color: Color.fromARGB(255, 89, 89, 89)),
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: Color.fromARGB(255, 89, 89, 89)),
                                 ),
                               ),
                             ],
@@ -167,13 +187,14 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                           controller: nomeRouteController,
                           label: "Nome da Rota *",
                           maxLength: 50,
-                          validator: (value) => value!.isEmpty ? "Campo Obrigatório!" : null,
+                          validator: (value) =>
+                              value!.isEmpty ? "Campo Obrigatório!" : null,
                         ),
                         CustomTextField(
                           controller: descRouteController,
-                          label: "Descrição da Rota *",
+                          label: "Descrição da Rota",
                           maxLength: 200,
-                          validator: (value) => value!.isEmpty ? "Campo Obrigatório!" : null,
+                          // validator: (value) => value!.isEmpty ? "Campo Obrigatório!" : null,
                         ),
                       ],
                     ),
@@ -182,7 +203,8 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                   width: constraints.maxWidth,
                   height: constraints.maxHeight * .16,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -196,8 +218,10 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                            backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 12),
+                            backgroundColor:
+                                const Color.fromARGB(255, 0, 63, 6),
                             elevation: 10,
                           ),
                           child: ScreenTextButtonStyle(text: textButton),

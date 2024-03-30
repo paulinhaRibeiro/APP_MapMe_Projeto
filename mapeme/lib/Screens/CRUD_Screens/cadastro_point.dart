@@ -16,7 +16,7 @@ import 'package:provider/provider.dart';
 import '../../BD/table_route.dart';
 import '../Route/name_id_route.dart';
 import '../Widgets/text_field_register.dart';
-import 'listagem_point.dart';
+import 'tab_listagens.dart';
 
 class CadastroPoi extends StatefulWidget {
   const CadastroPoi(

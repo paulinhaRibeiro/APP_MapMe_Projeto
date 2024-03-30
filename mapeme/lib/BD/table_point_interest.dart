@@ -23,10 +23,10 @@ class ManipuTablePointInterest {
     // Resgata a conexão com bd - instancia da classe DataBaseHelper que é gerenciada pelo getIt
     var db = await GetIt.I.get<DataBaseHelper>().getDB();
 
-    // lista de Maps 
+    // lista de Maps
     // mostra apenas os ponto onde o foreignidRoute seja igual a nulo
-    final List<Map<String, dynamic>> maps =
-        await db.rawQuery("SELECT * FROM tablepointInterest WHERE foreignidRoute IS NULL ORDER BY name");
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM tablepointInterest WHERE foreignidRoute IS NULL ORDER BY name");
     await db.close();
 
     // Cria a lista - passa o tamanho e retorna para cada elemento desta lista um obj Map que vai ser convertido para obj Dart - fromMap da classe PointInterest - para cada elemento da lista
@@ -51,7 +51,7 @@ class ManipuTablePointInterest {
 
   //
 
-  //Metodo para retornar todas as imagens1 que não são vazias 
+  //Metodo para retornar todas as imagens1 que não são vazias
   Future<List<String>> getPointInterestImages1(int foreignidRoute) async {
     var db = await GetIt.I.get<DataBaseHelper>().getDB();
     final List<Map<String, dynamic>> maps = await db.rawQuery(
@@ -65,7 +65,7 @@ class ManipuTablePointInterest {
   }
 //
 
-  //Metodo para retornar todas as imagens1 que não são vazias 
+  //Metodo para retornar todas as imagens1 que não são vazias
   Future<List<String>> getPointInterestImages2(int foreignidRoute) async {
     var db = await GetIt.I.get<DataBaseHelper>().getDB();
     final List<Map<String, dynamic>> maps = await db.rawQuery(
@@ -78,7 +78,22 @@ class ManipuTablePointInterest {
     return images;
   }
 
-  // 
+  //
+
+// retorna os pontos de interesse com base no foreignIdRoute
+  Future<List<PointInterest>> getPointInterestByForeignIdRoute(
+      int foreignIdRoute) async {
+    var db = await GetIt.I.get<DataBaseHelper>().getDB();
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM tablepointInterest WHERE foreignidRoute = ? ORDER BY name",
+        [foreignIdRoute]); // Passa o valor de foreignIdRoute como um parâmetro
+
+    await db.close();
+
+    return List.generate(
+        maps.length, (index) => PointInterest.fromMap(maps[index]));
+  }
 
   // UPDATE
   Future<void> updatePointInterest(PointInterest point) async {

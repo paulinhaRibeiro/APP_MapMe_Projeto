@@ -101,7 +101,8 @@ class _DetailsPointState extends State<DetailsPoint> {
               },
               style: ElevatedButton.styleFrom(
                 elevation: 10,
-                backgroundColor: Colors.red,
+                backgroundColor:
+                    const Color.fromARGB(202, 244, 67, 54), // Colors.red,
                 foregroundColor: Colors.white,
               ),
               child: const Text(
@@ -132,7 +133,7 @@ class _DetailsPointState extends State<DetailsPoint> {
         // retirar o icone da seta que é gerado automaticamente
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: const Text("Detalhes do Point"),
+        title: const Text("Detalhes do Ponto de Interesse"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -197,7 +198,7 @@ class _DetailsPointState extends State<DetailsPoint> {
       // Botôes de editar e apagar
       bottomNavigationBar: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(5.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -212,16 +213,9 @@ class _DetailsPointState extends State<DetailsPoint> {
                         setState(() {
                           _updatedPoint = updatedPoint;
                           imagesPathList.clear();
-                          // if (_updatedPoint.img1 != "") {
-                          //   imagesPathList.add(_updatedPoint.img1);
-                          // }
-                          // if (_updatedPoint.img2 != "") {
-                          //   imagesPathList.add(_updatedPoint.img2);
-                          // }
+
                           _addImagensList();
                         });
-
-                        // chamar a função para resetar a lista e add os novos elemento.
 
                         widget.onUpdateLista();
                       },
@@ -230,7 +224,12 @@ class _DetailsPointState extends State<DetailsPoint> {
                 );
               },
               icon: const Icon(Icons.edit),
-              label: const Text('Editar'),
+              label: const Text(
+                'Editar',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               style: ElevatedButton.styleFrom(
                 elevation: 10,
               ),
@@ -242,10 +241,15 @@ class _DetailsPointState extends State<DetailsPoint> {
                 // _apagarPoi();
               },
               icon: const Icon(Icons.delete),
-              label: const Text('Deletar'),
+              label: const Text(
+                'Deletar',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               style: ElevatedButton.styleFrom(
                 elevation: 10,
-                backgroundColor: Colors.red,
+                backgroundColor: const Color.fromARGB(202, 244, 67, 54),
                 foregroundColor: Colors.white,
               ),
             ),
