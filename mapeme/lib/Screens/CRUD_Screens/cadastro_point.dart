@@ -108,8 +108,12 @@ class _CadastroPoiState extends State<CadastroPoi>
             type.substring(1).toLowerCase()));
         // dropOpcoes.addAll(types);
 
+        // Adicionar o campo de ponto não identificado somente se não existir na lista
+        if (!dropOpcoes.contains("Tipo não identificado")) {
+          dropOpcoes.add("Tipo não identificado");
+        }
         // Adicionar o campo Outro
-        dropOpcoes.add("Outro");
+        dropOpcoes.add("Novo Tipo de Ponto");
       });
     } catch (e) {
       debugPrint("Erro ao carregar tipos de ponto de interesse: $e");
@@ -120,11 +124,9 @@ class _CadastroPoiState extends State<CadastroPoi>
   _restartRegisterRoutePoint() async {
     String txt = "Deseja Cadastrar mais um ponto a esta Rota:";
     if (widget.idNameRoutePoint != null) {
-      txt =
-          "$txt ${widget.idNameRoutePoint!.nameRoute}";
+      txt = "$txt ${widget.idNameRoutePoint!.nameRoute}";
     } else {
-      txt =
-          "$txt ${widget.routePoint!.nameRoute}";
+      txt = "$txt ${widget.routePoint!.nameRoute}";
     }
 
     return showDialog(
@@ -196,7 +198,6 @@ class _CadastroPoiState extends State<CadastroPoi>
 
   // Cadastrar uma rota existente ou o foreignidRoute do point recebe o id da rota
   _cadastraRoutePoint() async {
-    
     // rota existente captura só o id dela
     if (widget.idNameRoutePoint != null) {
       routeId = widget.idNameRoutePoint!.idRoute;
@@ -206,7 +207,7 @@ class _CadastroPoiState extends State<CadastroPoi>
         widget.routePoint!.idRoute == 0) {
       routeId = await dbRoute.insertRoute(widget.routePoint!);
       debugPrint("id da nova rota $routeId");
-      // o id que era zero passa a ser o id do novo cadastro de rota 
+      // o id que era zero passa a ser o id do novo cadastro de rota
       widget.routePoint!.idRoute = routeId!;
     }
 
@@ -220,10 +221,10 @@ class _CadastroPoiState extends State<CadastroPoi>
       longitude: double.parse(longitudeController.text),
       img1: _pickedImage1 != null ? _pickedImage1!.path : "",
       img2: _pickedImage2 != null ? _pickedImage2!.path : "",
-      typePointInterest: dropValue.value != "Outro"
+      typePointInterest: dropValue.value != "Novo Tipo de Ponto"
           ? dropValue.value.toUpperCase()
           : typePointController.text.toUpperCase(),
-      synced: 0, 
+      synced: 0,
     );
 
     await db.insertPointInterest(p); // converte para toMap e grava no sqlite
@@ -245,7 +246,7 @@ class _CadastroPoiState extends State<CadastroPoi>
         longitude: double.parse(longitudeController.text),
         img1: _pickedImage1 != null ? _pickedImage1!.path : "",
         img2: _pickedImage2 != null ? _pickedImage2!.path : "",
-        typePointInterest: dropValue.value != "Outro"
+        typePointInterest: dropValue.value != "Novo Tipo de Ponto"
             ? dropValue.value.toUpperCase()
             : typePointController.text.toUpperCase(),
         // turisticPoint: isTouristPoint ? 1 : 0,
@@ -474,7 +475,7 @@ class _CadastroPoiState extends State<CadastroPoi>
                                       ),
                                       value: (value.isEmpty) ? null : value,
                                       onChanged: (escolha) {
-                                        if (escolha == "Outro") {
+                                        if (escolha == "Novo Tipo de Ponto") {
                                           setState(() {
                                             showOutroTextField = true;
                                           });
@@ -489,7 +490,19 @@ class _CadastroPoiState extends State<CadastroPoi>
                                           .map(
                                             (op) => DropdownMenuItem(
                                               value: op,
-                                              child: Text(op),
+                                              child: op != "Novo Tipo de Ponto"
+                                                  ? Text(op)
+                                                  : Row(
+                                                      children: [
+                                                        const Icon(Icons
+                                                            .add_circle_outlined),
+                                                        const SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        Text(op),
+                                                      ],
+                                                    ),
+                                              // child: Text(op),
                                             ),
                                           )
                                           .toList(),
@@ -498,7 +511,7 @@ class _CadastroPoiState extends State<CadastroPoi>
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 13.0),
                                       child: Text(
-                                        'Caso o item mais condizente com o seu cadastro não estiver na lista, selecione "Outro" e insira manualmente no campo de texto.',
+                                        'Caso o item mais condizente com o seu cadastro não estiver na lista, selecione "Novo Tipo de Ponto" e insira manualmente no campo de texto.',
                                         style: TextStyle(
                                             fontSize: 12,
                                             color: Color.fromARGB(

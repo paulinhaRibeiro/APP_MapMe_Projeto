@@ -32,7 +32,23 @@ class _EditRouteState extends State<EditRoute> {
   }
 
   _voltarScreen() {
+    _aviso("Rota Atualizada com Sucesso");
     Navigator.of(context).pop();
+  }
+
+  _aviso(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Center(
+          child: Text(
+            msg,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   _atualizarRoute() async {
@@ -91,12 +107,6 @@ class _EditRouteState extends State<EditRoute> {
                               if (formKey.currentState!.validate()) {
                                 _atualizarRoute();
                               }
-                              // if (showOutroTextField) {
-                              //   _cadastrarRota();
-                              // } else {
-                              //   // Se a rota existente for selecionada
-                              //   _routeExist();
-                              // }
                             },
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(

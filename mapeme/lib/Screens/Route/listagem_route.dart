@@ -10,7 +10,8 @@ import '../../Models/route.dart';
 class ListagemRoute extends StatelessWidget {
   final VoidCallback onUpdateListaRoute;
   final Future<List<RoutesPoint>> itemsRoute;
-  const ListagemRoute({super.key, required this.itemsRoute, required this.onUpdateListaRoute});
+  const ListagemRoute(
+      {super.key, required this.itemsRoute, required this.onUpdateListaRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +52,7 @@ class ListagemRoute extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16.0),
 
                   child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // campo da imagem
                       // data[index].imgRoute != ""
@@ -66,31 +66,36 @@ class ListagemRoute extends StatelessWidget {
                           topLeft: Radius.circular(16),
                           topRight: Radius.circular(16),
                         ),
-                        child: Container(
+                        child: Image.asset(
+                          'assets/images_geral/map_img.png',
                           height: 150,
                           width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Não há imagem disponível!",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.grey,
-                                // color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
+                          fit: BoxFit.cover,
                         ),
+                        // child: Container(
+                        //   height: 150,
+                        //   width: double.infinity,
+                        //   decoration: BoxDecoration(
+                        //     color: Colors.grey[200],
+                        //   ),
+                        //   child: const Center(
+                        //     child: Text(
+                        //       "Não há imagem disponível!",
+                        //       textAlign: TextAlign.center,
+                        //       style: TextStyle(
+                        //         color: Colors.grey,
+                        //         // color: Colors.white,
+                        //         fontSize: 16,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                       ),
 
                       Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             NomePoint(
                               nomePoint: "Rota: ${data[index].nameRoute}",
@@ -98,8 +103,7 @@ class ListagemRoute extends StatelessWidget {
                             const SizedBox(height: 8),
                             // descrição
                             DescriptonPoint(
-                                description: data[index]
-                                    .descriptionRoute),
+                                description: data[index].descriptionRoute),
                             const SizedBox(height: 12),
                             // Texto de ponto turístico
                             // NameTypePointInteresse(

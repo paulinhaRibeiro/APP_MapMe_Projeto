@@ -241,31 +241,47 @@ class _DetailsRouteState extends State<DetailsRoute> {
 //
       // Botôes de editar e apagar
       bottomNavigationBar: Container(
-        width: double.infinity,
+        // width: double.infinity,
         padding: const EdgeInsets.all(5.0),
+        // padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10.0,
+              spreadRadius: 1.0,
+              offset: Offset(0, -5),
+            ),
+          ],
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // 
+            //
             // INICIAR o trajeto
             TextButton(
               onPressed: () {},
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.directions_outlined), // Ícone
+                  Icon(Icons.directions), // Ícone
                   SizedBox(height: 4), // Espaçamento entre o ícone e o texto
                   Text(
                     'Iniciar Rota',
                     style: TextStyle(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ), // Texto
+                  ),
                 ],
               ),
             ),
 
-            // 
+            //
             // Ir Para os Pontos de Interesse
             TextButton(
               onPressed: () {
@@ -282,15 +298,15 @@ class _DetailsRouteState extends State<DetailsRoute> {
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.place_outlined), // Ícone
+                  Icon(Icons.place), // Ícone
                   SizedBox(height: 4), // Espaçamento entre o ícone e o texto
                   Text(
                     'Pontos de Interesse\n da Rota',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ), // Texto
+                  ),
                 ],
               ),
             ),

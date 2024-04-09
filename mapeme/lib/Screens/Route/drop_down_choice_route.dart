@@ -102,7 +102,7 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
               children: [
                 SizedBox(
                   width: constraints.maxWidth,
-                  height: constraints.maxHeight * .25,
+                  height: constraints.maxHeight * .2,
                   child: Center(
                     child: ValueListenableBuilder(
                       valueListenable: dropValue,
@@ -152,10 +152,20 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                                     .map(
                                       (op) => DropdownMenuItem<RouteOption>(
                                         value: op,
-                                        child: Text(op.nameRoute != "Nova Rota" ?
-                                            'Rota: ${op.nameRoute}' : op.nameRoute),
-
-                                        // child: Text('${op.idRoute} Rota: ${op.nameRoute}'),
+                                        child: op.nameRoute != "Nova Rota"
+                                            ? Text('Rota: ${op.nameRoute}')
+                                            : Row(
+                                                children: [
+                                                  const Icon(Icons
+                                                      .add_circle_outlined),
+                                                  const SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Text(op.nameRoute),
+                                                ],
+                                              ),
+                                        // child: Text(op.nameRoute != "Nova Rota" ?
+                                        //     'Rota: ${op.nameRoute}' : op.nameRoute),
                                       ),
                                     )
                                     .toList(),
@@ -179,7 +189,7 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                 if (showOutroTextField)
                   SizedBox(
                     width: constraints.maxWidth,
-                    height: constraints.maxHeight * .45,
+                    height: constraints.maxHeight * .35,
                     child: Column(
                       children: [
                         const DividerText(text: "Cadastrar Rota"),
