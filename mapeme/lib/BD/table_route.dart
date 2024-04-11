@@ -2,7 +2,6 @@ import 'package:get_it/get_it.dart';
 import 'package:mapeme/BD/database_helper.dart';
 import 'package:mapeme/Models/route.dart';
 
-
 // classe de manipulação do bd
 class ManipuTableRoute {
   // CREATE - gravar as funções no bd
@@ -15,7 +14,7 @@ class ManipuTableRoute {
 
     // fecha conexão com o bd
     await db.close();
-    
+
     // retorna o ID da rota cadastrada
     return id;
   }
@@ -37,14 +36,32 @@ class ManipuTableRoute {
         maps.length, (index) => RoutesPoint.fromMapRoute(maps[index]));
   }
 
+  //
+  // Leitura - Filtra as rotas pelo o nome
+  Future<List<RoutesPoint>> getSearchNameRoute(String nameRoute) async {
+    var db = await GetIt.I.get<DataBaseHelper>().getDB();
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      "tableroute",
+      where: "nameRoute LIKE ?",
+      whereArgs: ['%$nameRoute%'],
+      orderBy: "nameRoute",
+    );
+    await db.close();
+
+    return List.generate(
+      maps.length,
+      (index) => RoutesPoint.fromMapRoute(maps[index]),
+    );
+  }
 
   //
 
-  // Método para obter os tipos de ponto de interesse
+  // Leitura - Método para obter os nomes das rotas
   Future<List<String>> getNameRoutes() async {
     var db = await GetIt.I.get<DataBaseHelper>().getDB();
-    final List<Map<String, dynamic>> maps =
-        await db.rawQuery("SELECT DISTINCT nameRoute FROM tableroute ORDER BY nameRoute");
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT DISTINCT nameRoute FROM tableroute ORDER BY nameRoute");
     await db.close();
 
     // Extrair os tipos de ponto de interesse da lista de mapas
@@ -52,12 +69,14 @@ class ManipuTableRoute {
     return types;
   }
 
+  // Leitura - Método para obter os nomes e ids das rotas
   Future<List<Map<String, dynamic>>> getNameRoutesWithIds() async {
-  var db = await GetIt.I.get<DataBaseHelper>().getDB();
-  final List<Map<String, dynamic>> maps = await db.rawQuery("SELECT idRoute, nameRoute FROM tableroute ORDER BY nameRoute");
-  await db.close();
-  return maps;
-}
+    var db = await GetIt.I.get<DataBaseHelper>().getDB();
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT idRoute, nameRoute FROM tableroute ORDER BY nameRoute");
+    await db.close();
+    return maps;
+  }
 
   //
 
@@ -78,8 +97,10 @@ class ManipuTableRoute {
   Future<void> deleteRoute(int idRoute) async {
     var db = await GetIt.I.get<DataBaseHelper>().getDB();
     await db.transaction((txn) async {
-      await txn.delete('tableroute', where: 'idRoute = ?', whereArgs: [idRoute]);
-      await txn.delete('tablepointInterest', where: 'foreignidRoute = ?', whereArgs: [idRoute]);
+      await txn
+          .delete('tableroute', where: 'idRoute = ?', whereArgs: [idRoute]);
+      await txn.delete('tablepointInterest',
+          where: 'foreignidRoute = ?', whereArgs: [idRoute]);
     });
     await db.close();
   }

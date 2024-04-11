@@ -197,8 +197,8 @@ class _DetailsPointState extends State<DetailsPoint> {
 //
       // Botôes de editar e apagar
       bottomNavigationBar: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(5.0),
+        // width: double.infinity,
+        padding: const EdgeInsets.all(8.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [

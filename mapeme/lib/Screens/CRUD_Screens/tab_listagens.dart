@@ -36,6 +36,8 @@ class _ListagemDadosState extends State<ListagemDados>
   // para controlar o TabBar
   late TabController _tabListagemController;
 
+  // TextEditingController para  o campo de pesquisa
+  TextEditingController searchController = TextEditingController();
 
   @override
   // metodo disparado quando criar essa tela
@@ -133,11 +135,11 @@ class _ListagemDadosState extends State<ListagemDados>
         controller: _tabListagemController,
         tabs: const [
           Tab(
-            icon: Icon(Icons.alt_route_outlined),
+            icon: Icon(Icons.alt_route_rounded),
             text: 'Rotas',
           ),
           Tab(
-            icon: Icon(Icons.share_location_outlined),
+            icon: Icon(Icons.share_location_rounded),
             text: 'Pontos de Interesse',
           ),
         ],
@@ -156,6 +158,82 @@ class _ListagemDadosState extends State<ListagemDados>
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                
+                // Botão de buscar
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(25, 16, 25, 1),
+                  child: Container(
+                    height: 55,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      border: Border.all(
+                        color: const Color.fromARGB(255, 0, 63, 6),
+                        // width: 2.5,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: searchController,
+                            decoration: const InputDecoration(
+                              labelText: 'Buscar',
+                              hintText: "Buscar pelo nome",
+                              border: InputBorder.none,
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 10.0),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: double.infinity,
+                          // color: Colors.green,
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 0, 63, 6),
+                            borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(8.0),
+                              bottomRight: Radius.circular(8.0),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color.fromARGB(255, 0, 63, 6)
+                                    .withOpacity(0.5),
+                                spreadRadius: 1,
+                                blurRadius: 3,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.manage_search_rounded,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                            onPressed: () {
+                              if (_tabListagemController.index == 0) {
+                                // Rota
+                                setState(() {
+                                  itemsRoute = bdRoute.getSearchNameRoute(
+                                      searchController.text);
+                                });
+                                
+                              } else {
+                                // ponto de interesse
+                                setState(() {
+                                  items = bd.getSearchNamePoint(searchController.text);
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // End Botão de buscar
+
                 Expanded(
                   child: TabBarView(
                     controller: _tabListagemController,
@@ -165,7 +243,7 @@ class _ListagemDadosState extends State<ListagemDados>
                         child: SizedBox(
                           // color: Colors.amber,
                           width: constraints.maxWidth,
-                          height: constraints.maxHeight * .89,
+                          height: constraints.maxHeight * .75, //.75,
                           child: Center(
                             child: ListagemRoute(
                               itemsRoute: itemsRoute,
@@ -180,7 +258,7 @@ class _ListagemDadosState extends State<ListagemDados>
                         child: SizedBox(
                           // altura - pegar 89% da tela disponivel
                           width: constraints.maxWidth,
-                          height: constraints.maxHeight * .89,
+                          height: constraints.maxHeight * .75, //89
                           child: Center(
                             child: ListagemPointInteresse(
                               itemsPoint: items,
@@ -205,7 +283,7 @@ class _ListagemDadosState extends State<ListagemDados>
                       minimumSize: const Size.fromHeight(55),
                     ),
                     icon: const Icon(
-                      Icons.add_location_alt_outlined,
+                      Icons.add_location_alt_rounded,
                       color: Colors.white,
                     ),
                     label: const ScreenTextButtonStyle(

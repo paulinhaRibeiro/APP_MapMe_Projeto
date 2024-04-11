@@ -36,6 +36,27 @@ class ManipuTablePointInterest {
 
   //
 
+  //
+  // Leitura - Filtra os pontos de interesse pelo o nome
+  Future<List<PointInterest>> getSearchNamePoint(String name) async {
+    var db = await GetIt.I.get<DataBaseHelper>().getDB();
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      "tablepointInterest",
+      where: "foreignidRoute IS NULL AND name LIKE ?",
+      whereArgs: ['%$name%'],
+      orderBy: "name",
+    );
+    await db.close();
+
+    return List.generate(
+      maps.length,
+      (index) => PointInterest.fromMap(maps[index]),
+    );
+  }
+
+  // 
+
   // Método para obter os tipos de ponto de interesse
   Future<List<String>> getPointInterestTypes() async {
     var db = await GetIt.I.get<DataBaseHelper>().getDB();

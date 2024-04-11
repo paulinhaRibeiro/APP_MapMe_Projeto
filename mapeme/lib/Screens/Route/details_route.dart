@@ -168,68 +168,65 @@ class _DetailsRouteState extends State<DetailsRoute> {
                   const SizedBox(height: 12),
 
                   // Botões de editar e deletar rota
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        //
-                        // Botão de EDITAR a Rota
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditRoute(
-                                  route: _updatedRoute,
-                                  onUpdate: (updatedRoute) {
-                                    setState(() {
-                                      _updatedRoute = updatedRoute;
-                                    });
-                                    widget.onUpdateLista();
-                                  },
-                                ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      //
+                      // Botão de EDITAR a Rota
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditRoute(
+                                route: _updatedRoute,
+                                onUpdate: (updatedRoute) {
+                                  setState(() {
+                                    _updatedRoute = updatedRoute;
+                                  });
+                                  widget.onUpdateLista();
+                                },
                               ),
-                            );
-                          },
-                          icon: const Icon(Icons.edit),
-                          label: const Text(
-                            'Editar Rota',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
                             ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            elevation: 10,
+                          );
+                        },
+                        icon: const Icon(Icons.edit),
+                        label: const Text(
+                          'Editar Rota',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(width: 15),
+                        style: ElevatedButton.styleFrom(
+                          elevation: 10,
+                        ),
+                      ),
+                      const SizedBox(width: 15),
 
-                        //
-                        // Botão de DELETAR a Rota
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            _confirmDeleteDialog();
-                            // _apagarPoi();
-                          },
-                          icon: const Icon(Icons.delete),
-                          label: const Text(
-                            'Deletar Rota',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            elevation: 10,
-                            backgroundColor:
-                                const Color.fromARGB(202, 244, 67, 54),
-                            foregroundColor: Colors.white,
+                      //
+                      // Botão de DELETAR a Rota
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          _confirmDeleteDialog();
+                          // _apagarPoi();
+                        },
+                        icon: const Icon(Icons.delete),
+                        label: const Text(
+                          'Deletar Rota',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                      ],
-                    ),
+                        style: ElevatedButton.styleFrom(
+                          elevation: 10,
+                          backgroundColor:
+                              const Color.fromARGB(202, 244, 67, 54),
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
+                  // ),
                 ],
               ),
             ),
@@ -244,18 +241,18 @@ class _DetailsRouteState extends State<DetailsRoute> {
         // width: double.infinity,
         padding: const EdgeInsets.all(5.0),
         // padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(30.0),
             topRight: Radius.circular(30.0),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black12,
-              blurRadius: 10.0,
-              spreadRadius: 1.0,
-              offset: Offset(0, -5),
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 3,
+              blurRadius: 7,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -269,12 +266,17 @@ class _DetailsRouteState extends State<DetailsRoute> {
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.directions), // Ícone
+                  Icon(
+                    Icons.directions,
+                    color: Color.fromARGB(255, 0, 27, 2),
+                    size: 30.0,
+                  ), // Ícone
                   SizedBox(height: 4), // Espaçamento entre o ícone e o texto
                   Text(
                     'Iniciar Rota',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 0, 27, 2),
                     ),
                   ),
                 ],
@@ -298,13 +300,18 @@ class _DetailsRouteState extends State<DetailsRoute> {
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.place), // Ícone
+                  Icon(
+                    Icons.place,
+                    color: Color.fromARGB(255, 0, 27, 2),
+                    size: 30.0,
+                  ), // Ícone
                   SizedBox(height: 4), // Espaçamento entre o ícone e o texto
                   Text(
                     'Pontos de Interesse\n da Rota',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 0, 27, 2),
                     ),
                   ),
                 ],

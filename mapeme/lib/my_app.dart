@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
         ),
 
         // Color.fromARGB(255, 174, 229, 179),),
-        // Color(0xFF00610A),
+        // Color(0xFF00610A), => 2A4D14
 
         // Cores do aplicativo
         colorScheme: ColorScheme.fromSeed(

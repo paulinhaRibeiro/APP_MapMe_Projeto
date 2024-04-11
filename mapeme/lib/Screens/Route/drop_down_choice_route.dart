@@ -102,7 +102,7 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
               children: [
                 SizedBox(
                   width: constraints.maxWidth,
-                  height: constraints.maxHeight * .2,
+                  height: constraints.maxHeight * .25,
                   child: Center(
                     child: ValueListenableBuilder(
                       valueListenable: dropValue,
@@ -189,7 +189,7 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                 if (showOutroTextField)
                   SizedBox(
                     width: constraints.maxWidth,
-                    height: constraints.maxHeight * .35,
+                    height: constraints.maxHeight * .45,
                     child: Column(
                       children: [
                         const DividerText(text: "Cadastrar Rota"),

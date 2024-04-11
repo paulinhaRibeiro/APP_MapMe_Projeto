@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-class GeolocationUser extends ChangeNotifier {
+class GeolocationUser{
   double? lat;
   double? long;
   String erro = "";
@@ -23,7 +23,6 @@ class GeolocationUser extends ChangeNotifier {
     } catch (e) {
       erro = e.toString();
     }
-    notifyListeners();
   }
 
 
