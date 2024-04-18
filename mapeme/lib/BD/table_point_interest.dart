@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:mapeme/BD/database_helper.dart';
 import 'package:mapeme/Models/point_interest.dart';
+import 'package:sqflite/sqflite.dart';
 
 // classe de manipulação do bd
 class ManipuTablePointInterest {
@@ -55,7 +56,7 @@ class ManipuTablePointInterest {
     );
   }
 
-  // 
+  //
 
   // Método para obter os tipos de ponto de interesse
   Future<List<String>> getPointInterestTypes() async {
@@ -136,18 +137,26 @@ class ManipuTablePointInterest {
     await db.close();
   }
 
-  // Retorna o ultimo id cadastrado
-  Future<int> getLastInsertedPointInterestId() async {
+  // Contar quantos registros tem
+  // Future<int> countRecordsWithName(int foreignidRoute, int idPoint) async {
+  Future<void> countRecordsWithName(int foreignidRoute, int idPoint) async {
     var db = await GetIt.I.get<DataBaseHelper>().getDB();
-    final List<Map<String, dynamic>> result =
-        await db.rawQuery("SELECT MAX(id) as last_id FROM tablepointInterest");
-    await db.close();
-
-    // Verifica se há resultados e retorna o último ID, ou 0 se nenhum registro estiver presente
-    if (result.isNotEmpty && result.first['last_id'] != null) {
-      return result.first['last_id'] as int;
-    } else {
-      return 0;
+    var result = await db.rawQuery(
+        'SELECT COUNT(foreignidRoute) FROM tablepointInterest WHERE foreignidRoute = ?',
+        [foreignidRoute]);
+    var count =
+        Sqflite.firstIntValue(result) ?? 0; // Se o valor for nulo, retorna 0
+    if (count == 1) {
+      // excluir o ponto
+      deletePointInterest(idPoint);
+      // deleta a rota
+      await db.delete('tableroute',
+          where: 'idRoute = ?', whereArgs: [foreignidRoute]);
+    } else if (count > 1) {
+      // Excluir só o ponto de interesse
+      deletePointInterest(idPoint);
     }
+    await db.close();
+    // return count;
   }
 }

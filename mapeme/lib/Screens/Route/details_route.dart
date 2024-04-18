@@ -4,10 +4,10 @@ import 'package:mapeme/BD/table_route.dart';
 import 'package:mapeme/Models/route.dart';
 
 import '../../BD/table_point_interest.dart';
-// import '../Widgets/divide_text.dart';
 import '../Widgets/image_slider_details.dart';
 import '../Widgets/listagem_widgets.dart/descricao_point_widget.dart';
-import '../Widgets/listagem_widgets.dart/nome_point_widget.dart';
+// import '../Widgets/listagem_widgets.dart/nome_point_widget.dart';
+import '../Widgets/text_button.dart';
 import 'edit_route.dart';
 import 'lista_point_routes.dart';
 
@@ -134,184 +134,152 @@ class _DetailsRouteState extends State<DetailsRoute> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // retirar o icone da seta que é gerado automaticamente
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: const Text("Detalhes da Rota"),
+        title: const Text('Detalhes da Rota'),
+        actions: [
+          PopupMenuButton(
+            tooltip: "Mais Opções",
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem(
+                  value: 'Editar',
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit_rounded),
+                      SizedBox(width: 10),
+                      Text(
+                        'Editar Rota',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 0, 63, 6),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'Remover',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.delete_rounded,
+                        color: Color(0xFF9F0000),
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Remover Rota',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF9F0000),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ];
+            },
+            onSelected: (value) {
+              if (value == 'Editar') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditRoute(
+                      route: _updatedRoute,
+                      onUpdate: (updatedRoute) {
+                        setState(() {
+                          _updatedRoute = updatedRoute;
+                        });
+                        widget.onUpdateLista();
+                      },
+                    ),
+                  ),
+                );
+              } else if (value == 'Remover') {
+                _confirmDeleteDialog();
+              }
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ImagemDetailsScreen(
-              // lista das imagens
               imagesList: imagesPathList,
+              name: _updatedRoute.nameRoute,
             ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Nome da rota
-                  NomePoint(
-                    nomePoint: "Rota: ${_updatedRoute.nameRoute}",
-                    numLines: 50,
+                  Text(
+                    'Descrição',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[800],
+                    ),
                   ),
                   const SizedBox(height: 8),
-
-                  // Descrição da rota
                   DescriptonPoint(
                     description: _updatedRoute.descriptionRoute,
                     numLines: 50,
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 24),
 
-                  // Botões de editar e deletar rota
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      //
-                      // Botão de EDITAR a Rota
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditRoute(
-                                route: _updatedRoute,
-                                onUpdate: (updatedRoute) {
-                                  setState(() {
-                                    _updatedRoute = updatedRoute;
-                                  });
-                                  widget.onUpdateLista();
-                                },
-                              ),
+                  // Botão de iniciar a Rota
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+                        elevation: 10,
+                        minimumSize: const Size.fromHeight(55),
+                      ),
+                      icon: const Icon(
+                        Icons.play_arrow,
+                        color: Colors.white,
+                      ),
+                      label: const ScreenTextButtonStyle(text: "Iniciar Rota"),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ListagemPointsRoute(
+                              idRoute: _updatedRoute.idRoute,
+                              nameRoute: _updatedRoute.nameRoute,
+                              onUpdateListaRoutePoints: _addImagensList,
                             ),
-                          );
-                        },
-                        icon: const Icon(Icons.edit),
-                        label: const Text(
-                          'Editar Rota',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
                           ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          elevation: 10,
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        elevation: 10,
+                        minimumSize: const Size.fromHeight(55),
+                      ),
+                      icon: const Icon(
+                        Icons.place,
+                        color: Color.fromARGB(255, 0, 63, 6),
+                      ),
+                      label: const Text(
+                        'Pontos de Interesse da Rota',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 0, 63, 6),
                         ),
                       ),
-                      const SizedBox(width: 15),
-
-                      //
-                      // Botão de DELETAR a Rota
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          _confirmDeleteDialog();
-                          // _apagarPoi();
-                        },
-                        icon: const Icon(Icons.delete),
-                        label: const Text(
-                          'Deletar Rota',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          elevation: 10,
-                          backgroundColor:
-                              const Color.fromARGB(202, 244, 67, 54),
-                          foregroundColor: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  // ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-
-//
-//
-      // Botôes de editar e apagar
-      bottomNavigationBar: Container(
-        // width: double.infinity,
-        padding: const EdgeInsets.all(5.0),
-        // padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 3,
-              blurRadius: 7,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            //
-            // INICIAR o trajeto
-            TextButton(
-              onPressed: () {},
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.directions,
-                    color: Color.fromARGB(255, 0, 27, 2),
-                    size: 30.0,
-                  ), // Ícone
-                  SizedBox(height: 4), // Espaçamento entre o ícone e o texto
-                  Text(
-                    'Iniciar Rota',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 0, 27, 2),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            //
-            // Ir Para os Pontos de Interesse
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ListagemPointsRoute(
-                      idRoute: _updatedRoute.idRoute,
-                      onUpdateListaRoutePoints: _addImagensList,
-                    ),
-                  ),
-                );
-              },
-              child: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.place,
-                    color: Color.fromARGB(255, 0, 27, 2),
-                    size: 30.0,
-                  ), // Ícone
-                  SizedBox(height: 4), // Espaçamento entre o ícone e o texto
-                  Text(
-                    'Pontos de Interesse\n da Rota',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 0, 27, 2),
                     ),
                   ),
                 ],

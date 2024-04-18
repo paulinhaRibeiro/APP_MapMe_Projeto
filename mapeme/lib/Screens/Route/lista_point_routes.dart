@@ -3,15 +3,20 @@ import 'package:get_it/get_it.dart';
 
 import '../../BD/table_point_interest.dart';
 import '../../Models/point_interest.dart';
+import '../CRUD_Screens/cadastro_point.dart';
 import '../CRUD_Screens/listagem_point_interesse.dart';
+import '../Widgets/text_button.dart';
+import 'name_id_route.dart';
 
 class ListagemPointsRoute extends StatefulWidget {
   final VoidCallback onUpdateListaRoutePoints;
   final int idRoute;
+  final String nameRoute;
   const ListagemPointsRoute(
       {super.key,
       required this.idRoute,
-      required this.onUpdateListaRoutePoints});
+      required this.onUpdateListaRoutePoints,
+      required this.nameRoute});
 
   @override
   State<ListagemPointsRoute> createState() => _ListagemPointsRouteState();
@@ -21,12 +26,15 @@ class _ListagemPointsRouteState extends State<ListagemPointsRoute> {
   var bdPoint = GetIt.I.get<ManipuTablePointInterest>();
   // variavel para capturar todos os pontos de interesse ligados a rota
   late Future<List<PointInterest>> pointRoute;
+  late RouteOption nameIdRoute;
 
   @override
   void initState() {
     super.initState();
     // pontos de interesse da rota
     pointRoute = bdPoint.getPointInterestByForeignIdRoute(widget.idRoute);
+    nameIdRoute =
+        RouteOption(idRoute: widget.idRoute, nameRoute: widget.nameRoute);
   }
 
   // função de callback
@@ -74,6 +82,32 @@ class _ListagemPointsRouteState extends State<ListagemPointsRoute> {
                         onUpdateListaPoint: atualizarDadosPoint,
                       ),
                     ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CadastroPoi(
+                              idNameRoutePoint: nameIdRoute,
+                            ),
+                          ));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+                      elevation: 10,
+                      minimumSize: const Size.fromHeight(55),
+                    ),
+                    icon: const Icon(
+                      Icons.add_location_alt_rounded,
+                      color: Colors.white,
+                    ),
+                    label: const ScreenTextButtonStyle(
+                        text: "Cadastrar Novo Ponto"),
                   ),
                 ),
               ],

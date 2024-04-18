@@ -11,8 +11,8 @@ class ScreenTextButtonStyle extends StatelessWidget {
       textAlign: TextAlign.center,
       style: const TextStyle(
         color: Colors.white,
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
+        fontSize: 19,//20,
+        fontWeight: FontWeight.bold,
         // color: Color.fromARGB(255, 0, 63, 6),
       ),
     );

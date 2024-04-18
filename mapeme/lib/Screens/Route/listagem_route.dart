@@ -6,6 +6,7 @@ import 'package:mapeme/Screens/Widgets/listagem_widgets.dart/descricao_point_wid
 import 'package:mapeme/Screens/Widgets/listagem_widgets.dart/nome_point_widget.dart';
 
 import '../../Models/route.dart';
+// import '../Widgets/listagem_widgets.dart/turistico_widget.dart';
 
 class ListagemRoute extends StatelessWidget {
   final VoidCallback onUpdateListaRoute;
@@ -54,17 +55,12 @@ class ListagemRoute extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // campo da imagem
-                      // data[index].imgRoute != ""
-                      //     ? ImagemPoint(
-                      //         nomeImagem: data[index].imgRoute)
-                      //     : ImagemPoint(
-                      //         nomeImagem: data[index].imgRoute),
-
                       ClipRRect(
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(16),
                           topRight: Radius.circular(16),
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
                         ),
                         child: Image.asset(
                           'assets/images_geral/map_img.png',
@@ -72,43 +68,25 @@ class ListagemRoute extends StatelessWidget {
                           width: double.infinity,
                           fit: BoxFit.cover,
                         ),
-                        // child: Container(
-                        //   height: 150,
-                        //   width: double.infinity,
-                        //   decoration: BoxDecoration(
-                        //     color: Colors.grey[200],
-                        //   ),
-                        //   child: const Center(
-                        //     child: Text(
-                        //       "Não há imagem disponível!",
-                        //       textAlign: TextAlign.center,
-                        //       style: TextStyle(
-                        //         color: Colors.grey,
-                        //         // color: Colors.white,
-                        //         fontSize: 16,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
                       ),
-
                       Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            NomePoint(
-                              nomePoint: "Rota: ${data[index].nameRoute}",
+                            Center(
+                              child: NomePoint(
+                                nomePoint: data[index].nameRoute,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             // descrição
                             DescriptonPoint(
                                 description: data[index].descriptionRoute),
-                            const SizedBox(height: 12),
-                            // Texto de ponto turístico
-                            // NameTypePointInteresse(
-                            //   nameTypePoint:
-                            //       data[index].typePointInterest,
+                            // const SizedBox(height: 8),
+                            // // Texto de ponto turístico
+                            // const NameTypePointInteresse(
+                            //   nameTypePoint: "ROTA",
                             // ),
                           ],
                         ),

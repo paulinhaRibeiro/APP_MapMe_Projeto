@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapeme/Screens/Widgets/text_button.dart';
 // para ir para a url
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,80 +21,19 @@ class WebPageSite extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Container(
-          width: MediaQuery.of(context).size.width * .50,
-          height: 100,
-          decoration: BoxDecoration(
-            border: Border.all(
-                width: 1, color: const Color.fromARGB(255, 195, 195, 195)),
-            image: const DecorationImage(
-              image: AssetImage('assets/images_geral/map_img.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          alignment: Alignment.center,
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              elevation: 10,
-              // backgroundColor: Colors.white.withOpacity(0.5),
-            ),
-            onPressed: () =>
-                _lauchLink("https://www.google.com/maps/search/$lat,$long/"),
-            icon: const Icon(Icons.map_outlined),
-            label: const Text(
-              "Ver no Mapa",
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Latitude:",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(255, 122, 122, 122),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 12.0),
-                  child: Text(
-                    lat,
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 88, 88, 88),
-                    ),
-                  ),
-                ),
-                const Text(
-                  "Longitude:",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(255, 122, 122, 122),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 12.0),
-                  child: Text(
-                    long,
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 88, 88, 88),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )
-      ],
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+        elevation: 10,
+        minimumSize: const Size.fromHeight(55),
+      ),
+      onPressed: () =>
+          _lauchLink("https://www.google.com/maps/search/$lat,$long/"),
+      icon: const Icon(
+        Icons.map_outlined,
+        color: Colors.white,
+      ),
+      label: const ScreenTextButtonStyle(text: "Ver no Mapa"),
     );
   }
 }

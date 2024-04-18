@@ -123,26 +123,26 @@ class _ListagemDadosState extends State<ListagemDados>
 
   @override
   Widget build(BuildContext context) {
-    var appBar = AppBar(
-      // retirar o icone da seta que é gerado automaticamente
-      automaticallyImplyLeading: false,
-      centerTitle: true,
-      title: const Text(
-        "Listagem",
-        textAlign: TextAlign.center,
-      ),
-      bottom: TabBar(
-        controller: _tabListagemController,
-        tabs: const [
-          Tab(
-            icon: Icon(Icons.alt_route_rounded),
-            text: 'Rotas',
-          ),
-          Tab(
-            icon: Icon(Icons.share_location_rounded),
-            text: 'Pontos de Interesse',
-          ),
-        ],
+    var appBar = PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight + 48), // Height of TabBar + AppBar
+        child: AppBar(
+        // retirar o icone da seta que é gerado automaticamente
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        
+        bottom: TabBar(
+          controller: _tabListagemController,
+          tabs: const [
+            Tab(
+              icon: Icon(Icons.alt_route_rounded),
+              text: 'Rotas',
+            ),
+            Tab(
+              icon: Icon(Icons.share_location_rounded),
+              text: 'Pontos de Interesse',
+            ),
+          ],
+        ),
       ),
     );
     return Scaffold(
@@ -243,7 +243,7 @@ class _ListagemDadosState extends State<ListagemDados>
                         child: SizedBox(
                           // color: Colors.amber,
                           width: constraints.maxWidth,
-                          height: constraints.maxHeight * .75, //.75,
+                          height: constraints.maxHeight * .82, //.75,
                           child: Center(
                             child: ListagemRoute(
                               itemsRoute: itemsRoute,
@@ -258,7 +258,7 @@ class _ListagemDadosState extends State<ListagemDados>
                         child: SizedBox(
                           // altura - pegar 89% da tela disponivel
                           width: constraints.maxWidth,
-                          height: constraints.maxHeight * .75, //89
+                          height: constraints.maxHeight * .82,//75, //89
                           child: Center(
                             child: ListagemPointInteresse(
                               itemsPoint: items,

@@ -65,19 +65,28 @@ class ListagemPointInteresse extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            NomePoint(
-                              nomePoint:
-                                  data[index].name,
+                            Center(
+                              child: NomePoint(
+                                nomePoint: data[index].name,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             // descrição
                             DescriptonPoint(
                                 description: data[index].description),
-                            const SizedBox(height: 12),
-                            // Texto de ponto turístico
-                            NameTypePointInteresse(
-                              nameTypePoint: data[index].typePointInterest,
-                            ),
+                            // const SizedBox(height: 8),
+                            // // Texto de ponto turístico
+                            // NameTypePointInteresse(
+                            //   nameTypePoint: data[index].typePointInterest,
+                            // ),
+                            if (data[index].typePointInterest !=
+                                "TIPO NÃO IDENTIFICADO") ...[
+                              const SizedBox(height: 8),
+                              // Texto de punto turístico
+                              NameTypePointInteresse(
+                                nameTypePoint: data[index].typePointInterest,
+                              ),
+                            ],
                           ],
                         ),
                       ),

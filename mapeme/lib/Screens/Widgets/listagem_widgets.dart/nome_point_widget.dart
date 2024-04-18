@@ -10,7 +10,7 @@ class NomePoint extends StatelessWidget {
     return Text(
       nomePoint,
       style: const TextStyle(
-        fontSize: 20,
+        fontSize: 20,//20,
         fontWeight: FontWeight.bold,
         fontFamily: 'Roboto',
       ),

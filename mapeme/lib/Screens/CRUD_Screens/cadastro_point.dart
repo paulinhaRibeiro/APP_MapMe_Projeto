@@ -129,8 +129,15 @@ class _CadastroPoiState extends State<CadastroPoi>
         // Adicionar o campo de ponto não identificado somente se não existir na lista
         if (!dropOpcoes.contains("Tipo não identificado")) {
           dropOpcoes.add("Tipo não identificado");
+        } else { //se o "Tipo não identificado" exitir na lista
+          // e se não for o cadastro ligado a uma rota -> ou seja um ponto de interesse que não é ligado a nenhuma rota
+          // Pq o Ponto de interesse devem ter um tipo em especifico. Não pode ser Tipo não identificado
+          if (widget.routePoint == null && widget.idNameRoutePoint == null){
+            dropOpcoes.remove("Tipo não identificado");
+          }
         }
-        // Adicionar o campo Outro
+        
+        // Adicionar o campo Novo Tipo de Ponto
         dropOpcoes.add("Novo Tipo de Ponto");
       });
     } catch (e) {
@@ -140,11 +147,11 @@ class _CadastroPoiState extends State<CadastroPoi>
 
   // restartar o cadastro
   _restartRegisterRoutePoint() async {
-    String txt = "Deseja Cadastrar mais um ponto a esta Rota:";
+    String txt = "Deseja Cadastrar mais um ponto a esta rota ";
     if (widget.idNameRoutePoint != null) {
-      txt = "$txt ${widget.idNameRoutePoint!.nameRoute}";
+      txt = '$txt "${widget.idNameRoutePoint!.nameRoute}"?';
     } else {
-      txt = "$txt ${widget.routePoint!.nameRoute}";
+      txt = '$txt "${widget.routePoint!.nameRoute}"?';
     }
 
     return showDialog(
