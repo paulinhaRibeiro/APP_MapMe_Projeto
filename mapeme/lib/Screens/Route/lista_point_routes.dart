@@ -9,6 +9,7 @@ import '../Widgets/text_button.dart';
 import 'name_id_route.dart';
 
 class ListagemPointsRoute extends StatefulWidget {
+  // Lista de imgs dos pontos de interesse da rota
   final VoidCallback onUpdateListaRoutePoints;
   final int idRoute;
   final String nameRoute;
@@ -23,16 +24,19 @@ class ListagemPointsRoute extends StatefulWidget {
 }
 
 class _ListagemPointsRouteState extends State<ListagemPointsRoute> {
+  // Intancia do bd
   var bdPoint = GetIt.I.get<ManipuTablePointInterest>();
   // variavel para capturar todos os pontos de interesse ligados a rota
   late Future<List<PointInterest>> pointRoute;
+  // Recebe o nome e o id da rota
   late RouteOption nameIdRoute;
 
   @override
   void initState() {
     super.initState();
-    // pontos de interesse da rota
+    // Tds os pontos de interesse da rota
     pointRoute = bdPoint.getPointInterestByForeignIdRoute(widget.idRoute);
+    // Recebe o nome e o id da rota recebidos via construtor
     nameIdRoute =
         RouteOption(idRoute: widget.idRoute, nameRoute: widget.nameRoute);
   }
@@ -40,7 +44,9 @@ class _ListagemPointsRouteState extends State<ListagemPointsRoute> {
   // função de callback
   atualizarDadosPoint() {
     setState(() {
+      // Atualiza Tds os pontos de interesse da rota
       pointRoute = bdPoint.getPointInterestByForeignIdRoute(widget.idRoute);
+      // Atualiza a lista de imgs da tela de detalhes da Rota
       widget.onUpdateListaRoutePoints();
     });
   }
@@ -58,7 +64,7 @@ class _ListagemPointsRouteState extends State<ListagemPointsRoute> {
         ),
       ),
       body: SizedBox(
-        width: MediaQuery.of(context).size.width,
+        // width: MediaQuery.of(context).size.width,
         height: (MediaQuery.of(context).size.height -
                 AppBar().preferredSize.height) -
             MediaQuery.of(context).padding.top,
@@ -77,22 +83,28 @@ class _ListagemPointsRouteState extends State<ListagemPointsRoute> {
                     width: constraints.maxWidth,
                     height: constraints.maxHeight * .89,
                     child: Center(
+                      // Chama o componente responsavel por listar os pontos de interesse
                       child: ListagemPointInteresse(
                         itemsPoint: pointRoute,
+                        // E passa o atualizarDadosPoint para atualizar a listagem dos pontos de interesse da rota
                         onUpdateListaPoint: atualizarDadosPoint,
                       ),
                     ),
                   ),
                 ),
+
+                // Cadastrar um novo ponto ligado a esta Rota
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16),
                   child: ElevatedButton.icon(
                     onPressed: () {
+                      // Chama a tela de cadastro
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => CadastroPoi(
+                              // Passa o id da Rota para ser add ao atributo do ponto de interesse
                               idNameRoutePoint: nameIdRoute,
                             ),
                           ));

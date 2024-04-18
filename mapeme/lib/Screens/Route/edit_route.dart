@@ -6,6 +6,7 @@ import 'package:mapeme/Models/route.dart';
 import '../Widgets/text_field_register.dart';
 
 class EditRoute extends StatefulWidget {
+  // Função que é executada quando atualiza os dados da rota
   final Function(RoutesPoint) onUpdate;
   // Para quando abrir a tela já ter o obj carregado
   final RoutesPoint route;
@@ -27,6 +28,7 @@ class _EditRouteState extends State<EditRoute> {
   @override
   void initState() {
     super.initState();
+    // Recebe os valores recebidos via construtor
     nomeUpdateController.text = widget.route.nameRoute;
     descUpdateController.text = widget.route.descriptionRoute;
   }
@@ -51,14 +53,19 @@ class _EditRouteState extends State<EditRoute> {
     );
   }
 
+// Operação de atualização da Rota
   _atualizarRoute() async {
+    // Recebe os valores q foram alterados
     var route = RoutesPoint(
+      // o Id continua o mesmo
       idRoute: widget.route.idRoute,
       nameRoute: nomeUpdateController.text,
       descriptionRoute: descUpdateController.text,
       imgRoute: "Sem imagem",
     );
+    // Chama a função do bd para atualizar a rota
     await db.updateRoute(route);
+    // executa a função de atualizar a rota
     widget.onUpdate(route);
     _voltarScreen();
   }
@@ -93,9 +100,10 @@ class _EditRouteState extends State<EditRoute> {
                     label: "Descrição da Rota",
                     maxLength: 200,
                   ),
+                  
+                  // 
+                  // Botão de Salvar as Alterações
                   SizedBox(
-                    // width: constraints.maxWidth,
-                    // height: constraints.maxHeight * .16,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 16),
@@ -105,6 +113,7 @@ class _EditRouteState extends State<EditRoute> {
                           ElevatedButton(
                             onPressed: () {
                               if (formKey.currentState!.validate()) {
+                                // Chama a função responsavel por atualizar os dados
                                 _atualizarRoute();
                               }
                             },

@@ -122,7 +122,7 @@ class _PageLoginState extends State<PageLogin> {
                   ElevatedButton(
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
-                        // metodod para o login
+                        // Se os dados passado no formulario de login forem validos chama a tela "ListagemDados"
                         Navigator.push(
                             context,
                             MaterialPageRoute(

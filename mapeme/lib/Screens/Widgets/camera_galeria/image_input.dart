@@ -53,7 +53,8 @@ class _ImageInputState extends State<ImageInput> {
         '${appDir.path}/$fileName',
       );
       widget.onSelectImage(pickedImage: savedImage, indexImg: 1);
-    } // Para salvar a segunda imagem
+    }
+    // Para salvar a segunda imagem
     else if (index == 2) {
       // Para pegar a pasta que pode armazenar docs na aplicação
       String fileName2 = path.basename(_storedImage2!.path);

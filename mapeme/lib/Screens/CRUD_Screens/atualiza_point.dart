@@ -11,7 +11,9 @@ import '../Widgets/divide_text.dart';
 import '../Widgets/text_button.dart';
 import '../Widgets/text_field_register.dart';
 
+// Tela responsavel pela atualização dos dados do ponto de interesse
 class AtualizarCadastroPoi extends StatefulWidget {
+  // Para atualizar os elementos da tela de detalhe
   final Function(PointInterest) onUpdate;
   // Para quando abrir a tela já ter o obj carregado
   final PointInterest p;
@@ -27,8 +29,10 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
     with SingleTickerProviderStateMixin {
   // Obtem a instancia da tabela do bd
   var db = GetIt.I.get<ManipuTablePointInterest>();
+
   // para controlar o TabBar
   late TabController _tabUpdateController;
+
   // variaveis para pegar o q for digitado nas caixinhas de texto
   final nomeController = TextEditingController();
   final descController = TextEditingController();
@@ -36,16 +40,15 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
   final longitudeController = TextEditingController();
 
   // Type do point
-  // para pegar a escola ou o valor digitado
+  // para pegar a escolha ou o valor digitado
   final typePointController = TextEditingController();
+  // Para o valor quando selecionado
   final dropValue = ValueNotifier("");
   // Lista vazia para ser preenchida posteriormente
   List<String> dropOpcoes = [];
+  // Para controlar a criação de um novo tipo
   bool showOutroTextField = false;
-  //
 
-  // Para controlar o evento do clique do usuario
-  // bool isTouristPoint = false;
   // variaveis para pegar as imagem escolhidas
   File? _pickedImage1;
   File? _pickedImage2;
@@ -54,9 +57,11 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
   void _selectImage(
       {File? pickedImage, required int indexImg, bool apagar = false}) {
     setState(() {
+      // Se for a img1
       if (indexImg == 1) {
         _pickedImage1 = pickedImage;
       } else if (indexImg == 2) {
+        //Se dfor a img2
         _pickedImage2 = pickedImage;
 
         // para remover a imagem
@@ -86,16 +91,14 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
     dropValue.value = widget.p.typePointInterest.substring(0, 1).toUpperCase() +
         widget.p.typePointInterest.substring(1).toLowerCase();
 
-    // dropValue.value = widget.p.typePointInterest;
-    // recebe o valor de acordo com o valor do campo do bd
-    // isTouristPoint = widget.p.turisticPoint == 1 ? true : false;
-
     // Carrega os tipos de ponto de interesse ao inicializar o estado
     loadPointInterestTypes();
   }
 
+  // captura todos os tipos de pontos de interesse
   void loadPointInterestTypes() async {
     try {
+      // Recebe todos os tipos dos pontos de interesse cadastrados sem repetição
       List<String> types = await db.getPointInterestTypes();
       setState(() {
         // Limpar a lista atual
@@ -108,6 +111,14 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
         // Adicionar o campo de ponto não identificado somente se não existir na lista
         if (!dropOpcoes.contains("Tipo não identificado")) {
           dropOpcoes.add("Tipo não identificado");
+        } else {
+          //se o "Tipo não identificado" exitir na lista
+          // e se não for o cadastro ligado a uma rota -> ou seja um ponto de interesse que não é ligado a nenhuma rota
+          // Pq o Ponto de interesse devem ter um tipo em especifico. Não pode ser Tipo não identificado
+          if (widget.p.foreignidRoute == null &&
+              widget.p.foreignidRoute == null) {
+            dropOpcoes.remove("Tipo não identificado");
+          }
         }
         // Adicionar o campo Outro
         dropOpcoes.add("Novo Tipo de Ponto");
@@ -117,6 +128,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
     }
   }
 
+  // Para carregar a geolocalização do usuario
   void _initGeolocation() async {
     latitudeController.text = "Carregando...";
     longitudeController.text = "Carregando...";
@@ -161,6 +173,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
     );
   }
 
+  // Para atualizar os elementos do ponto de interesse
   _atualizarPoi() async {
     var p = PointInterest(
       id: widget.p.id,
@@ -175,17 +188,18 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
       typePointInterest: dropValue.value != "Novo Tipo de Ponto"
           ? dropValue.value.toUpperCase()
           : typePointController.text.toUpperCase(),
-      // img1: img1Controller.text,
-      // img2: img2Controller.text,
-      // turisticPoint: isTouristPoint ? 1 : 0,
+      
       // receber o valor dela mesmo
       synced: widget.p.synced,
     );
+    // Chama a função do bd para atualizar
     await db.updatePointInterest(p);
+    // Atualiza os itens do detalhe do ponto de interesse
     widget.onUpdate(p);
     _voltarScreen();
   }
 
+  // valida os valores digitados
   void _submitUpdateForm() {
     // ignore: unused_local_variable
     double posiLat;
@@ -237,6 +251,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
       body: TabBarView(
         controller: _tabUpdateController,
         children: [
+          // TabBar 0
           Center(
             child: SingleChildScrollView(
               child: Column(
@@ -309,8 +324,8 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
             // ),
           ),
           //
-
-          // ------ Segunda
+ 
+          // ------ Segunda // TabBar 1
 
 //
           // Segunda Aba -> escolher o tipo do ponto
@@ -397,6 +412,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
                       },
                     ),
                   ),
+                  // Se escolher Novo Tipo, campo de tesxto para criar aparece
                   if (showOutroTextField)
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
@@ -456,7 +472,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
           ),
 //
 
-          // ------ Terceira
+          // ------ Terceira // TabBar 2
 
 //
           // Terceira Aba -> a de Localização
@@ -491,25 +507,6 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
                         controller: longitudeController,
                         label: "Longitude *",
                       ),
-
-                      // se é rota ou ponto turistico
-                      // Padding(
-                      //   padding: const EdgeInsets.symmetric(
-                      //     horizontal: 15,
-                      //   ),
-                      //   child: Row(
-                      //     children: [
-                      //       Checkbox(
-                      //           value: isTouristPoint,
-                      //           onChanged: (value) {
-                      //             setState(() {
-                      //               isTouristPoint = value!;
-                      //             });
-                      //           }),
-                      //       const Text("É Ponto Turistico.")
-                      //     ],
-                      //   ),
-                      // ),
 
                       const SizedBox(height: 10),
 

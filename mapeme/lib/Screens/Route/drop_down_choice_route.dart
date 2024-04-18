@@ -11,6 +11,7 @@ import 'package:mapeme/Screens/Widgets/text_field_register.dart';
 
 import '../../Models/route.dart';
 
+// Tela responsavel pela a escolha ou criação de uma nova Rota
 class DropPageChoiceRoute extends StatefulWidget {
   const DropPageChoiceRoute({Key? key}) : super(key: key);
 
@@ -19,31 +20,44 @@ class DropPageChoiceRoute extends StatefulWidget {
 }
 
 class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
+  // Opcção escolhida
   final dropValue = ValueNotifier<String>("");
+  // Controllers da Rota
   final nomeRouteController = TextEditingController();
   final descRouteController = TextEditingController();
+  // Intancia da tabela da rota
   final bd = GetIt.I.get<ManipuTableRoute>();
 
+// lista de nome das rotas
   List<RouteOption> dropOpcoes = [];
+  // Para controlar a criação de uma nova Rota
   bool showOutroTextField = false;
+  // Texto do botão
   String textButton = "Avançar";
-  // late int idRoutePoint;
+  // Texto AppBar
+  String titleAppBar = "Selecionar Rota";
+
+  // Rota Existente
+  // Recebe so o id e o nome da rota existente
   late RouteOption nameIdRoute;
 
   @override
   void initState() {
     super.initState();
+    // Carrregar os nomes e os ids da Rota
     loadRoute();
   }
 
   // função q captura todas as rotas já cadastradas para o usuário escolher uma ou criar uma nova "Nova Rota"
   void loadRoute() async {
     try {
+      // Recebe todos os nomes e ids das rotas cadastradas sem repetir o nome
       List<Map<String, dynamic>> routesWithIds =
           await bd.getNameRoutesWithIds();
 
       setState(() {
         dropOpcoes.clear();
+        // A lista recebe todos esses valores
         dropOpcoes.addAll(routesWithIds.map((route) => RouteOption(
             idRoute: route['idRoute'], nameRoute: route['nameRoute'])));
         dropOpcoes.add(RouteOption(idRoute: -1, nameRoute: "Nova Rota"));
@@ -53,6 +67,7 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
     }
   }
 
+  // Nova Rota
   void _cadastrarRota() async {
     // Passa para a tela de cadastro todos os dados da rota
     var route = RoutesPoint(
@@ -61,23 +76,27 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
       descriptionRoute: descRouteController.text,
       imgRoute: "sem imagem",
     );
+    // Vai para a tela de cadastro com somente os dados da rota para ser criada
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => CadastroPoi(
-                routePoint: route,
-              )),
+        builder: (context) => CadastroPoi(
+          routePoint: route,
+        ),
+      ),
     );
   }
 
+  // Rota Existente
   void _routeExist() async {
     // passa para a tela de cadastro só o nome e o id da rota existente
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => CadastroPoi(
-                idNameRoutePoint: nameIdRoute,
-              )),
+        builder: (context) => CadastroPoi(
+          idNameRoutePoint: nameIdRoute,
+        ),
+      ),
     );
   }
 
@@ -87,7 +106,7 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: const Text("Cadastrar/Selecionar Rota"),
+        title: Text(titleAppBar), //"Cadastrar/Selecionar Rota"),
       ),
       body: SingleChildScrollView(
         child: SizedBox(
@@ -132,6 +151,7 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                                     setState(() {
                                       showOutroTextField = true;
                                       textButton = "Cadastrar Nova Rota";
+                                      titleAppBar = "Cadastrar Rota";
                                     });
                                   } else {
                                     setState(() {
@@ -144,6 +164,7 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                                           "nome: ${nameIdRoute.nameRoute} id: ${nameIdRoute.idRoute}");
                                       showOutroTextField = false;
                                       textButton = "Avançar";
+                                      titleAppBar = "Selecionar Rota";
                                     });
                                   }
                                   dropValue.value = escolha.nameRoute;

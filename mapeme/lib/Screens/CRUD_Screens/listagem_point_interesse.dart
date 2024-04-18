@@ -8,8 +8,11 @@ import '../Widgets/listagem_widgets.dart/nome_point_widget.dart';
 import '../Widgets/listagem_widgets.dart/turistico_widget.dart';
 import 'details_point.dart';
 
+// Classe responsavel por listar todos os pontos de interesse
 class ListagemPointInteresse extends StatelessWidget {
+  // Função de callback para atualizar os dados -> AtualizarDados
   final VoidCallback onUpdateListaPoint;
+  // Todos os pontos de interesse
   final Future<List<PointInterest>> itemsPoint;
   const ListagemPointInteresse(
       {super.key, required this.onUpdateListaPoint, required this.itemsPoint});
@@ -40,11 +43,15 @@ class ListagemPointInteresse extends StatelessWidget {
 
                   onTap: () {
                     // Ação ao tocar no Card
+                    // Chama a Tela de detalhes do ponto de interesse
+                    // Não executa o callback aqui, é transferido para a outra tela
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => DetailsPoint(
+                          // passa a função de callback para ser executada posteriormente 
                           onUpdateLista: onUpdateListaPoint,
+                          // recebe todos os dados do ponto de interesse quando clicado no card
                           p: data[index],
                         ),
                       ),
@@ -74,11 +81,7 @@ class ListagemPointInteresse extends StatelessWidget {
                             // descrição
                             DescriptonPoint(
                                 description: data[index].description),
-                            // const SizedBox(height: 8),
-                            // // Texto de ponto turístico
-                            // NameTypePointInteresse(
-                            //   nameTypePoint: data[index].typePointInterest,
-                            // ),
+                            
                             if (data[index].typePointInterest !=
                                 "TIPO NÃO IDENTIFICADO") ...[
                               const SizedBox(height: 8),
@@ -99,7 +102,7 @@ class ListagemPointInteresse extends StatelessWidget {
           );
         } else if (snapshot.hasError) {
           // se o snapshot possuir um erro
-          Text("${snapshot.error}"); //exibi na tela o erro
+          Text("${snapshot.error}"); //exibi o erro
         }
 
         //caso contrario retorna o circulo de progresso

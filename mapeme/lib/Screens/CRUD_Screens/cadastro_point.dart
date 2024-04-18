@@ -20,11 +20,16 @@ import 'tab_listagens.dart';
 class CadastroPoi extends StatefulWidget {
   const CadastroPoi(
       {super.key, this.onUpdateList, this.routePoint, this.idNameRoutePoint});
+  // Quando é ligado a nenhuma rota, só recebe a função de callback
   // recebe a função de atualizar a lista da classe de listagem
   final VoidCallback? onUpdateList;
-  // Definindo um valor padrão para routePoint - cadastro da rota
+
+  //        ROTA
+  // CADASTRAR UMA NOVA ROTA e o ponto
   final RoutesPoint? routePoint;
-  // armazena o nome e o id da rota
+  // ROTA EXISTENTE -
+  // armazena só nome e o id da rota (não tem a descrição), para perguntar
+  // se quer cadastrar outro item a mesma rota
   final RouteOption? idNameRoutePoint;
 
   @override
@@ -35,8 +40,8 @@ class _CadastroPoiState extends State<CadastroPoi>
     with SingleTickerProviderStateMixin {
   // Obtem a instancia da tabela do bd
   var db = GetIt.I.get<ManipuTablePointInterest>();
-
   var dbRoute = GetIt.I.get<ManipuTableRoute>();
+
   // para controlar o TabBar
   late TabController _tabController;
 
@@ -48,9 +53,11 @@ class _CadastroPoiState extends State<CadastroPoi>
   // Type do point
   // para pegar a escolha ou o valor digitado
   final typePointController = TextEditingController();
+  // captura a escolha do tipo de ponto
   final dropValue = ValueNotifier("");
-  // Lista vazia para ser preenchida posteriormente
+  // Lista vazia para ser preenchida posteriormente com os tipos dos pontos
   List<String> dropOpcoes = [];
+  // para criar um novo tipo de ponto
   bool showOutroTextField = false;
   // id da rota
   int? routeId;
@@ -60,6 +67,7 @@ class _CadastroPoiState extends State<CadastroPoi>
   File? _pickedImage1;
   File? _pickedImage2;
 
+  // Recebe as imgs - Callback
   void _selectImage(
       {File? pickedImage, required int indexImg, bool apagar = false}) {
     setState(() {
@@ -114,8 +122,10 @@ class _CadastroPoiState extends State<CadastroPoi>
     }
   }
 
+  // captura todos os tipos de pontos de interesse
   void loadPointInterestTypes() async {
     try {
+      // Recebe todos os tipos dos pontos de interesse cadastrados sem repetição
       List<String> types = await db.getPointInterestTypes();
       setState(() {
         // Limpar a lista atual
@@ -124,19 +134,19 @@ class _CadastroPoiState extends State<CadastroPoi>
         dropOpcoes.addAll(types.map((type) =>
             type.substring(0, 1).toUpperCase() +
             type.substring(1).toLowerCase()));
-        // dropOpcoes.addAll(types);
 
         // Adicionar o campo de ponto não identificado somente se não existir na lista
         if (!dropOpcoes.contains("Tipo não identificado")) {
           dropOpcoes.add("Tipo não identificado");
-        } else { //se o "Tipo não identificado" exitir na lista
+        } else {
+          //se o "Tipo não identificado" exitir na lista
           // e se não for o cadastro ligado a uma rota -> ou seja um ponto de interesse que não é ligado a nenhuma rota
           // Pq o Ponto de interesse devem ter um tipo em especifico. Não pode ser Tipo não identificado
-          if (widget.routePoint == null && widget.idNameRoutePoint == null){
+          if (widget.routePoint == null && widget.idNameRoutePoint == null) {
             dropOpcoes.remove("Tipo não identificado");
           }
         }
-        
+
         // Adicionar o campo Novo Tipo de Ponto
         dropOpcoes.add("Novo Tipo de Ponto");
       });
@@ -145,7 +155,7 @@ class _CadastroPoiState extends State<CadastroPoi>
     }
   }
 
-  // restartar o cadastro
+  // AlertDialog para restartar o cadastro
   _restartRegisterRoutePoint() async {
     String txt = "Deseja Cadastrar mais um ponto a esta rota ";
     if (widget.idNameRoutePoint != null) {
@@ -168,6 +178,7 @@ class _CadastroPoiState extends State<CadastroPoi>
               onPressed: () {
                 // Fechar e navegar para a listagem
                 Navigator.of(context).pop(true);
+                // Volta para atela de listagem
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -185,6 +196,7 @@ class _CadastroPoiState extends State<CadastroPoi>
             // Caso clicar em sim vai voltar para criar um novo registro
             ElevatedButton(
               onPressed: () {
+                // Restarta todos os campos
                 nomeController.text = "";
                 descController.text = "";
 
@@ -222,24 +234,34 @@ class _CadastroPoiState extends State<CadastroPoi>
     );
   }
 
+  // Cadastrar a Rota  e o point da Rota
   // Cadastrar uma rota existente ou o foreignidRoute do point recebe o id da rota
   _cadastraRoutePoint() async {
-    // rota existente captura só o id dela
+    // ROTA EXISTENTE
+    // se idNameRoutePoint não for nulo - ele é uma Rota que já existe
     if (widget.idNameRoutePoint != null) {
+      // Recebe o id dessa rota que já existe
       routeId = widget.idNameRoutePoint!.idRoute;
     }
-    // cadastrar um nova rota e receber o id dela
+    // CADASTRAR NOVA ROTA
+    // Se a rota existente for nulo (widget.idNameRoutePoint)
+    // e widget.routePoint!.idRoute for igual a zeo, significa que é uma rota nova
+    // faz essa validação "widget.routePoint!.idRoute == 0" para que quando resertar o cadastro não ter perigo de criar outra nova rota
     else if (widget.idNameRoutePoint == null &&
         widget.routePoint!.idRoute == 0) {
+      // Cadastra a rota e o "routeId" recebe o id dela
       routeId = await dbRoute.insertRoute(widget.routePoint!);
       debugPrint("id da nova rota $routeId");
       // o id que era zero passa a ser o id do novo cadastro de rota
+      // Assim não entrará masi nesse else if quando resetar o cadastro, vai só para o 
+      // if de rota existente
       widget.routePoint!.idRoute = routeId!;
     }
 
     // Cria um novo obj PointInterest
     var p = PointInterest(
       id: 0, // para q o sqlite gerencie o id
+      // Recebe o id da rota
       foreignidRoute: routeId,
       name: nomeController.text,
       description: descController.text,
@@ -258,9 +280,12 @@ class _CadastroPoiState extends State<CadastroPoi>
     _restartRegisterRoutePoint();
   }
 
-  // Operação de cadastrar BD
+  // Operação de cadastrar BD o Point de Interesse
   _cadastrarPoi() async {
     // cria o ponto de interesse sem ser ligado a nenhuma rota
+    // Ponto de interesse que não é ligado a nenhuma rota
+    // Se não for passado valores de uma rota existente (widget.idNameRoutePoint)
+    // e nem de uma nova Rota (widget.routePoint)
     if (widget.routePoint == null && widget.idNameRoutePoint == null) {
       // Cria um novo obj PointInterest
       var p = PointInterest(
@@ -287,7 +312,9 @@ class _CadastroPoiState extends State<CadastroPoi>
 
       // Fecha a tela
       _voltarScreen();
-    } else {
+    }
+    //Se for uma Rota existente ou uma nova Rota
+    else {
       // ponto de interesse ligado a uma rota já existente ou nova
       _cadastraRoutePoint();
     }
@@ -333,7 +360,7 @@ class _CadastroPoiState extends State<CadastroPoi>
           "Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
       return;
     }
-    // chama a função de cadastrar
+    // chama a função de cadastrar se os campos forem validos
     _cadastrarPoi();
   }
 

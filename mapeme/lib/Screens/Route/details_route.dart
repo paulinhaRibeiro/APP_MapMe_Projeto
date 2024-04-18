@@ -12,8 +12,8 @@ import 'edit_route.dart';
 import 'lista_point_routes.dart';
 
 class DetailsRoute extends StatefulWidget {
+  // Callback -> atualizaDados
   final VoidCallback onUpdateLista;
-
   // Para quando abrir a tela já ter o obj carregado
   final RoutesPoint route;
   const DetailsRoute(
@@ -24,20 +24,27 @@ class DetailsRoute extends StatefulWidget {
 }
 
 class _DetailsRouteState extends State<DetailsRoute> {
+  // referencias as tabelas
   var dbRoute = GetIt.I.get<ManipuTableRoute>();
   var bdPoint = GetIt.I.get<ManipuTablePointInterest>();
 
+  // para atualizar os dados na tela de detalhes
   late RoutesPoint _updatedRoute;
+  // Para receber todas as imgs dos pontos de interesse da rota
   List<String> imagesPathList = [];
 
+  // Para Capturar todas as imagens dos pontos de interesse da rota
   Future<void> _addImagensList() async {
+    // Apaga todos os elementos da lista de imgs
     imagesPathList.clear();
+    // Captura as img1
     List<String> imagens1 =
         await bdPoint.getPointInterestImages1(_updatedRoute.idRoute);
-
+    // Captura as img2
     List<String> imagens2 =
         await bdPoint.getPointInterestImages2(_updatedRoute.idRoute);
 
+    // Atualiza a lista com essas imgs
     setState(() {
       imagesPathList.addAll(imagens1);
       imagesPathList.addAll(imagens2);
@@ -47,11 +54,13 @@ class _DetailsRouteState extends State<DetailsRoute> {
   @override
   void initState() {
     super.initState();
+    // Atualiza a _updatedRoute com os valores recebidos anteriormente
     _updatedRoute = widget.route;
     // conecta ao bd e pega todas as imagens dos pontos de interesse
     _addImagensList();
   }
 
+  // Notifica que a operação deu certo
   _aviso(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -67,10 +76,12 @@ class _DetailsRouteState extends State<DetailsRoute> {
     );
   }
 
+  // Voltar a outra tela
   _voltarScreen() {
     Navigator.of(context).pop();
   }
 
+  // Confirma se quer realmente excluir a rota
   _confirmDeleteDialog() async {
     return showDialog(
       context: context,
@@ -86,6 +97,7 @@ class _DetailsRouteState extends State<DetailsRoute> {
             "Tem certeza de que deseja excluir esta Rota?",
           ),
           actions: <Widget>[
+            // Se clicar em Cancelar, só fecha o AlertDialog
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(false);
@@ -98,9 +110,13 @@ class _DetailsRouteState extends State<DetailsRoute> {
                 ),
               ),
             ),
+
+            // Se clicar em Excluir
             ElevatedButton(
               onPressed: () {
+                // fecha o AlertDialog
                 Navigator.of(context).pop(true);
+                // E chama a Função de apagar a Rota
                 _apagarRoute();
               },
               style: ElevatedButton.styleFrom(
@@ -121,13 +137,14 @@ class _DetailsRouteState extends State<DetailsRoute> {
   }
 
   _apagarRoute() async {
-    // bool confirmDelete = await _confirmDeleteDialog();
-    // if (confirmDelete) {
+    // Chama a operação de deletar a rota no bd
     await dbRoute.deleteRoute(widget.route.idRoute);
+    // executa a função de callback AtualizaDados da tela de listagem
     widget.onUpdateLista();
+    // E volta para a tela de listagem
     _voltarScreen();
+    // Lança o aviso
     _aviso("Item Excluído");
-    // }
   }
 
   @override
@@ -179,17 +196,22 @@ class _DetailsRouteState extends State<DetailsRoute> {
                 ),
               ];
             },
+            // clicar em editar
             onSelected: (value) {
               if (value == 'Editar') {
+                // Vai para a tela de edição da rota
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => EditRoute(
+                      // Passa os dados da Rota
                       route: _updatedRoute,
+                      // Executa a função para atualizar os itens da tela de detalhes da rota
                       onUpdate: (updatedRoute) {
                         setState(() {
                           _updatedRoute = updatedRoute;
                         });
+                        // Executa a função de Callback para atualizar a listagem das rotas
                         widget.onUpdateLista();
                       },
                     ),
@@ -230,12 +252,13 @@ class _DetailsRouteState extends State<DetailsRoute> {
                   ),
 
                   const SizedBox(height: 24),
+//
 
                   // Botão de iniciar a Rota
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {}, 
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(255, 0, 63, 6),
                         elevation: 10,
@@ -249,16 +272,23 @@ class _DetailsRouteState extends State<DetailsRoute> {
                     ),
                   ),
                   const SizedBox(height: 16),
+                  
+                  // 
+                  // Botão para ir para os Pontos de interesse da rota
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       onPressed: () {
+                        // Chama a Tela de listagem dos pontos de interesse da rota
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ListagemPointsRoute(
+                              // Passa o id da Rota
                               idRoute: _updatedRoute.idRoute,
+                              // Nome da Rota
                               nameRoute: _updatedRoute.nameRoute,
+                              // Função de callback para atualizar as imgs quando um ponto for alterado
                               onUpdateListaRoutePoints: _addImagensList,
                             ),
                           ),

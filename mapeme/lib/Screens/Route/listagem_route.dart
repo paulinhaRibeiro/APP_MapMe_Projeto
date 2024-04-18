@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mapeme/Screens/Route/details_route.dart';
-// import 'package:get_it/get_it.dart';
 import 'package:mapeme/Screens/Widgets/listagem_widgets.dart/circulo_progresso_widget.dart';
 import 'package:mapeme/Screens/Widgets/listagem_widgets.dart/descricao_point_widget.dart';
 import 'package:mapeme/Screens/Widgets/listagem_widgets.dart/nome_point_widget.dart';
 
 import '../../Models/route.dart';
-// import '../Widgets/listagem_widgets.dart/turistico_widget.dart';
 
+// Lista todas as Rotas atraves de cards
 class ListagemRoute extends StatelessWidget {
+  // Função de Callback
   final VoidCallback onUpdateListaRoute;
+  // Todas as Rotas cadastradas
   final Future<List<RoutesPoint>> itemsRoute;
   const ListagemRoute(
       {super.key, required this.itemsRoute, required this.onUpdateListaRoute});
@@ -40,11 +41,14 @@ class ListagemRoute extends StatelessWidget {
 
                   onTap: () {
                     // Ação ao tocar no Card
+                    // Chama a tela de detalhes
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => DetailsRoute(
+                          // Passando a função de callback "atualizaDados"
                           onUpdateLista: onUpdateListaRoute,
+                          // Recebe todos os dados da rota que foi clicada
                           route: data[index],
                         ),
                       ),
@@ -83,11 +87,6 @@ class ListagemRoute extends StatelessWidget {
                             // descrição
                             DescriptonPoint(
                                 description: data[index].descriptionRoute),
-                            // const SizedBox(height: 8),
-                            // // Texto de ponto turístico
-                            // const NameTypePointInteresse(
-                            //   nameTypePoint: "ROTA",
-                            // ),
                           ],
                         ),
                       ),
@@ -100,7 +99,7 @@ class ListagemRoute extends StatelessWidget {
           );
         } else if (snapshot.hasError) {
           // se o snapshot possuir um erro
-          Text("${snapshot.error}"); //exibi na tela o erro
+          Text("${snapshot.error}"); //exibi o erro
         }
 
         //caso contrario retorna o circulo de progresso

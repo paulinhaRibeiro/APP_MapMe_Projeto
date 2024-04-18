@@ -7,15 +7,12 @@ import 'package:mapeme/Screens/CRUD_Screens/tab_listagens.dart';
 
 // para imagem de slide
 import 'package:mapeme/Screens/Widgets/image_slider_details.dart';
-// import 'package:mapeme/Screens/Widgets/listagem_widgets.dart/turistico_widget.dart';
 import 'package:mapeme/Screens/Widgets/connection_web.dart';
 
-// import '../Widgets/divide_text.dart';
 import '../Widgets/listagem_widgets.dart/descricao_point_widget.dart';
-// import '../Widgets/listagem_widgets.dart/nome_point_widget.dart';
-// import '../Widgets/text_button.dart';
 
 class DetailsPoint extends StatefulWidget {
+  // recebe a função de callback
   final VoidCallback onUpdateLista;
 
   // Para quando abrir a tela já ter o obj carregado
@@ -27,12 +24,16 @@ class DetailsPoint extends StatefulWidget {
 }
 
 class _DetailsPointState extends State<DetailsPoint> {
+  // instancia do bd
   var db = GetIt.I.get<ManipuTablePointInterest>();
-
+  // para atualizar os dados na tela de detalhes
   late PointInterest _updatedPoint;
-
+  // Lista das imgs do ponto de interesse
   List<String> imagesPathList = [];
+  // Para o campo do tipo do ponto
+  bool _showType = false;
 
+  // Função para add as imgs a lista
   _addImagensList() {
     if (_updatedPoint.img1 != "") {
       imagesPathList.add(_updatedPoint.img1);
@@ -46,7 +47,7 @@ class _DetailsPointState extends State<DetailsPoint> {
   void initState() {
     super.initState();
     _updatedPoint = widget.p;
-    // para add as img nas lista
+    // para add as img na lista
     _addImagensList();
   }
 
@@ -77,8 +78,6 @@ class _DetailsPointState extends State<DetailsPoint> {
   _confirmDeleteDialog() async {
     return showDialog(
       context: context,
-      // impede o fechamento ao tocar fora do diálogo
-      // barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text(
@@ -123,14 +122,20 @@ class _DetailsPointState extends State<DetailsPoint> {
     );
   }
 
+  // Deletar o Ponto de interesse
   _apagarPoi() async {
-    // bool confirmDelete = await _confirmDeleteDialog();
-    // if (confirmDelete) {
+    // Se for um ponto de interesse ligado a uma rota
     if (widget.p.foreignidRoute != null) {
+      // chama a função do bd q verifica a quantidade pontps de interesse
+      //ligados a rota e excluir a rota se o utimo ponto de interesse for excluido
       await db.countRecordsWithName(widget.p.foreignidRoute!, widget.p.id);
+      // Navega para a tela de listagem
       _voltarScreen2();
     } else {
+      // se a exclusão for de um ponto de interesse q não é ligado a uma rota
+      // exclui normalmente
       await db.deletePointInterest(widget.p.id);
+      // Atualiza a listagem dos dados -> AtualizaDados
       widget.onUpdateLista();
       _voltarScreen();
       _aviso("Item Excluído");
@@ -143,8 +148,6 @@ class _DetailsPointState extends State<DetailsPoint> {
     // }
   }
 
-  bool _showType = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,6 +156,7 @@ class _DetailsPointState extends State<DetailsPoint> {
         centerTitle: true,
         title: const Text('Detalhes do Ponto de Interesse'),
         actions: [
+          // Se tiver um tipo defindo, aparece o icon de estrela
           if (_updatedPoint.typePointInterest != "TIPO NÃO IDENTIFICADO")
             IconButton(
               tooltip: "Tipo do Ponto de Interesse",
@@ -166,6 +170,8 @@ class _DetailsPointState extends State<DetailsPoint> {
                 });
               },
             ),
+
+            // Opções de editar e remover
           PopupMenuButton(
             tooltip: "Mais Opções",
             itemBuilder: (BuildContext context) {
@@ -207,21 +213,26 @@ class _DetailsPointState extends State<DetailsPoint> {
                 ),
               ];
             },
+            // Editar ponto de interesse
             onSelected: (value) {
               if (value == 'Editar') {
+                // chama a tela de editar o ponto de interesse
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => AtualizarCadastroPoi(
+                      // Passa os valores deste ponto de interesse
                       p: _updatedPoint,
+                      // Atualiza o _updatedPoint de acordo com os valores alterados na tela de edição
                       onUpdate: (updatedPoint) {
                         setState(() {
                           _updatedPoint = updatedPoint;
+                          // Exclui tds os itens da lista
                           imagesPathList.clear();
-
+                          // Chama a função para inserir novamente de acordo com os dados alterados
                           _addImagensList();
                         });
-
+                        // E atualiza a listagem - Callback
                         widget.onUpdateLista();
                       },
                     ),
@@ -248,24 +259,7 @@ class _DetailsPointState extends State<DetailsPoint> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //       child: Text(
-                  //         'Descrição do Ponto',
-                  //         style: TextStyle(
-                  //           fontSize: 20,
-                  //           fontWeight: FontWeight.bold,
-                  //           color: Colors.grey[800],
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     // Expanded(
-                  //     //   child: NameTypePointInteresse(
-                  //     //     nameTypePoint: _updatedPoint.typePointInterest,
-                  //     //   ),
-                  //     // ),
-
+                
                   Row(
                     children: [
                       Expanded(

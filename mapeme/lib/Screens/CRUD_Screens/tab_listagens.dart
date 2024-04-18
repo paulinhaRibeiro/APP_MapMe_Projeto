@@ -16,6 +16,7 @@ import 'package:mapeme/Screens/Widgets/text_button.dart';
 import '../../BD/table_route.dart';
 import '../../Models/route.dart';
 
+// Tela responsavel por listar todas as rotas e pontos de interesse cadastrados
 class ListagemDados extends StatefulWidget {
   const ListagemDados({super.key});
 
@@ -25,6 +26,9 @@ class ListagemDados extends StatefulWidget {
 
 class _ListagemDadosState extends State<ListagemDados>
     with SingleTickerProviderStateMixin {
+  //
+  // Pontos de interess
+  // referencia da tabela que manipula os pontos de interesse
   var bd = GetIt.I.get<ManipuTablePointInterest>();
   // lista de pontos de interesse
   late Future<List<PointInterest>> items;
@@ -33,20 +37,23 @@ class _ListagemDadosState extends State<ListagemDados>
   var bdRoute = GetIt.I.get<ManipuTableRoute>();
   // lista de rotas
   late Future<List<RoutesPoint>> itemsRoute;
-  // para controlar o TabBar
+
+  // Para controlar o TabBar
   late TabController _tabListagemController;
 
   // TextEditingController para  o campo de pesquisa
   TextEditingController searchController = TextEditingController();
 
-  @override
   // metodo disparado quando criar essa tela
+  @override
   void initState() {
     super.initState();
     _tabListagemController = TabController(length: 2, vsync: this);
-
+    // Pontos de interesse
+    // o Items recebe todos os pontos de interesse cadastrados
     items = bd.getPointInterest();
     // Rota
+    // o itemsRoute recebe todas as rotas cadastrados
     itemsRoute = bdRoute.getRoute();
   }
 
@@ -56,32 +63,40 @@ class _ListagemDadosState extends State<ListagemDados>
   // executada posteriormente e não quando criada no arquivo original
   atualizarDados() {
     setState(() {
+      // Atualiza os dados da rota e pontos de interesse
       items = bd.getPointInterest();
       itemsRoute = bdRoute.getRoute();
     });
   }
 
+  //
+  // Função para escolher se faz parte de uma rota ou não
   _escolhaRotaPoint() async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text(
-            // textAlign: TextAlign.center,
             "Faz parte de uma Rota?",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           actions: <Widget>[
-            // Se não fizer parte de uma rota vai para a tela de cadastrar um ponto de interesse que é algum ponto turistico por exemplo: sem tá ligado a uma rota
+            // Se não fizer parte de uma rota vai para a tela de cadastrar um ponto de
+            //interesse que é algum ponto turistico por exemplo: sem tá ligado a uma rota
             TextButton(
               onPressed: () {
                 // Fechar e navegar para a proxima pagina
                 Navigator.of(context).pop(true);
+                // Vai para a tela de cadastrar o ponto sem ser ligado a nenhuma rota
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            CadastroPoi(onUpdateList: atualizarDados)));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CadastroPoi(
+                      // Só passa a função de callback para atualizar os elementos quando cadastrar
+                      onUpdateList: atualizarDados, 
+                    ),
+                  ),
+                );
               },
               child: const Text(
                 "Não",
@@ -95,9 +110,9 @@ class _ListagemDadosState extends State<ListagemDados>
             // Caso clicar em sim vai ser direcionado a tela de escolher a rota ou criar uma
             ElevatedButton(
               onPressed: () {
-                // const DropPageChoiceRoute();
-
+                // quando faz parte de uma rota, fecha o AlertDialog 
                 Navigator.of(context).pop(true);
+                // e vai para a tela de escolher ou criar uma nova rota
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -124,12 +139,13 @@ class _ListagemDadosState extends State<ListagemDados>
   @override
   Widget build(BuildContext context) {
     var appBar = PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight + 48), // Height of TabBar + AppBar
-        child: AppBar(
+      preferredSize: const Size.fromHeight(
+          kToolbarHeight + 48), // Height of TabBar + AppBar
+      child: AppBar(
         // retirar o icone da seta que é gerado automaticamente
         automaticallyImplyLeading: false,
         centerTitle: true,
-        
+
         bottom: TabBar(
           controller: _tabListagemController,
           tabs: const [
@@ -158,7 +174,6 @@ class _ListagemDadosState extends State<ListagemDados>
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                
                 // Botão de buscar
                 Padding(
                   padding: const EdgeInsets.fromLTRB(25, 16, 25, 1),
@@ -171,6 +186,8 @@ class _ListagemDadosState extends State<ListagemDados>
                         // width: 2.5,
                       ),
                     ),
+
+                    // Buscar por Nome
                     child: Row(
                       children: [
                         Expanded(
@@ -212,17 +229,21 @@ class _ListagemDadosState extends State<ListagemDados>
                               size: 30,
                             ),
                             onPressed: () {
+                              // Se tiver no TabBar zero - Rota
                               if (_tabListagemController.index == 0) {
                                 // Rota
                                 setState(() {
+                                  // Atualiza a rota de acordo com o valor digitado e filtra e ordena pelo nome do ponto de interesse
                                   itemsRoute = bdRoute.getSearchNameRoute(
                                       searchController.text);
                                 });
-                                
                               } else {
+                                // Se tiver no TabBar um - Ponto de interesse
                                 // ponto de interesse
                                 setState(() {
-                                  items = bd.getSearchNamePoint(searchController.text);
+                                  // Atualiza o ponto de interesse de acordo com o valor digitado e filtra e ordena pelo nome da rota
+                                  items = bd.getSearchNamePoint(
+                                      searchController.text);
                                 });
                               }
                             },
@@ -238,30 +259,39 @@ class _ListagemDadosState extends State<ListagemDados>
                   child: TabBarView(
                     controller: _tabListagemController,
                     children: [
-                      // Rotas
+                      //
+
+                      // TabBar 1
+                      // Cards da Rotas
                       SingleChildScrollView(
                         child: SizedBox(
-                          // color: Colors.amber,
                           width: constraints.maxWidth,
                           height: constraints.maxHeight * .82, //.75,
                           child: Center(
+                            // Chama a função de listar todas as Rotas
                             child: ListagemRoute(
+                              // Todas as Rotas
                               itemsRoute: itemsRoute,
+                              // Função de Callback para ser executada posteriormente
                               onUpdateListaRoute: atualizarDados,
                             ),
                           ),
                         ),
                       ),
 
-                      // Pontos de interesse
+                      // TabBar 1
+                      // Cards do Pontos de interesse
                       SingleChildScrollView(
                         child: SizedBox(
                           // altura - pegar 89% da tela disponivel
                           width: constraints.maxWidth,
-                          height: constraints.maxHeight * .82,//75, //89
+                          height: constraints.maxHeight * .82, //75, //89
                           child: Center(
+                            // Chama a função de listar todos pontos de interesse
                             child: ListagemPointInteresse(
+                              // Passa todos os pontos de interesse
                               itemsPoint: items,
+                              // Função de Callback para ser executada posteriormente
                               onUpdateListaPoint: atualizarDados,
                             ),
                           ),
@@ -270,11 +300,15 @@ class _ListagemDadosState extends State<ListagemDados>
                     ],
                   ),
                 ),
+
+                //
+                //Botão para cadastrar um novo ponto
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16),
                   child: ElevatedButton.icon(
                     onPressed: () {
+                      // Ao clicar chama a função _escolhaRotaPoint
                       _escolhaRotaPoint();
                     },
                     style: ElevatedButton.styleFrom(
