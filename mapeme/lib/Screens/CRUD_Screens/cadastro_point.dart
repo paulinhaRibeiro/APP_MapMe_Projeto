@@ -14,6 +14,7 @@ import 'package:mapeme/Screens/Widgets/text_button.dart';
 
 import '../../BD/table_route.dart';
 import '../Route/name_id_route.dart';
+import '../Widgets/utils/informativo.dart';
 import '../Widgets/text_field_register.dart';
 import 'tab_listagens.dart';
 
@@ -135,17 +136,33 @@ class _CadastroPoiState extends State<CadastroPoi>
             type.substring(0, 1).toUpperCase() +
             type.substring(1).toLowerCase()));
 
-        // Adicionar o campo de ponto não identificado somente se não existir na lista
-        if (!dropOpcoes.contains("Tipo não identificado")) {
-          dropOpcoes.add("Tipo não identificado");
-        } else {
-          //se o "Tipo não identificado" exitir na lista
-          // e se não for o cadastro ligado a uma rota -> ou seja um ponto de interesse que não é ligado a nenhuma rota
-          // Pq o Ponto de interesse devem ter um tipo em especifico. Não pode ser Tipo não identificado
-          if (widget.routePoint == null && widget.idNameRoutePoint == null) {
+        // Só vai conter "Tipo não identificado" se o cadastro for de um ponto ligado a uma rota
+        if (widget.routePoint != null || widget.idNameRoutePoint != null) {
+          // Adicionar o campo de ponto não identificado somente se não existir na lista
+          if (!dropOpcoes.contains("Tipo não identificado")) {
+            dropOpcoes.add("Tipo não identificado");
+          }
+        }
+        // Se for um ponto que não é ligado a uma rota
+        else if (widget.routePoint == null && widget.idNameRoutePoint == null) {
+          // Verifica se o "Tipo não identificado" existi na lista
+          if (dropOpcoes.contains("Tipo não identificado")) {
+            // Apaga, caso exista
             dropOpcoes.remove("Tipo não identificado");
           }
         }
+
+        // // Adicionar o campo de ponto não identificado somente se não existir na lista
+        // if (!dropOpcoes.contains("Tipo não identificado")) {
+        //   dropOpcoes.add("Tipo não identificado");
+        // } else {
+        //   //se o "Tipo não identificado" exitir na lista
+        //   // e se não for o cadastro ligado a uma rota -> ou seja um ponto de interesse que não é ligado a nenhuma rota
+        //   // Pq o Ponto de interesse devem ter um tipo em especifico. Não pode ser Tipo não identificado
+        //   if (widget.routePoint == null && widget.idNameRoutePoint == null) {
+        //     dropOpcoes.remove("Tipo não identificado");
+        //   }
+        // }
 
         // Adicionar o campo Novo Tipo de Ponto
         dropOpcoes.add("Novo Tipo de Ponto");
@@ -157,7 +174,7 @@ class _CadastroPoiState extends State<CadastroPoi>
 
   // AlertDialog para restartar o cadastro
   _restartRegisterRoutePoint() async {
-    String txt = "Deseja Cadastrar mais um ponto a esta rota ";
+    String txt = "Deseja cadastrar mais um ponto a esta rota ";
     if (widget.idNameRoutePoint != null) {
       txt = '$txt "${widget.idNameRoutePoint!.nameRoute}"?';
     } else {
@@ -178,6 +195,11 @@ class _CadastroPoiState extends State<CadastroPoi>
               onPressed: () {
                 // Fechar e navegar para a listagem
                 Navigator.of(context).pop(true);
+                Aviso.showSnackBar(context, "Cadastrado com Sucesso");
+
+                // Tem q ver essa questão
+                // Navigator.of(context).pop();
+                // Navigator.of(context).pop();
                 // Volta para atela de listagem
                 Navigator.push(
                     context,
@@ -253,7 +275,7 @@ class _CadastroPoiState extends State<CadastroPoi>
       routeId = await dbRoute.insertRoute(widget.routePoint!);
       debugPrint("id da nova rota $routeId");
       // o id que era zero passa a ser o id do novo cadastro de rota
-      // Assim não entrará masi nesse else if quando resetar o cadastro, vai só para o 
+      // Assim não entrará masi nesse else if quando resetar o cadastro, vai só para o
       // if de rota existente
       widget.routePoint!.idRoute = routeId!;
     }
@@ -322,24 +344,25 @@ class _CadastroPoiState extends State<CadastroPoi>
 
   // Fecha a tela e mostrar mensagem de sucesso
   _voltarScreen() {
-    _aviso("Cadastrado com Sucesso");
+    Aviso.showSnackBar(context, "Cadastrado com Sucesso");
+    // _aviso("Cadastrado com Sucesso");
     Navigator.of(context).pop();
   }
 
-  _aviso(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Center(
-          child: Text(
-            msg,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // _aviso(String msg) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Center(
+  //         child: Text(
+  //           msg,
+  //           style: const TextStyle(
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // valida os campos e chama a função de cadastrar
   void _submitForm() {
@@ -350,14 +373,17 @@ class _CadastroPoiState extends State<CadastroPoi>
         latitudeController.text.isEmpty ||
         longitudeController.text.isEmpty ||
         dropValue.value == "") {
-      _aviso("Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
+      Aviso.showSnackBar(context,
+          "Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
+      // _aviso("Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
       return;
     }
     try {
       posiLat = double.parse(latitudeController.text);
     } catch (e) {
-      _aviso(
+      Aviso.showSnackBar(context,
           "Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
+      // _aviso( "Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
       return;
     }
     // chama a função de cadastrar se os campos forem validos

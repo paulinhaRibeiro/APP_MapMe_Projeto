@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mapeme/BD/table_route.dart';
 import 'package:mapeme/Models/route.dart';
 
+import '../Widgets/utils/informativo.dart';
 import '../Widgets/text_field_register.dart';
 
 class EditRoute extends StatefulWidget {
@@ -34,24 +35,25 @@ class _EditRouteState extends State<EditRoute> {
   }
 
   _voltarScreen() {
-    _aviso("Rota Atualizada com Sucesso");
+    Aviso.showSnackBar(context, 'Rota Atualizada com Sucesso');
+      //_aviso("Rota Atualizada com Sucesso");
     Navigator.of(context).pop();
   }
 
-  _aviso(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Center(
-          child: Text(
-            msg,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // _aviso(String msg) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Center(
+  //         child: Text(
+  //           msg,
+  //           style: const TextStyle(
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
 // Operação de atualização da Rota
   _atualizarRoute() async {

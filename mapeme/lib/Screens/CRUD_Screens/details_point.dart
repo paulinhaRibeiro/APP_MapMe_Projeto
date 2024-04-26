@@ -9,6 +9,8 @@ import 'package:mapeme/Screens/CRUD_Screens/tab_listagens.dart';
 import 'package:mapeme/Screens/Widgets/image_slider_details.dart';
 import 'package:mapeme/Screens/Widgets/connection_web.dart';
 
+import '../Route/drop_down_choice_route.dart';
+import '../Widgets/utils/informativo.dart';
 import '../Widgets/listagem_widgets.dart/descricao_point_widget.dart';
 
 class DetailsPoint extends StatefulWidget {
@@ -51,20 +53,20 @@ class _DetailsPointState extends State<DetailsPoint> {
     _addImagensList();
   }
 
-  _aviso(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Center(
-          child: Text(
-            msg,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // _aviso(String msg) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Center(
+  //         child: Text(
+  //           msg,
+  //           style: const TextStyle(
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   _voltarScreen() {
     Navigator.of(context).pop();
@@ -138,7 +140,9 @@ class _DetailsPointState extends State<DetailsPoint> {
       // Atualiza a listagem dos dados -> AtualizaDados
       widget.onUpdateLista();
       _voltarScreen();
-      _aviso("Item Excluído");
+      // ignore: use_build_context_synchronously
+      Aviso.showSnackBar(context, "Item Excluído");
+    // _aviso("Item Excluído");
     }
     // Original
     // await db.deletePointInterest(widget.p.id);
@@ -171,11 +175,30 @@ class _DetailsPointState extends State<DetailsPoint> {
               },
             ),
 
-            // Opções de editar e remover
+          // Opções de editar e remover
           PopupMenuButton(
             tooltip: "Mais Opções",
             itemBuilder: (BuildContext context) {
               return [
+                // opc Add a uma Rota
+                // Se for um ponto de interesse q não é ligado a nenhuma rota
+                if (_updatedPoint.foreignidRoute == null)
+                  const PopupMenuItem(
+                    value: 'AddRota',
+                    child: Row(
+                      children: [
+                        Icon(Icons.add_circle_rounded),
+                        SizedBox(width: 10),
+                        Text(
+                          'Adicionar a uma Rota',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 0, 63, 6),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 const PopupMenuItem(
                   value: 'Editar',
                   child: Row(
@@ -192,6 +215,8 @@ class _DetailsPointState extends State<DetailsPoint> {
                     ],
                   ),
                 ),
+
+                // Remover
                 const PopupMenuItem(
                   value: 'Remover',
                   child: Row(
@@ -240,6 +265,11 @@ class _DetailsPointState extends State<DetailsPoint> {
                 );
               } else if (value == 'Remover') {
                 _confirmDeleteDialog();
+              } else if (value == 'AddRota') {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DropPageChoiceRoute(addRoutePoint: _updatedPoint,)));
               }
             },
           ),
@@ -259,7 +289,6 @@ class _DetailsPointState extends State<DetailsPoint> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                
                   Row(
                     children: [
                       Expanded(

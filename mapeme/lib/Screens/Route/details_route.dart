@@ -5,6 +5,7 @@ import 'package:mapeme/Models/route.dart';
 
 import '../../BD/table_point_interest.dart';
 import '../Widgets/image_slider_details.dart';
+import '../Widgets/utils/informativo.dart';
 import '../Widgets/listagem_widgets.dart/descricao_point_widget.dart';
 // import '../Widgets/listagem_widgets.dart/nome_point_widget.dart';
 import '../Widgets/text_button.dart';
@@ -61,20 +62,20 @@ class _DetailsRouteState extends State<DetailsRoute> {
   }
 
   // Notifica que a operação deu certo
-  _aviso(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Center(
-          child: Text(
-            msg,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // _aviso(String msg) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Center(
+  //         child: Text(
+  //           msg,
+  //           style: const TextStyle(
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // Voltar a outra tela
   _voltarScreen() {
@@ -144,7 +145,9 @@ class _DetailsRouteState extends State<DetailsRoute> {
     // E volta para a tela de listagem
     _voltarScreen();
     // Lança o aviso
-    _aviso("Item Excluído");
+    // ignore: use_build_context_synchronously
+    Aviso.showSnackBar(context, "Item Excluído");
+    // _aviso("Item Excluído");
   }
 
   @override

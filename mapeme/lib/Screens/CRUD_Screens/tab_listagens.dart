@@ -42,7 +42,7 @@ class _ListagemDadosState extends State<ListagemDados>
   late TabController _tabListagemController;
 
   // TextEditingController para  o campo de pesquisa
-  TextEditingController searchController = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   // metodo disparado quando criar essa tela
   @override
@@ -71,7 +71,7 @@ class _ListagemDadosState extends State<ListagemDados>
 
   //
   // Função para escolher se faz parte de uma rota ou não
-  _escolhaRotaPoint() async {
+  Future<void> _escolhaRotaPoint() async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -93,7 +93,7 @@ class _ListagemDadosState extends State<ListagemDados>
                   MaterialPageRoute(
                     builder: (context) => CadastroPoi(
                       // Só passa a função de callback para atualizar os elementos quando cadastrar
-                      onUpdateList: atualizarDados, 
+                      onUpdateList: atualizarDados,
                     ),
                   ),
                 );
@@ -110,7 +110,7 @@ class _ListagemDadosState extends State<ListagemDados>
             // Caso clicar em sim vai ser direcionado a tela de escolher a rota ou criar uma
             ElevatedButton(
               onPressed: () {
-                // quando faz parte de uma rota, fecha o AlertDialog 
+                // quando faz parte de uma rota, fecha o AlertDialog
                 Navigator.of(context).pop(true);
                 // e vai para a tela de escolher ou criar uma nova rota
                 Navigator.push(
@@ -138,196 +138,188 @@ class _ListagemDadosState extends State<ListagemDados>
 
   @override
   Widget build(BuildContext context) {
-    var appBar = PreferredSize(
-      preferredSize: const Size.fromHeight(
-          kToolbarHeight + 48), // Height of TabBar + AppBar
-      child: AppBar(
-        // retirar o icone da seta que é gerado automaticamente
-        automaticallyImplyLeading: false,
-        centerTitle: true,
+    var appBar = AppBar(
+      // retirar o icone da seta que é gerado automaticamente
+      automaticallyImplyLeading: false,
+      centerTitle: true,
+      title: Image.asset(
+        "assets/images_logo/MapME.png",
+        height: MediaQuery.of(context).size.height * 0.07, //7% da altura total da tela
+      ), //Text('MapMe'),
 
-        bottom: TabBar(
-          controller: _tabListagemController,
-          tabs: const [
-            Tab(
-              icon: Icon(Icons.alt_route_rounded),
-              text: 'Rotas',
-            ),
-            Tab(
-              icon: Icon(Icons.share_location_rounded),
-              text: 'Pontos de Interesse',
-            ),
-          ],
-        ),
+      bottom: TabBar(
+        controller: _tabListagemController,
+        tabs: const [
+          Tab(
+            icon: Icon(Icons.alt_route_rounded),
+            text: 'Rotas',
+          ),
+          Tab(
+            icon: Icon(Icons.share_location_rounded),
+            text: 'Pontos de Interesse',
+          ),
+        ],
       ),
     );
     return Scaffold(
       appBar: appBar,
-      body: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: (MediaQuery.of(context).size.height -
-                AppBar().preferredSize.height) -
-            MediaQuery.of(context).padding.top,
-        child: LayoutBuilder(
-          builder: (_, constraints) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Botão de buscar
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(25, 16, 25, 1),
-                  child: Container(
-                    height: 55,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(
-                        color: const Color.fromARGB(255, 0, 63, 6),
-                        // width: 2.5,
-                      ),
-                    ),
-
-                    // Buscar por Nome
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: searchController,
-                            decoration: const InputDecoration(
-                              labelText: 'Buscar',
-                              hintText: "Buscar pelo nome",
-                              border: InputBorder.none,
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 10.0),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: double.infinity,
-                          // color: Colors.green,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 0, 63, 6),
-                            borderRadius: const BorderRadius.only(
-                              topRight: Radius.circular(8.0),
-                              bottomRight: Radius.circular(8.0),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color.fromARGB(255, 0, 63, 6)
-                                    .withOpacity(0.5),
-                                spreadRadius: 1,
-                                blurRadius: 3,
-                                offset: const Offset(0, 1),
-                              ),
-                            ],
-                          ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.manage_search_rounded,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                            onPressed: () {
-                              // Se tiver no TabBar zero - Rota
-                              if (_tabListagemController.index == 0) {
-                                // Rota
-                                setState(() {
-                                  // Atualiza a rota de acordo com o valor digitado e filtra e ordena pelo nome do ponto de interesse
-                                  itemsRoute = bdRoute.getSearchNameRoute(
-                                      searchController.text);
-                                });
-                              } else {
-                                // Se tiver no TabBar um - Ponto de interesse
-                                // ponto de interesse
-                                setState(() {
-                                  // Atualiza o ponto de interesse de acordo com o valor digitado e filtra e ordena pelo nome da rota
-                                  items = bd.getSearchNamePoint(
-                                      searchController.text);
-                                });
-                              }
-                            },
-                          ),
-                        ),
-                      ],
+      body: LayoutBuilder(
+        builder: (_, constraints) {
+          return Column(
+            children: [
+              // Botão de buscar
+              Padding(
+                padding: const EdgeInsets.fromLTRB(25, 16, 25, 1),
+                child: Container(
+                  height: 55,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 0, 63, 6),
+                      // width: 2.5,
                     ),
                   ),
-                ),
-                // End Botão de buscar
 
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabListagemController,
+                  // Buscar por Nome
+                  child: Row(
                     children: [
-                      //
-
-                      // TabBar 1
-                      // Cards da Rotas
-                      SingleChildScrollView(
-                        child: SizedBox(
-                          width: constraints.maxWidth,
-                          height: constraints.maxHeight * .82, //.75,
-                          child: Center(
-                            // Chama a função de listar todas as Rotas
-                            child: ListagemRoute(
-                              // Todas as Rotas
-                              itemsRoute: itemsRoute,
-                              // Função de Callback para ser executada posteriormente
-                              onUpdateListaRoute: atualizarDados,
-                            ),
+                      Expanded(
+                        child: TextField(
+                          controller: searchController,
+                          decoration: const InputDecoration(
+                            labelText: 'Buscar',
+                            hintText: "Buscar pelo nome",
+                            border: InputBorder.none,
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 10.0),
                           ),
                         ),
                       ),
-
-                      // TabBar 1
-                      // Cards do Pontos de interesse
-                      SingleChildScrollView(
-                        child: SizedBox(
-                          // altura - pegar 89% da tela disponivel
-                          width: constraints.maxWidth,
-                          height: constraints.maxHeight * .82, //75, //89
-                          child: Center(
-                            // Chama a função de listar todos pontos de interesse
-                            child: ListagemPointInteresse(
-                              // Passa todos os pontos de interesse
-                              itemsPoint: items,
-                              // Função de Callback para ser executada posteriormente
-                              onUpdateListaPoint: atualizarDados,
-                            ),
+                      Container(
+                        height: double.infinity,
+                        // color: Colors.green,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 0, 63, 6),
+                          borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(8.0),
+                            bottomRight: Radius.circular(8.0),
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color.fromARGB(255, 0, 63, 6)
+                                  .withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 3,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.manage_search_rounded,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            // Se tiver no TabBar zero - Rota
+                            if (_tabListagemController.index == 0) {
+                              // Rota
+                              setState(() {
+                                // Atualiza a rota de acordo com o valor digitado e filtra e ordena pelo nome do ponto de interesse
+                                itemsRoute = bdRoute
+                                    .getSearchNameRoute(searchController.text);
+                              });
+                            } else {
+                              // Se tiver no TabBar um - Ponto de interesse
+                              // ponto de interesse
+                              setState(() {
+                                // Atualiza o ponto de interesse de acordo com o valor digitado e filtra e ordena pelo nome da rota
+                                items = bd
+                                    .getSearchNamePoint(searchController.text);
+                              });
+                            }
+                          },
                         ),
                       ),
                     ],
                   ),
                 ),
+              ),
+              // End Botão de buscar
 
-                //
-                //Botão para cadastrar um novo ponto
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // Ao clicar chama a função _escolhaRotaPoint
-                      _escolhaRotaPoint();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 0, 63, 6),
-                      elevation: 10,
-                      minimumSize: const Size.fromHeight(55),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabListagemController,
+                  children: [
+                    //
+
+                    // TabBar 1
+                    // Cards da Rotas
+                    SingleChildScrollView(
+                      child: SizedBox(
+                        width: constraints.maxWidth,
+                        height: constraints.maxHeight * .82, //.75,
+                        child: Center(
+                          // Chama a função de listar todas as Rotas
+                          child: ListagemRoute(
+                            // Todas as Rotas
+                            itemsRoute: itemsRoute,
+                            // Função de Callback para ser executada posteriormente
+                            onUpdateListaRoute: atualizarDados,
+                          ),
+                        ),
+                      ),
                     ),
-                    icon: const Icon(
-                      Icons.add_location_alt_rounded,
-                      color: Colors.white,
+
+                    // TabBar 1
+                    // Cards do Pontos de interesse
+                    SingleChildScrollView(
+                      child: SizedBox(
+                        // altura - pegar 89% da tela disponivel
+                        width: constraints.maxWidth,
+                        height: constraints.maxHeight * .82, //75, //89
+                        child: Center(
+                          // Chama a função de listar todos pontos de interesse
+                          child: ListagemPointInteresse(
+                            // Passa todos os pontos de interesse
+                            itemsPoint: items,
+                            // Função de Callback para ser executada posteriormente
+                            onUpdateListaPoint: atualizarDados,
+                          ),
+                        ),
+                      ),
                     ),
-                    label: const ScreenTextButtonStyle(
-                        text: "Cadastrar Novo Ponto"),
-                  ),
+                  ],
                 ),
-              ],
-            );
-          },
-        ),
+              ),
+
+              //
+              //Botão para cadastrar um novo ponto
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16),
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    // Ao clicar chama a função _escolhaRotaPoint
+                    _escolhaRotaPoint();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+                    elevation: 10,
+                    minimumSize: const Size.fromHeight(55),
+                  ),
+                  icon: const Icon(
+                    Icons.add_location_alt_rounded,
+                    color: Colors.white,
+                  ),
+                  label:
+                      const ScreenTextButtonStyle(text: "Cadastrar Novo Ponto"),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

@@ -9,11 +9,18 @@ import 'package:mapeme/Screens/Widgets/divide_text.dart';
 import 'package:mapeme/Screens/Widgets/text_button.dart';
 import 'package:mapeme/Screens/Widgets/text_field_register.dart';
 
+import '../../BD/table_point_interest.dart';
+import '../../Models/point_interest.dart';
 import '../../Models/route.dart';
+import '../CRUD_Screens/tab_listagens.dart';
+import '../Widgets/utils/informativo.dart';
 
 // Tela responsavel pela a escolha ou criação de uma nova Rota
 class DropPageChoiceRoute extends StatefulWidget {
-  const DropPageChoiceRoute({Key? key}) : super(key: key);
+  // Variavel q terar o valor  do point selecionado quando na tela de detalhes do ponto de interesse
+  // q não é ligado a nenhuma rota chamar para adicionar a uma rota
+  final PointInterest? addRoutePoint;
+  const DropPageChoiceRoute({Key? key, this.addRoutePoint}) : super(key: key);
 
   @override
   State<DropPageChoiceRoute> createState() => _DropPageChoiceRouteState();
@@ -46,6 +53,8 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
     super.initState();
     // Carrregar os nomes e os ids da Rota
     loadRoute();
+    // Printa o valor de addRoutePoint
+    debugPrint("valor de addRoutePoint ${widget.addRoutePoint}");
   }
 
   // função q captura todas as rotas já cadastradas para o usuário escolher uma ou criar uma nova "Nova Rota"
@@ -67,6 +76,64 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
     }
   }
 
+  // _aviso(String msg) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Center(
+  //         child: Text(
+  //           msg,
+  //           style: const TextStyle(
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+// Fecha a tela e mostrar mensagem de sucesso
+  _voltarScreen() {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const ListagemDados()));
+  }
+
+  // Função que atualiza o foreignidRoute de um ponto de interesse quando na tela de detalhes seleciona a opc de add a uma rota
+  // Para atualizar os elementos do ponto de interesse
+  _atualizarforeignidRoutePoiRoute(int idRoute) async {
+    // Obtem a instancia da tabela do bd
+    var dbPoint = GetIt.I.get<ManipuTablePointInterest>();
+    var p = PointInterest(
+      id: widget.addRoutePoint!.id,
+      foreignidRoute: idRoute, // recebe o id da nova rota ou da rota existente
+      name: widget.addRoutePoint!.name,
+      description: widget.addRoutePoint!.description,
+      latitude: widget.addRoutePoint!.latitude,
+      longitude: widget.addRoutePoint!.longitude,
+      img1: widget.addRoutePoint!.img1,
+      img2: widget.addRoutePoint!.img2,
+      typePointInterest: widget.addRoutePoint!.typePointInterest,
+
+      // receber o valor dela mesmo
+      synced: widget.addRoutePoint!.synced,
+    );
+    // Chama a função do bd para atualizar
+    await dbPoint.updatePointInterest(p);
+    // Rota existente 
+    if (textButton == "Avançar"){
+
+      // ignore: use_build_context_synchronously
+      Aviso.showSnackBar(context, 'Ponto de interesse adicionado a Rota "${nameIdRoute.nameRoute}"');
+      //_aviso('Ponto de interesse adicionado a Rota "${nameIdRoute.nameRoute}"');
+    }
+    // Rota nova
+    else{
+      // ignore: use_build_context_synchronously
+      Aviso.showSnackBar(context, 'Ponto de interesse adicionado a Rota "${nomeRouteController.text}"');
+      //_aviso('Ponto de interesse adicionado a Rota "${nomeRouteController.text}"');
+    }
+    _voltarScreen();
+  }
+
   // Nova Rota
   void _cadastrarRota() async {
     // Passa para a tela de cadastro todos os dados da rota
@@ -77,27 +144,51 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
       imgRoute: "sem imagem",
     );
     // Vai para a tela de cadastro com somente os dados da rota para ser criada
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CadastroPoi(
-          routePoint: route,
+    // quando é no momento do cadastro de um ponto ligado a uma rota
+    // NOVA ROTA
+    if (widget.addRoutePoint == null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CadastroPoi(
+            routePoint: route,
+          ),
         ),
-      ),
-    );
+      );
+    }
+    // se widget.addRoutePoint ter o valor do point selecionado
+    // ele vai salvar essa nova rota e chamar a função para editar o foreignidRoute com o valor da rota
+    else {
+      // ROTA EXISTENTE
+      // id da rota
+      int? routeId;
+      // Cadastra a nova rota e captura o id dela para ser add ao foreignidRoute do ponto
+      routeId = await bd.insertRoute(route);
+      debugPrint("id da nova rota $routeId");
+      // Chama a função para atualizar o point
+      _atualizarforeignidRoutePoiRoute(routeId);
+    }
   }
 
   // Rota Existente
   void _routeExist() async {
     // passa para a tela de cadastro só o nome e o id da rota existente
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CadastroPoi(
-          idNameRoutePoint: nameIdRoute,
+    // quando é no momento do cadastro de um ponto ligado a uma rota
+    if (widget.addRoutePoint == null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CadastroPoi(
+            idNameRoutePoint: nameIdRoute,
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      // O route id vai receber só o id dessa rota existente
+      // routeId = nameIdRoute.idRoute;
+      // Chama a função para atualizar o point
+      _atualizarforeignidRoutePoiRoute(nameIdRoute.idRoute);
+    }
   }
 
   @override

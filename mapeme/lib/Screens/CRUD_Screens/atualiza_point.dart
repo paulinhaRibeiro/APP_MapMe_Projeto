@@ -8,6 +8,7 @@ import 'package:mapeme/Models/point_interest.dart';
 
 import '../Widgets/camera_galeria/image_input.dart';
 import '../Widgets/divide_text.dart';
+import '../Widgets/utils/informativo.dart';
 import '../Widgets/text_button.dart';
 import '../Widgets/text_field_register.dart';
 
@@ -108,18 +109,33 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
             type.substring(0, 1).toUpperCase() +
             type.substring(1).toLowerCase()));
 
-        // Adicionar o campo de ponto não identificado somente se não existir na lista
-        if (!dropOpcoes.contains("Tipo não identificado")) {
-          dropOpcoes.add("Tipo não identificado");
-        } else {
-          //se o "Tipo não identificado" exitir na lista
-          // e se não for o cadastro ligado a uma rota -> ou seja um ponto de interesse que não é ligado a nenhuma rota
-          // Pq o Ponto de interesse devem ter um tipo em especifico. Não pode ser Tipo não identificado
-          if (widget.p.foreignidRoute == null &&
-              widget.p.foreignidRoute == null) {
+        // Só vai conter "Tipo não identificado" se o cadastro for de um ponto ligado a uma rota
+        if (widget.p.foreignidRoute != null) {
+          // Adicionar o campo de ponto não identificado somente se não existir na lista
+          if (!dropOpcoes.contains("Tipo não identificado")) {
+            dropOpcoes.add("Tipo não identificado");
+          }
+        }// Se for um ponto que não é ligado a uma rota 
+        else if (widget.p.foreignidRoute == null){
+          // Verifica se o "Tipo não identificado" existi na lista
+          if (dropOpcoes.contains("Tipo não identificado")) {
+            // Apaga, caso exista
             dropOpcoes.remove("Tipo não identificado");
           }
         }
+
+        // // Adicionar o campo de ponto não identificado somente se não existir na lista
+        // if (!dropOpcoes.contains("Tipo não identificado")) {
+        //   dropOpcoes.add("Tipo não identificado");
+        // } else {
+        //   //se o "Tipo não identificado" exitir na lista
+        //   // e se não for o cadastro ligado a uma rota -> ou seja um ponto de interesse que não é ligado a nenhuma rota
+        //   // Pq o Ponto de interesse devem ter um tipo em especifico. Não pode ser Tipo não identificado
+        //   if (widget.p.foreignidRoute == null &&
+        //       widget.p.foreignidRoute == null) {
+        //     dropOpcoes.remove("Tipo não identificado");
+        //   }
+        // }
         // Adicionar o campo Outro
         dropOpcoes.add("Novo Tipo de Ponto");
       });
@@ -154,24 +170,25 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
   }
 
   _voltarScreen() {
-    _aviso("Ponto de Interesse Atualizado com Sucesso");
+    Aviso.showSnackBar(context, "Ponto de Interesse Atualizado com Sucesso");
+    // _aviso("Ponto de Interesse Atualizado com Sucesso");
     Navigator.of(context).pop();
   }
 
-  _aviso(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Center(
-          child: Text(
-            msg,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // _aviso(String msg) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Center(
+  //         child: Text(
+  //           msg,
+  //           style: const TextStyle(
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // Para atualizar os elementos do ponto de interesse
   _atualizarPoi() async {
@@ -207,14 +224,16 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
         latitudeController.text.isEmpty ||
         longitudeController.text.isEmpty ||
         dropValue.value == "") {
-      _aviso("Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
+      Aviso.showSnackBar(context, "Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
+      // _aviso("Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
       return;
     }
     try {
       posiLat = double.parse(latitudeController.text);
     } catch (e) {
-      _aviso(
-          "Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
+      Aviso.showSnackBar(context, "Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
+      // _aviso(
+      //     "Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
       return;
     }
     // chama a função de atualizar
