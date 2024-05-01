@@ -73,8 +73,13 @@ class _DetailsPointState extends State<DetailsPoint> {
   }
 
   _voltarScreen2() {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const ListagemDados()));
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ListagemDados(),
+      ),
+      (route) => false,
+    );
   }
 
   _confirmDeleteDialog() async {
@@ -142,7 +147,7 @@ class _DetailsPointState extends State<DetailsPoint> {
       _voltarScreen();
       // ignore: use_build_context_synchronously
       Aviso.showSnackBar(context, "Item Excluído");
-    // _aviso("Item Excluído");
+      // _aviso("Item Excluído");
     }
     // Original
     // await db.deletePointInterest(widget.p.id);
@@ -269,7 +274,9 @@ class _DetailsPointState extends State<DetailsPoint> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => DropPageChoiceRoute(addRoutePoint: _updatedPoint,)));
+                        builder: (context) => DropPageChoiceRoute(
+                              addRoutePoint: _updatedPoint,
+                            )));
               }
             },
           ),

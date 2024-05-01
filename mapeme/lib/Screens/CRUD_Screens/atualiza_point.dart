@@ -115,8 +115,8 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
           if (!dropOpcoes.contains("Tipo não identificado")) {
             dropOpcoes.add("Tipo não identificado");
           }
-        }// Se for um ponto que não é ligado a uma rota 
-        else if (widget.p.foreignidRoute == null){
+        } // Se for um ponto que não é ligado a uma rota
+        else if (widget.p.foreignidRoute == null) {
           // Verifica se o "Tipo não identificado" existi na lista
           if (dropOpcoes.contains("Tipo não identificado")) {
             // Apaga, caso exista
@@ -205,7 +205,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
       typePointInterest: dropValue.value != "Novo Tipo de Ponto"
           ? dropValue.value.toUpperCase()
           : typePointController.text.toUpperCase(),
-      
+
       // receber o valor dela mesmo
       synced: widget.p.synced,
     );
@@ -224,14 +224,16 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
         latitudeController.text.isEmpty ||
         longitudeController.text.isEmpty ||
         dropValue.value == "") {
-      Aviso.showSnackBar(context, "Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
+      Aviso.showSnackBar(context,
+          "Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
       // _aviso("Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
       return;
     }
     try {
       posiLat = double.parse(latitudeController.text);
     } catch (e) {
-      Aviso.showSnackBar(context, "Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
+      Aviso.showSnackBar(context,
+          "Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
       // _aviso(
       //     "Por favor, Certifique-se de que o serviço de localização está ativo e aguarde o carregamento.");
       return;
@@ -343,7 +345,7 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
             // ),
           ),
           //
- 
+
           // ------ Segunda // TabBar 1
 
 //
@@ -368,6 +370,8 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
                           child: Column(
                             children: [
                               DropdownButtonFormField<String>(
+                                // Borda fora da caixa
+                                borderRadius: BorderRadius.circular(10),
                                 // Define o tamanho do DropdownButtonFormField para preencher o espaço disponível horizontalmente
                                 isExpanded: true,
                                 // Reduz a altura do DropdownButtonFormField

@@ -93,8 +93,13 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
 
 // Fecha a tela e mostrar mensagem de sucesso
   _voltarScreen() {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const ListagemDados()));
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ListagemDados(),
+      ),
+      (route) => false,
+    );
   }
 
   // Função que atualiza o foreignidRoute de um ponto de interesse quando na tela de detalhes seleciona a opc de add a uma rota
@@ -118,17 +123,18 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
     );
     // Chama a função do bd para atualizar
     await dbPoint.updatePointInterest(p);
-    // Rota existente 
-    if (textButton == "Avançar"){
-
+    // Rota existente
+    if (textButton == "Avançar") {
       // ignore: use_build_context_synchronously
-      Aviso.showSnackBar(context, 'Ponto de interesse adicionado a Rota "${nameIdRoute.nameRoute}"');
+      Aviso.showSnackBar(context,
+          'Ponto de interesse adicionado a Rota "${nameIdRoute.nameRoute}"');
       //_aviso('Ponto de interesse adicionado a Rota "${nameIdRoute.nameRoute}"');
     }
     // Rota nova
-    else{
+    else {
       // ignore: use_build_context_synchronously
-      Aviso.showSnackBar(context, 'Ponto de interesse adicionado a Rota "${nomeRouteController.text}"');
+      Aviso.showSnackBar(context,
+          'Ponto de interesse adicionado a Rota "${nomeRouteController.text}"');
       //_aviso('Ponto de interesse adicionado a Rota "${nomeRouteController.text}"');
     }
     _voltarScreen();
@@ -223,6 +229,8 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                           child: Column(
                             children: [
                               DropdownButtonFormField<RouteOption>(
+                                // Borda fora da caixa
+                                borderRadius: BorderRadius.circular(10),
                                 isExpanded: true,
                                 isDense: true,
                                 hint: const Text("Escolha a Rota *"),

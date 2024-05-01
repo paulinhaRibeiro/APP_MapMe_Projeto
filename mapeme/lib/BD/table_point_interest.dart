@@ -138,25 +138,29 @@ class ManipuTablePointInterest {
   }
 
   // Contar quantos registros tem
-  // Future<int> countRecordsWithName(int foreignidRoute, int idPoint) async {
+  // 
   Future<void> countRecordsWithName(int foreignidRoute, int idPoint) async {
     var db = await GetIt.I.get<DataBaseHelper>().getDB();
+
+    // a quantidade de pontos da rota
     var result = await db.rawQuery(
         'SELECT COUNT(foreignidRoute) FROM tablepointInterest WHERE foreignidRoute = ?',
         [foreignidRoute]);
+    //
     var count =
         Sqflite.firstIntValue(result) ?? 0; // Se o valor for nulo, retorna 0
+    //
     if (count == 1) {
       // excluir o ponto
-      deletePointInterest(idPoint);
+      await db.delete('tablepointInterest', where: 'id = ?', whereArgs: [idPoint]);
       // deleta a rota
       await db.delete('tableroute',
           where: 'idRoute = ?', whereArgs: [foreignidRoute]);
+    // 
     } else if (count > 1) {
       // Excluir só o ponto de interesse
-      deletePointInterest(idPoint);
+      await db.delete('tablepointInterest', where: 'id = ?', whereArgs: [idPoint]);
     }
     await db.close();
-    // return count;
   }
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mapeme/Screens/Widgets/text_button.dart';
-import 'package:mapeme/Screens/authtentication/login_page.dart';
-import 'package:mapeme/pag_teste.dart';
+import '../Widgets/utils/informativo.dart';
 
 class PageSignUp extends StatefulWidget {
   const PageSignUp({super.key});
@@ -158,11 +157,14 @@ class _PageSignUpState extends State<PageSignUp> {
                   ElevatedButton(
                     onPressed: () {
                       if (formKeySignUp.currentState!.validate()) {
+                        Aviso.showSnackBar(context,
+                            'Usuário cadastrado com sucesso');
                         // metodod para o login
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Teste()));
+                        // Navigator.pushReplacement(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => const PageLogin()));
+                        Navigator.of(context).pop();
                       }
 
                       //imprimir os valores no console
@@ -200,10 +202,11 @@ class _PageSignUpState extends State<PageSignUp> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const PageLogin()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => const PageLogin()),
+                // );
+                Navigator.of(context).pop();
               },
               child: const Text(
                 "Login",

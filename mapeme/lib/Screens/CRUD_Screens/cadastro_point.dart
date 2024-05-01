@@ -197,14 +197,15 @@ class _CadastroPoiState extends State<CadastroPoi>
                 Navigator.of(context).pop(true);
                 Aviso.showSnackBar(context, "Cadastrado com Sucesso");
 
-                // Tem q ver essa questão
-                // Navigator.of(context).pop();
-                // Navigator.of(context).pop();
+                
                 // Volta para atela de listagem
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ListagemDados()));
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ListagemDados(),
+                  ),
+                  (route) => false,
+                );
               },
               child: const Text(
                 "Não",
@@ -522,6 +523,8 @@ class _CadastroPoiState extends State<CadastroPoi>
                           child: Column(
                             children: [
                               DropdownButtonFormField<String>(
+                                // Borda fora da caixa
+                                borderRadius: BorderRadius.circular(10),
                                 // Define o tamanho do DropdownButtonFormField para preencher o espaço disponível horizontalmente
                                 isExpanded: true,
                                 // Reduz a altura do DropdownButtonFormField

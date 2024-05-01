@@ -123,10 +123,14 @@ class _PageLoginState extends State<PageLogin> {
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         // Se os dados passado no formulario de login forem validos chama a tela "ListagemDados"
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ListagemDados()));
+                        // Navega para a segunda tela e remove todas as telas na pilha
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ListagemDados(),
+                          ),
+                          (route) => false,
+                        );
                       }
                       debugPrint("Email: ${emailController.text}");
                       debugPrint("Senha: ${passwordController.text}");
