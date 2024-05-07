@@ -6,24 +6,26 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final int? maxLength;
   final String? exampleText;
+  final String? hintText;
 
   const CustomTextField(
       {super.key,
       required this.controller,
       required this.label,
-      this.validator, this.maxLength, this.exampleText});
+      this.validator, this.maxLength, this.exampleText, this.hintText});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: maxLength != null ? 5 : 10,),
       child: TextFormField(
-        readOnly: label == "Latitude *" || label == "Longitude *",//label == "Latitude *" || label == "Longitude *" ? true : false,
+        readOnly: label == "Latitude *" || label == "Longitude *",
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
           labelText: label,
+          hintText: hintText,
           helperText: exampleText,
         ),
         controller: controller,

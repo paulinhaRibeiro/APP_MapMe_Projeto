@@ -29,8 +29,13 @@ class DropPageChoiceRoute extends StatefulWidget {
 class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
   // Opcção escolhida
   final dropValue = ValueNotifier<String>("");
+  // Forma o nome da rota
+  late String nomeRoute;
   // Controllers da Rota
-  final nomeRouteController = TextEditingController();
+  final originRouteController = TextEditingController();
+  final destinyRouteController = TextEditingController();
+
+  //
   final descRouteController = TextEditingController();
   // Intancia da tabela da rota
   final bd = GetIt.I.get<ManipuTableRoute>();
@@ -47,6 +52,9 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
   // Rota Existente
   // Recebe so o id e o nome da rota existente
   late RouteOption nameIdRoute;
+
+  //para o formulario
+  final formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -133,8 +141,8 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
     // Rota nova
     else {
       // ignore: use_build_context_synchronously
-      Aviso.showSnackBar(context,
-          'Ponto de interesse adicionado a Rota "${nomeRouteController.text}"');
+      Aviso.showSnackBar(
+          context, 'Ponto de interesse adicionado a Rota "$nomeRoute"');
       //_aviso('Ponto de interesse adicionado a Rota "${nomeRouteController.text}"');
     }
     _voltarScreen();
@@ -145,7 +153,7 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
     // Passa para a tela de cadastro todos os dados da rota
     var route = RoutesPoint(
       idRoute: 0,
-      nameRoute: nomeRouteController.text,
+      nameRoute: nomeRoute,
       descriptionRoute: descRouteController.text,
       imgRoute: "sem imagem",
     );
@@ -197,6 +205,36 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
     }
   }
 
+  // valida os campos
+  void _submitForm() {
+    // Se não escolher nenhuma opção na lista, lança o aviso
+    if (dropValue.value == "") {
+      Aviso.showSnackBar(context, "Escolher algum tipo de rota é obrigatório");
+      return;
+    }
+    // Se tiver escolhido uma opção, verifica se é uma nova rota ou uma exitente
+    else {
+      // Se a opção selecionada for "Nova Rota"
+      if (showOutroTextField) {
+        // Verifica se foi preenchidos os campos obg.
+        if (!formKey.currentState!.validate()) {
+          Aviso.showSnackBar(
+              context, "Os campos Origem e Destino são obrigatório.");
+          return;
+        }
+        // Se tiver sido preenchido
+        else {
+          nomeRoute =
+              "${originRouteController.text} ao/a ${destinyRouteController.text}";
+          _cadastrarRota();
+        }
+      } else {
+        // Se a rota existente for selecionada
+        _routeExist();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -205,147 +243,198 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
         centerTitle: true,
         title: Text(titleAppBar), //"Cadastrar/Selecionar Rota"),
       ),
-      body: SingleChildScrollView(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: (MediaQuery.of(context).size.height -
-                  AppBar().preferredSize.height) -
-              MediaQuery.of(context).padding.top,
-          child: LayoutBuilder(builder: (_, constraints) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: constraints.maxWidth,
-                  height: constraints.maxHeight * .25,
-                  child: Center(
-                    child: ValueListenableBuilder(
-                      valueListenable: dropValue,
-                      builder: (BuildContext context, String value, _) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 10),
-                          child: Column(
-                            children: [
-                              DropdownButtonFormField<RouteOption>(
-                                // Borda fora da caixa
-                                borderRadius: BorderRadius.circular(10),
-                                isExpanded: true,
-                                isDense: true,
-                                hint: const Text("Escolha a Rota *"),
-                                decoration: InputDecoration(
-                                  label: const Text("Rota *"),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                value: (value.isEmpty)
-                                    ? null
-                                    : dropOpcoes.firstWhere(
-                                        (option) => option.nameRoute == value,
-                                        orElse: () => dropOpcoes.first),
-                                onChanged: (escolha) {
-                                  if (escolha!.nameRoute == "Nova Rota") {
-                                    setState(() {
-                                      showOutroTextField = true;
-                                      textButton = "Cadastrar Nova Rota";
-                                      titleAppBar = "Cadastrar Rota";
-                                    });
-                                  } else {
-                                    setState(() {
-                                      // receber o valor do id
-                                      // idRoutePoint = escolha.idRoute;
-                                      nameIdRoute = RouteOption(
-                                          idRoute: escolha.idRoute,
-                                          nameRoute: escolha.nameRoute);
-                                      debugPrint(
-                                          "nome: ${nameIdRoute.nameRoute} id: ${nameIdRoute.idRoute}");
-                                      showOutroTextField = false;
-                                      textButton = "Avançar";
-                                      titleAppBar = "Selecionar Rota";
-                                    });
-                                  }
-                                  dropValue.value = escolha.nameRoute;
-                                },
-                                items: dropOpcoes
-                                    .map(
-                                      (op) => DropdownMenuItem<RouteOption>(
-                                        value: op,
-                                        child: op.nameRoute != "Nova Rota"
-                                            ? Text('Rota: ${op.nameRoute}')
-                                            : Row(
-                                                children: [
-                                                  const Icon(Icons
-                                                      .add_circle_outlined),
-                                                  const SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Text(op.nameRoute),
-                                                ],
-                                              ),
-                                        // child: Text(op.nameRoute != "Nova Rota" ?
-                                        //     'Rota: ${op.nameRoute}' : op.nameRoute),
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 13.0),
-                                child: Text(
-                                  'Caso a Rota mais condizente com o seu cadastro não estiver na lista, selecione "Nova Rota" e prossiga com o cadastro',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: Color.fromARGB(255, 89, 89, 89)),
+      body: Center(
+        child: SingleChildScrollView(
+          child: SizedBox(
+            // width: MediaQuery.of(context).size.width,
+            // height: (MediaQuery.of(context).size.height -
+            //         AppBar().preferredSize.height) -
+            //     MediaQuery.of(context).padding.top,
+            child: LayoutBuilder(builder: (_, constraints) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ValueListenableBuilder(
+                    valueListenable: dropValue,
+                    builder: (BuildContext context, String value, _) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 10),
+                        child: Column(
+                          children: [
+                            DropdownButtonFormField<RouteOption>(
+                              // Borda fora da caixa
+                              borderRadius: BorderRadius.circular(10),
+                              isExpanded: true,
+                              isDense: true,
+                              hint: const Text("Escolha a Rota *"),
+                              decoration: InputDecoration(
+                                label: const Text("Rota *"),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
-                            ],
+                              value: (value.isEmpty)
+                                  ? null
+                                  : dropOpcoes.firstWhere(
+                                      (option) => option.nameRoute == value,
+                                      orElse: () => dropOpcoes.first),
+                              onChanged: (escolha) {
+                                if (escolha!.nameRoute == "Nova Rota") {
+                                  setState(() {
+                                    showOutroTextField = true;
+                                    textButton = "Cadastrar Nova Rota";
+                                    titleAppBar = "Cadastrar Rota";
+                                  });
+                                } else {
+                                  setState(() {
+                                    // receber o valor do id
+                                    // idRoutePoint = escolha.idRoute;
+                                    nameIdRoute = RouteOption(
+                                        idRoute: escolha.idRoute,
+                                        nameRoute: escolha.nameRoute);
+                                    debugPrint(
+                                        "nome: ${nameIdRoute.nameRoute} id: ${nameIdRoute.idRoute}");
+                                    showOutroTextField = false;
+                                    textButton = "Avançar";
+                                    titleAppBar = "Selecionar Rota";
+                                  });
+                                }
+                                dropValue.value = escolha.nameRoute;
+                              },
+                              items: dropOpcoes
+                                  .map(
+                                    (op) => DropdownMenuItem<RouteOption>(
+                                      value: op,
+                                      child: op.nameRoute != "Nova Rota"
+                                          ? Text('Rota: ${op.nameRoute}')
+                                          : Row(
+                                              children: [
+                                                const Icon(Icons
+                                                    .add_circle_outlined),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(op.nameRoute),
+                                              ],
+                                            ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                            const Padding(
+                              padding:
+                                  EdgeInsets.symmetric(horizontal: 13.0),
+                              child: Text(
+                                'Caso a Rota mais condizente com o seu cadastro não estiver na lista, selecione "Nova Rota" e prossiga com o cadastro',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: Color.fromARGB(255, 89, 89, 89)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  if (showOutroTextField)
+                    Form(
+                      key: formKey,
+                      child: Column(
+                        children: [
+                          const DividerText(text: "Cadastrar Rota"),
+                          // CustomTextField(
+                          //   controller: nomeRouteController,
+                          //   label: "Nome da Rota *",
+                          //   maxLength: 50,
+                          //   validator: (value) =>
+                          //       value!.isEmpty ? "Campo Obrigatório!" : null,
+                          // ),
+      
+                          // Origem
+                          const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 5),
+                            child: Text(
+                              'Digite o nome do local onde você está.',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color.fromARGB(255, 89, 89, 89)),
+                            ),
                           ),
-                        );
-                      },
+                          CustomTextField(
+                            controller: originRouteController,
+                            label: "Origem *",
+                            hintText: "Informe o local de início.",
+                            maxLength: 30,
+                            exampleText: "Ex: Localidade Vale Sereno.",
+                            validator: (value) => value!.isEmpty
+                                ? "Campo Obrigatório!"
+                                : null,
+                          ),
+                          //
+      
+                          // Origem
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 5),
+                            child: Text(
+                              'Digite o nome do local para onde você deseja chegar.',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color.fromARGB(255, 89, 89, 89)),
+                            ),
+                          ),
+      
+                          // destino
+                          CustomTextField(
+                            controller: destinyRouteController,
+                            label: "Destino *",
+                            hintText: "Informe o destino.",
+                            maxLength: 30,
+                            exampleText: "Ex: Cachoeira da Lua Azul.",
+                            validator: (value) => value!.isEmpty
+                                ? "Campo Obrigatório!"
+                                : null,
+                          ),
+      
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          CustomTextField(
+                            controller: descRouteController,
+                            label: "Descrição da Rota",
+                            hintText:
+                                "Informe algo que descreva esta rota.",
+                            maxLength: 200,
+                            // exampleText:
+                            //     "Obs: Digite algo que descreva esta rota.",
+                            // validator: (value) => value!.isEmpty ? "Campo Obrigatório!" : null,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ),
-                if (showOutroTextField)
-                  SizedBox(
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight * .45,
-                    child: Column(
-                      children: [
-                        const DividerText(text: "Cadastrar Rota"),
-                        CustomTextField(
-                          controller: nomeRouteController,
-                          label: "Nome da Rota *",
-                          maxLength: 50,
-                          validator: (value) =>
-                              value!.isEmpty ? "Campo Obrigatório!" : null,
-                        ),
-                        CustomTextField(
-                          controller: descRouteController,
-                          label: "Descrição da Rota",
-                          maxLength: 200,
-                          // validator: (value) => value!.isEmpty ? "Campo Obrigatório!" : null,
-                        ),
-                      ],
-                    ),
-                  ),
-                SizedBox(
-                  width: constraints.maxWidth,
-                  height: constraints.maxHeight * .16,
-                  child: Padding(
+                  Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 16),
+                        horizontal: 15, vertical: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            if (showOutroTextField) {
-                              _cadastrarRota();
-                            } else {
-                              // Se a rota existente for selecionada
-                              _routeExist();
-                            }
+                            // if (showOutroTextField) {
+                            //   nomeRoute =
+                            //       "${originRouteController.text} ao/a ${destinyRouteController.text}";
+                            //   _cadastrarRota();
+                            // } else {
+                            //   // Se a rota existente for selecionada
+                            //   _routeExist();
+                            // }
+                            _submitForm();
                           },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
@@ -359,10 +448,10 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
                       ],
                     ),
                   ),
-                ),
-              ],
-            );
-          }),
+                ],
+              );
+            }),
+          ),
         ),
       ),
     );
@@ -371,7 +460,8 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
   @override
   void dispose() {
     super.dispose();
-    nomeRouteController.dispose();
+    originRouteController.dispose();
+    destinyRouteController.dispose();
     descRouteController.dispose();
   }
 }

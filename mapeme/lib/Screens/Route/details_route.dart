@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mapeme/BD/table_route.dart';
 import 'package:mapeme/Models/route.dart';
+import 'package:mapeme/Screens/Route/ordena_iniciar_Rota/iniciar_rota.dart';
 
 import '../../BD/table_point_interest.dart';
 import '../Widgets/image_slider_details.dart';
 import '../Widgets/utils/informativo.dart';
 import '../Widgets/listagem_widgets.dart/descricao_point_widget.dart';
 // import '../Widgets/listagem_widgets.dart/nome_point_widget.dart';
-import '../Widgets/text_button.dart';
+// import '../Widgets/text_button.dart';
 import 'edit_route.dart';
 import 'lista_point_routes.dart';
 
@@ -60,22 +61,6 @@ class _DetailsRouteState extends State<DetailsRoute> {
     // conecta ao bd e pega todas as imagens dos pontos de interesse
     _addImagensList();
   }
-
-  // Notifica que a operação deu certo
-  // _aviso(String msg) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Center(
-  //         child: Text(
-  //           msg,
-  //           style: const TextStyle(
-  //             fontWeight: FontWeight.bold,
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   // Voltar a outra tela
   _voltarScreen() {
@@ -250,7 +235,8 @@ class _DetailsRouteState extends State<DetailsRoute> {
                   ),
                   const SizedBox(height: 8),
                   DescriptonPoint(
-                    description: _updatedRoute.descriptionRoute,
+                    description:
+                        "Rota: ${_updatedRoute.nameRoute}. ${_updatedRoute.descriptionRoute}",
                     numLines: 50,
                   ),
 
@@ -260,23 +246,36 @@ class _DetailsRouteState extends State<DetailsRoute> {
                   // Botão de iniciar a Rota
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () {}, 
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 0, 63, 6),
-                        elevation: 10,
-                        minimumSize: const Size.fromHeight(55),
-                      ),
-                      icon: const Icon(
-                        Icons.play_arrow,
-                        color: Colors.white,
-                      ),
-                      label: const ScreenTextButtonStyle(text: "Iniciar Rota"),
-                    ),
-                  ),
+                    child: IniciarRota(idRoute: _updatedRoute.idRoute),),
+                    
+                  //   ElevatedButton.icon(
+                  //     onPressed: () {
+                  //       // Chama a Tela de listagem dos pontos de interesse da rota
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) => IniciarRota(
+                  //             idRoute: _updatedRoute.idRoute,
+                              
+                  //           ),
+                  //         ),
+                  //       );
+                  //     },
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+                  //       elevation: 10,
+                  //       minimumSize: const Size.fromHeight(55),
+                  //     ),
+                  //     icon: const Icon(
+                  //       Icons.play_arrow,
+                  //       color: Colors.white,
+                  //     ),
+                  //     label: const ScreenTextButtonStyle(text: "Iniciar Rota"),
+                  //   ),
+                  // ),
                   const SizedBox(height: 16),
-                  
-                  // 
+
+                  //
                   // Botão para ir para os Pontos de interesse da rota
                   SizedBox(
                     width: double.infinity,
