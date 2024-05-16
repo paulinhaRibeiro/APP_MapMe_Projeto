@@ -5,7 +5,9 @@ import 'package:mapeme/Screens/Widgets/text_button.dart';
 // arquivos
 import 'package:mapeme/Screens/authtentication/signup_page.dart';
 import 'package:mapeme/Screens/CRUD_Screens/tab_listagens.dart';
-import 'package:mapeme/pag_teste.dart';
+import 'package:mapeme/Screens/authtentication/recuperar_senha.dart';
+
+import '../Widgets/divide_text.dart';
 
 class PageLogin extends StatefulWidget {
   const PageLogin({super.key});
@@ -39,11 +41,11 @@ class _PageLoginState extends State<PageLogin> {
                   // --------------- LOGO -------------
                   Image.asset(
                     "assets/images_logo/logo1.png",
-                    width: 230,
+                    height: MediaQuery.of(context).size.height * 0.2, //20% da altura total da tela //height: 130,
                   ),
 
                   const SizedBox(
-                    height: 40,
+                    height: 30,
                   ),
 
                   // --------------- EMAIL -------------
@@ -60,12 +62,18 @@ class _PageLoginState extends State<PageLogin> {
                     },
                     decoration: InputDecoration(
                       label: const Text("Email"),
-                      suffixIcon: const Icon(
-                        FontAwesomeIcons.envelope, //person
-                        size: 20,
+
+                      prefixIcon: const Icon(
+                        Icons.email_rounded,
+                        // size: 20,
                       ),
+                      // suffixIcon: const Icon(
+                      //   FontAwesomeIcons.envelope, //person
+                      //   size: 20,
+                      // ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(10.0),
+                        // borderSide: BorderSide.none,
                       ),
                     ),
 
@@ -75,7 +83,7 @@ class _PageLoginState extends State<PageLogin> {
                   // --------------- END EMAIL -------------
 
                   const SizedBox(
-                    height: 20,
+                    height: 15,
                   ),
 
                   // --------------- SENHA -------------
@@ -93,6 +101,10 @@ class _PageLoginState extends State<PageLogin> {
                     obscureText: !isVisible,
                     decoration: InputDecoration(
                       label: const Text("Senha"),
+                      prefixIcon: const Icon(
+                        Icons.key_rounded,
+                        // size: 2,
+                      ),
                       suffixIcon: IconButton(
                         onPressed: () {
                           // mudar o estado do icone do botão de senha
@@ -109,13 +121,32 @@ class _PageLoginState extends State<PageLogin> {
                         ),
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
                   ),
 
+                  // --------------- Botão de esqueceu a senha -----------------
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: 
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const Teste()));
+                        },
+                        child: const Text(
+                          "Esqueceu a senha?",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    
+                  ),
+
                   const SizedBox(
-                    height: 30,
+                    height: 10,
                   ),
 
                   // --------------- BOTÂO DE LOGIN -------------
@@ -140,7 +171,7 @@ class _PageLoginState extends State<PageLogin> {
                       //   borderRadius: BorderRadius.circular(10),),
                       backgroundColor: const Color.fromARGB(255, 0, 63, 6),
                       elevation: 10,
-                      minimumSize: const Size.fromHeight(55),
+                      minimumSize: const Size.fromHeight(50),
                     ),
                     child: const ScreenTextButtonStyle(text: "Entrar"),
                   ),
@@ -148,24 +179,23 @@ class _PageLoginState extends State<PageLogin> {
                   const SizedBox(
                     height: 5,
                   ),
+                  const DividerText(
+                    text: 'Ou',
+                    // textAlign: TextAlign.center,
+                    // style: TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
 
-                  // --------------- Botão de esqueceu a senha -----------------
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Teste()));
-                        },
-                        child: const Text(
-                          "Esqueceu a senha?",
-                          style: TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                      ),
-                    ],
+                  OutlinedButton.icon(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      elevation: 10,
+                      minimumSize: const Size.fromHeight(50),
+                    ),
+                    icon: const Icon(FontAwesomeIcons.google),
+                    label: const Text("Entrar com Google"),
                   ),
                 ],
               ),

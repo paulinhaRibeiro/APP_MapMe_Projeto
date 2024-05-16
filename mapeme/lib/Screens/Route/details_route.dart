@@ -298,7 +298,7 @@ class _DetailsRouteState extends State<DetailsRoute> {
                       },
                       style: OutlinedButton.styleFrom(
                         elevation: 10,
-                        minimumSize: const Size.fromHeight(55),
+                        minimumSize: const Size.fromHeight(50),
                       ),
                       icon: const Icon(
                         Icons.place,

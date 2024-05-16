@@ -81,7 +81,7 @@ class _ListagemPointsRouteState extends State<ListagemPointsRoute> {
                   child: SizedBox(
                     // altura - pegar 89% da tela disponivel
                     width: constraints.maxWidth,
-                    height: constraints.maxHeight * .89,
+                    height: constraints.maxHeight,
                     child: Center(
                       // Chama o componente responsavel por listar os pontos de interesse
                       child: ListagemPointInteresse(
@@ -94,37 +94,73 @@ class _ListagemPointsRouteState extends State<ListagemPointsRoute> {
                 ),
 
                 // Cadastrar um novo ponto ligado a esta Rota
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // Chama a tela de cadastro
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CadastroPoi(
-                              // Passa o id da Rota para ser add ao atributo do ponto de interesse
-                              idNameRoutePoint: nameIdRoute,
-                            ),
-                          ));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 0, 63, 6),
-                      elevation: 10,
-                      minimumSize: const Size.fromHeight(55),
-                    ),
-                    icon: const Icon(
-                      Icons.add_location_alt_rounded,
-                      color: Colors.white,
-                    ),
-                    label: const ScreenTextButtonStyle(
-                        text: "Cadastrar Novo Ponto"),
-                  ),
-                ),
+                // Padding(
+                //   padding:
+                //       const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16),
+                //   child: ElevatedButton.icon(
+                //     onPressed: () {
+                //       // Chama a tela de cadastro
+                //       Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //             builder: (context) => CadastroPoi(
+                //               // Passa o id da Rota para ser add ao atributo do ponto de interesse
+                //               idNameRoutePoint: nameIdRoute,
+                //             ),
+                //           ));
+                //     },
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+                //       elevation: 10,
+                //       minimumSize: const Size.fromHeight(50),
+                //     ),
+                //     icon: const Icon(
+                //       Icons.add_location_alt_rounded,
+                //       color: Colors.white,
+                //     ),
+                //     label: const ScreenTextButtonStyle(
+                //         text: "Cadastrar Novo Ponto"),
+                //   ),
+                // ),
               ],
             );
           },
+        ),
+      ),
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.fromLTRB(16, 2, 16, 13),
+        decoration: BoxDecoration(boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 25,
+            offset: const Offset(8, 20),
+          ),
+        ]),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: ElevatedButton.icon(
+            onPressed: () {
+              // Chama a tela de cadastro
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CadastroPoi(
+                      // Passa o id da Rota para ser add ao atributo do ponto de interesse
+                      idNameRoutePoint: nameIdRoute,
+                    ),
+                  ));
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+              elevation: 10,
+              minimumSize: const Size.fromHeight(50),
+            ),
+            icon: const Icon(
+              Icons.add_location_alt_rounded,
+              color: Colors.white,
+            ),
+            label: const ScreenTextButtonStyle(text: "Cadastrar Novo Ponto"),
+          ),
         ),
       ),
     );

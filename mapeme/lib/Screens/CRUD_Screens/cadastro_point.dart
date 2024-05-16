@@ -68,6 +68,39 @@ class _CadastroPoiState extends State<CadastroPoi>
   File? _pickedImage1;
   File? _pickedImage2;
 
+  //
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    // Carrega os tipos de ponto de interesse ao inicializar o estado
+    loadPointInterestTypes();
+    // Chama a função que captura a geolocalização do usuario
+    _initGeolocation();
+  }
+
+  void _restartRegister() {
+    // Restarta todos os campos
+    nomeController.clear();
+    descController.clear();
+
+    // imagem
+    _pickedImage1 = null;
+    _pickedImage2 = null;
+
+    // restartar a lista de tipos de pontos
+    loadPointInterestTypes();
+    dropValue.value = "";
+    _tabController.animateTo(0);
+
+    // para não aparecer o campo de nome e descrição do typo de point
+    showOutroTextField = false;
+    typePointController.clear();
+
+    // restarta a localização
+    _initGeolocation();
+  }
+
   // Recebe as imgs - Callback
   void _selectImage(
       {File? pickedImage, required int indexImg, bool apagar = false}) {
@@ -86,17 +119,6 @@ class _CadastroPoiState extends State<CadastroPoi>
         }
       }
     });
-  }
-
-  //
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    // Carrega os tipos de ponto de interesse ao inicializar o estado
-    loadPointInterestTypes();
-    // Chama a função que captura a geolocalização do usuario
-    _initGeolocation();
   }
 
   void _initGeolocation() async {
@@ -183,75 +205,62 @@ class _CadastroPoiState extends State<CadastroPoi>
 
     return showDialog(
       context: context,
+      // Impede que o usuário feche o AlertDialog clicando fora dele
+      barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            txt,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          actions: <Widget>[
-            // se clicar em não só volta para a listagem
-            TextButton(
-              onPressed: () {
-                // Fechar e navegar para a listagem
-                Navigator.of(context).pop(true);
-                Aviso.showSnackBar(context, "Cadastrado com Sucesso");
+        return WillPopScope(
+          // Impede que o usuário feche o AlertDialog pressionando o botão de voltar
+          onWillPop: () async => false,
 
-                
-                // Volta para atela de listagem
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ListagemDados(),
+          child: AlertDialog(
+            title: Text(
+              txt,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
+            actions: <Widget>[
+              // se clicar em não só volta para a listagem
+              TextButton(
+                onPressed: () {
+                  // Fechar e navegar para a listagem
+                  Navigator.of(context).pop(true);
+                  Aviso.showSnackBar(context, "Cadastrado com Sucesso");
+
+                  // Volta para atela de listagem
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ListagemDados(),
+                    ),
+                    (route) => false,
+                  );
+                },
+                child: const Text(
+                  "Não",
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    // color: Color.fromARGB(255, 91, 91, 91),
                   ),
-                  (route) => false,
-                );
-              },
-              child: const Text(
-                "Não",
-                style: TextStyle(
-                  fontSize: 16.0,
-                  // color: Color.fromARGB(255, 91, 91, 91),
                 ),
               ),
-            ),
 
-            // Caso clicar em sim vai voltar para criar um novo registro
-            ElevatedButton(
-              onPressed: () {
-                // Restarta todos os campos
-                nomeController.text = "";
-                descController.text = "";
-
-                // imagem
-                _pickedImage1 = null;
-                _pickedImage2 = null;
-
-                // restartar a lista de tipos de pontos
-                loadPointInterestTypes();
-                dropValue.value = "";
-                _tabController.animateTo(0);
-
-                // para não aparecer o campo de nome e descrição do typo de point
-                showOutroTextField = false;
-                typePointController.text = "";
-
-                // restarta a localização
-                _initGeolocation();
-
-                Navigator.of(context).pop(true);
-              },
-              style: ElevatedButton.styleFrom(
-                elevation: 10,
-                backgroundColor: const Color.fromARGB(255, 0, 63, 6),
-                foregroundColor: Colors.white,
+              // Caso clicar em sim vai voltar para criar um novo registro
+              ElevatedButton(
+                onPressed: () {
+                  _restartRegister();
+                  Navigator.of(context).pop(true);
+                },
+                style: ElevatedButton.styleFrom(
+                  elevation: 10,
+                  backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text(
+                  "Sim",
+                  style: TextStyle(fontSize: 16.0),
+                ),
               ),
-              child: const Text(
-                "Sim",
-                style: TextStyle(fontSize: 16.0),
-              ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -377,6 +386,11 @@ class _CadastroPoiState extends State<CadastroPoi>
       Aviso.showSnackBar(context,
           "Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
       // _aviso("Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
+      return;
+    }
+    if (typePointController.text == "Tipo não identificado") {
+      Aviso.showSnackBar(context,
+          'Por favor, digite outro valor ao campo "Tipo do ponto de interesse".');
       return;
     }
     try {

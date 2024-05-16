@@ -229,6 +229,12 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
       // _aviso("Os Campos Nome, Tipo, Latitude e Longitude são obrigatórios");
       return;
     }
+
+    if (typePointController.text == "Tipo não identificado"){
+      Aviso.showSnackBar(context,
+          'Por favor, digite outro valor ao campo "Tipo do ponto de interesse".');
+          return;
+    }
     try {
       posiLat = double.parse(latitudeController.text);
     } catch (e) {

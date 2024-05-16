@@ -12,13 +12,14 @@ class PageSignUp extends StatefulWidget {
 
 class _PageSignUpState extends State<PageSignUp> {
   // variaveis do formulario
+  final nameControllerSignUp = TextEditingController();
   final emailControllerSignUp = TextEditingController();
   final passwordControllerSignUp = TextEditingController();
-  final confirmPasswordControllerSignUp = TextEditingController();
+  // final confirmPasswordControllerSignUp = TextEditingController();
 
   // para alterar o estado do icone da senha e repetir senha
   bool isVisibleSignUpSenha = false;
-  bool isVisibleSignUpConfirmSenha = false;
+  // bool isVisibleSignUpConfirmSenha = false;
 
   //para o formulario
   final formKeySignUp = GlobalKey<FormState>();
@@ -30,19 +31,47 @@ class _PageSignUpState extends State<PageSignUp> {
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(30.0),
-            child: Form(
+            padding: const EdgeInsets.symmetric(horizontal: 35.0, vertical: 20.0),
+              child: Form(
               key: formKeySignUp,
               child: Column(
                 children: [
                   // --------------- LOGO -------------
                   Image.asset(
                     "assets/images_logo/logo1.png",
-                    width: 230,
+                    height: MediaQuery.of(context).size.height * 0.2,
                   ),
 
                   const SizedBox(
-                    height: 40,
+                    height: 30,
+                  ),
+
+                  // --------------- Nome --------------
+                  TextFormField(
+                    controller: nameControllerSignUp,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Campo Obrigatório!";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      label: const Text("Nome de Usuário"),
+                      prefixIcon: const Icon(
+                        Icons.person_rounded,
+                      ),
+                      // suffixIcon: const Icon(
+                      //   FontAwesomeIcons.envelope, //person
+                      //   size: 20,
+                      // ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(
+                    height: 15,
                   ),
 
                   // --------------- EMAIL -------------
@@ -56,12 +85,11 @@ class _PageSignUpState extends State<PageSignUp> {
                     },
                     decoration: InputDecoration(
                       label: const Text("Email"),
-                      suffixIcon: const Icon(
-                        FontAwesomeIcons.envelope, //person
-                        size: 20,
+                      prefixIcon: const Icon(
+                        Icons.email_rounded,
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
 
@@ -70,11 +98,12 @@ class _PageSignUpState extends State<PageSignUp> {
                   ),
 
                   const SizedBox(
-                    height: 20,
+                    height: 15,
                   ),
 
                   // --------------- SENHA -------------
                   TextFormField(
+                  
                     controller: passwordControllerSignUp,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -86,6 +115,10 @@ class _PageSignUpState extends State<PageSignUp> {
                     obscureText: !isVisibleSignUpSenha,
                     decoration: InputDecoration(
                       label: const Text("Senha"),
+                      prefixIcon: const Icon(
+                        Icons.key_rounded,
+                        // size: 2,
+                      ),
                       suffixIcon: IconButton(
                         onPressed: () {
                           // mudar o icone do botão do icone da senha
@@ -102,63 +135,63 @@ class _PageSignUpState extends State<PageSignUp> {
                         ),
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
                   ),
 
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  // const SizedBox(
+                  //   height: 20,
+                  // ),
 
-                  // --------------- REPETIR SENHA -------------
-                  TextFormField(
-                    controller: confirmPasswordControllerSignUp,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Campo Obrigatório!";
-                      } else if (passwordControllerSignUp.text !=
-                          confirmPasswordControllerSignUp.text) {
-                        return "Confirmação de Senha Incorreta";
-                      }
-                      return null;
-                    },
-                    //visibilidade da senha
-                    obscureText: !isVisibleSignUpConfirmSenha,
-                    decoration: InputDecoration(
-                      label: const Text("Confirmar Senha"),
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          // mudar o icone do botão do icone da senha
-                          // para alterar entre visivel e não visivel
-                          setState(() {
-                            isVisibleSignUpConfirmSenha =
-                                !isVisibleSignUpConfirmSenha;
-                          });
-                        },
-                        icon: Icon(
-                          isVisibleSignUpConfirmSenha
-                              ? FontAwesomeIcons.eye
-                              : FontAwesomeIcons.eyeSlash,
-                          size: 20,
-                        ),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
+                  // // --------------- REPETIR SENHA -------------
+                  // TextFormField(
+                  //   controller: confirmPasswordControllerSignUp,
+                  //   validator: (value) {
+                  //     if (value!.isEmpty) {
+                  //       return "Campo Obrigatório!";
+                  //     } else if (passwordControllerSignUp.text !=
+                  //         confirmPasswordControllerSignUp.text) {
+                  //       return "Confirmação de Senha Incorreta";
+                  //     }
+                  //     return null;
+                  //   },
+                  //   //visibilidade da senha
+                  //   obscureText: !isVisibleSignUpConfirmSenha,
+                  //   decoration: InputDecoration(
+                  //     label: const Text("Confirmar Senha"),
+                  //     suffixIcon: IconButton(
+                  //       onPressed: () {
+                  //         // mudar o icone do botão do icone da senha
+                  //         // para alterar entre visivel e não visivel
+                  //         setState(() {
+                  //           isVisibleSignUpConfirmSenha =
+                  //               !isVisibleSignUpConfirmSenha;
+                  //         });
+                  //       },
+                  //       icon: Icon(
+                  //         isVisibleSignUpConfirmSenha
+                  //             ? FontAwesomeIcons.eye
+                  //             : FontAwesomeIcons.eyeSlash,
+                  //         size: 20,
+                  //       ),
+                  //     ),
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(10),
+                  //     ),
+                  //   ),
+                  // ),
 
                   const SizedBox(
-                    height: 30,
+                    height: 25,
                   ),
 
                   // --------------- BOTÂO DE LOGIN -------------
                   ElevatedButton(
                     onPressed: () {
                       if (formKeySignUp.currentState!.validate()) {
-                        Aviso.showSnackBar(context,
-                            'Usuário cadastrado com sucesso');
+                        Aviso.showSnackBar(
+                            context, 'Usuário cadastrado com sucesso');
                         // metodod para o login
                         // Navigator.pushReplacement(
                         //     context,
@@ -170,13 +203,13 @@ class _PageSignUpState extends State<PageSignUp> {
                       //imprimir os valores no console
                       debugPrint("Email: ${emailControllerSignUp.text}");
                       debugPrint("Senha: ${passwordControllerSignUp.text}");
-                      debugPrint(
-                          "Repetir Senha: ${confirmPasswordControllerSignUp.text}");
+                      // debugPrint(
+                      //     "Repetir Senha: ${confirmPasswordControllerSignUp.text}");
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 0, 63, 6),
                       elevation: 10,
-                      minimumSize: const Size.fromHeight(55),
+                      minimumSize: const Size.fromHeight(50),
                     ),
                     child: const ScreenTextButtonStyle(text: "Criar Conta"),
                   ),
@@ -223,7 +256,7 @@ class _PageSignUpState extends State<PageSignUp> {
   void dispose() {
     emailControllerSignUp.dispose();
     passwordControllerSignUp.dispose();
-    confirmPasswordControllerSignUp.dispose();
+    // confirmPasswordControllerSignUp.dispose();
     super.dispose();
   }
 }

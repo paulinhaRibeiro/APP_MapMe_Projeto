@@ -25,7 +25,7 @@ class WebPageSite extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color.fromARGB(255, 0, 63, 6),
         elevation: 10,
-        minimumSize: const Size.fromHeight(55),
+        minimumSize: const Size.fromHeight(50),
       ),
       onPressed: () =>
           _lauchLink("https://www.google.com/maps/search/$lat,$long/"),

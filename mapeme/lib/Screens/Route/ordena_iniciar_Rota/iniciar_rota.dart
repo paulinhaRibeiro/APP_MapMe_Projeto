@@ -27,21 +27,21 @@ class _IniciarRotaState extends State<IniciarRota> {
 
   Future<void> _openGoogleMaps(GeolocationUser geolocationUser,
       List<PointOfInterestLatLong> pontosInteresse) async {
-    // final url =
-    //     'https://www.google.com/maps/dir/${pontosInteresse.map((p) => '${p.latitude},${p.longitude}').join('/')}';
+    final url =
+        'https://www.google.com/maps/dir/${geolocationUser.lat},${geolocationUser.long}/${pontosInteresse.map((p) => '${p.latitude},${p.longitude}').join('/')}';
 
 //
 
     // Da localização do usuário (origin) ao último ponto (destination)
-    String origin = '${geolocationUser.lat},${geolocationUser.long}';
-    String destination =
-        '${pontosInteresse.last.latitude},${pontosInteresse.last.longitude}';
+    // String origin = '${geolocationUser.lat},${geolocationUser.long}';
+    // String destination =
+    //     '${pontosInteresse.last.latitude},${pontosInteresse.last.longitude}';
 
-    // especifica os pontos intermediários (waypoints) que a rota deve passar.
-    String waypointsString = pontosInteresse
-        .map((p) => '${p.latitude},${p.longitude}')
-        .take(pontosInteresse.length - 1) // Remove o último elemento
-        .join('|'); // Pule o ponto de partida na lista de waypoints
+    // // especifica os pontos intermediários (waypoints) que a rota deve passar.
+    // String waypointsString = pontosInteresse
+    //     .map((p) => '${p.latitude},${p.longitude}')
+    //     .take(pontosInteresse.length - 1) // Remove o último elemento
+    //     .join('|'); // Pule o ponto de partida na lista de waypoints
 
     //
 
@@ -56,8 +56,8 @@ class _IniciarRotaState extends State<IniciarRota> {
     //     .skip(1)
     //     .join('|'); // Pule o ponto de partida na lista de waypoints
 
-    final url =
-        'https://www.google.com/maps/dir/?api=1&origin=$origin&destination=$destination&waypoints=$waypointsString';
+    // final url =
+    //     'https://www.google.com/maps/dir/?api=1&origin=$origin&destination=$destination&waypoints=$waypointsString';
 
     debugPrint(url);
     if (await canLaunch(url)) {
@@ -78,12 +78,6 @@ class _IniciarRotaState extends State<IniciarRota> {
     try {
       final List<PointOfInterestLatLong> pontosComDistancia = [];
       for (var ponto in pontos) {
-        // final distancia = Geolocator.distanceBetween(
-        //   pontoIniciaLatitude,
-        //   pontoIniciaLongitude,
-        //   ponto.latitude,
-        //   ponto.longitude,
-        // );
         distancia = Geolocator.distanceBetween(
           pontoIniciaLatitude,
           pontoIniciaLongitude,
@@ -163,7 +157,7 @@ class _IniciarRotaState extends State<IniciarRota> {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color.fromARGB(255, 0, 63, 6),
         elevation: 10,
-        minimumSize: const Size.fromHeight(55),
+        minimumSize: const Size.fromHeight(50),
       ),
       child: isLoading
           ? const CircularProgressIndicator()
