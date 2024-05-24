@@ -3,7 +3,7 @@ import 'package:mapeme/BD/database_helper.dart';
 import 'package:mapeme/Models/point_interest.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../Screens/Route/ordena_iniciar_Rota/model_point_lat_long_route.dart';
+import '../Screens/Route/iniciar_Rota/model_point_lat_long_route.dart';
 
 // classe de manipulação do bd
 class ManipuTablePointInterest {
@@ -168,6 +168,28 @@ class ManipuTablePointInterest {
     await db.close();
   }
 
+  // // READ - devolve as latitude, longitude e nome dos Pontos de interesse ligado a uma rota
+  // Future<List<PointOfInterestLatLong>> getPointInterestLatLog(int idRoute) async {
+  //   // Resgata a conexão com bd - instancia da classe DataBaseHelper que é gerenciada pelo getIt
+  //   var db = await GetIt.I.get<DataBaseHelper>().getDB();
+
+  //   // lista de Maps
+  //   // mostra apenas os ponto onde o foreignidRoute seja igual a nulo
+  //   final List<Map<String, dynamic>> maps = await db.rawQuery(
+  //       "SELECT latitude, longitude, name FROM tablepointInterest WHERE foreignidRoute = ?",
+  //       [idRoute]);
+  //   await db.close();
+
+  //   // Cria a lista - passa o tamanho e retorna para cada elemento desta lista um obj Map que vai ser convertido para obj Dart - fromMap da classe PointInterest - para cada elemento da lista
+  //   return List.generate(
+  //       maps.length, (index) => PointOfInterestLatLong.fromMap(maps[index]));
+  // }
+
+  // //
+  
+
+
+
   // READ - devolve as latitude, longitude e nome dos Pontos de interesse ligado a uma rota
   Future<List<PointOfInterestLatLong>> getPointInterestLatLog(int idRoute) async {
     // Resgata a conexão com bd - instancia da classe DataBaseHelper que é gerenciada pelo getIt
@@ -176,7 +198,7 @@ class ManipuTablePointInterest {
     // lista de Maps
     // mostra apenas os ponto onde o foreignidRoute seja igual a nulo
     final List<Map<String, dynamic>> maps = await db.rawQuery(
-        "SELECT latitude, longitude, name FROM tablepointInterest WHERE foreignidRoute = ?",
+        "SELECT id, name, description, latitude, longitude, img1, img2, typePointInterest FROM tablepointInterest WHERE foreignidRoute = ?",
         [idRoute]);
     await db.close();
 

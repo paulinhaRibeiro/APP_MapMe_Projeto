@@ -1,4 +1,3 @@
-// import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 class GeolocationUser {
@@ -6,13 +5,13 @@ class GeolocationUser {
   double? long;
   String erro = "";
 
-  GeolocationUser() {
-    _init();
-  }
+  // GeolocationUser() {
+  //   _init();
+  // }
 
-  Future<void> _init() async {
-    await getPosition();
-  }
+  // Future<void> _init() async {
+  //   await getPosition();
+  // }
 
   Future<void> getPosition() async {
     // Seção de obtenção de posição
@@ -55,8 +54,8 @@ class GeolocationUser {
     }
 
     return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.bestForNavigation);
-        // desiredAccuracy: LocationAccuracy.high);
+      // desiredAccuracy: LocationAccuracy.bestForNavigation);
+        desiredAccuracy: LocationAccuracy.high);
 
     // Usa o GPS com a máxima precisão possível. Isso ajudará a evitar o uso de dados da internet para obter a localização.
     // desiredAccuracy: LocationAccuracy.bestForNavigation);

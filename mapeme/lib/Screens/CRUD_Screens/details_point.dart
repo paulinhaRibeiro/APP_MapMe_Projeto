@@ -7,9 +7,11 @@ import 'package:mapeme/Screens/CRUD_Screens/tab_listagens.dart';
 
 // para imagem de slide
 import 'package:mapeme/Screens/Widgets/image_slider_details.dart';
-import 'package:mapeme/Screens/Widgets/connection_web.dart';
+import 'package:mapeme/Screens/Widgets/view_map_location.dart';
 
+import '../../Localization/google_maps_location.dart';
 import '../Route/drop_down_choice_route.dart';
+import '../Widgets/text_button.dart';
 import '../Widgets/utils/informativo.dart';
 import '../Widgets/listagem_widgets.dart/descricao_point_widget.dart';
 
@@ -372,10 +374,47 @@ class _DetailsPointState extends State<DetailsPoint> {
 
                   // Botão de ver no mapa
                   const SizedBox(height: 24),
-                  WebPageSite(
-                    lat: _updatedPoint.latitude.toString(),
-                    long: _updatedPoint.longitude.toString(),
-                  ),
+                  // WebPageSite(
+                  //   lat: _updatedPoint.latitude.toString(),
+                  //   long: _updatedPoint.longitude.toString(),
+                  // ),
+                  // WebPageSite(
+                  //   lat: _updatedPoint.latitude,
+                  //   long: _updatedPoint.longitude,
+                  // ),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 0, 63, 6),
+                      elevation: 10,
+                      minimumSize: const Size.fromHeight(50),
+                    ),
+                    onPressed: () {
+                      // Recebe a intancia da classe GeolocationUserGoogleMaps
+                      GeolocationUserGoogleMaps googleMapsGeolocationUser =
+                          GeolocationUserGoogleMaps();
+
+                      // Chama a função para carregar os pontos de interesse da rota
+                      googleMapsGeolocationUser.loadPointsRoute(
+                          point: _updatedPoint);
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ViewMapLocation(
+                            googleMapsGeolocationUser:
+                                googleMapsGeolocationUser,
+                            point: _updatedPoint,
+                          
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.map_outlined,
+                      color: Colors.white,
+                    ),
+                    label: const ScreenTextButtonStyle(text: "Ver no Mapa"),
+                  )
                 ],
               ),
             ),

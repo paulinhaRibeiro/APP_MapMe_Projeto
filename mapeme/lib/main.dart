@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:mapeme/my_app.dart';
 
 // Para o bd
@@ -7,7 +8,6 @@ import 'package:mapeme/BD/database_helper.dart';
 import 'package:mapeme/BD/table_point_interest.dart';
 
 import 'BD/table_route.dart';
-// import 'package:mapeme/Screens/listagem_point.dart';
 
 // instancia do getIt - gerenciador de dependencia
 final getIt = GetIt.instance;
@@ -28,6 +28,9 @@ void main() async {
 
   // para executar somente quando os componentes minimos do flutter serem carregados
   WidgetsFlutterBinding.ensureInitialized();
+
+  //carregamento da variavel de ambiente
+  await FlutterConfig.loadEnvVariables();
   setConfiguration();
 
   runApp(const MyApp());

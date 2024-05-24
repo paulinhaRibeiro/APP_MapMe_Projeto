@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mapeme/BD/table_route.dart';
 import 'package:mapeme/Models/route.dart';
-import 'package:mapeme/Screens/Route/ordena_iniciar_Rota/iniciar_rota.dart';
+import 'package:mapeme/Screens/Route/iniciar_Rota/iniciar_rota.dart';
 
 import '../../BD/table_point_interest.dart';
 import '../Widgets/image_slider_details.dart';
