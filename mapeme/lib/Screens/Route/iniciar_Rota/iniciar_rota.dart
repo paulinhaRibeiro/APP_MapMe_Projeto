@@ -3,15 +3,16 @@ import 'package:get_it/get_it.dart';
 
 import '../../../BD/table_point_interest.dart';
 import '../../../Localization/google_maps_location.dart';
+import '../../../Models/point_interest.dart';
 import '../../Widgets/text_button.dart';
 import '../../Widgets/utils/informativo.dart';
-import '../connection_google_maps/page_route_point.dart';
-import 'model_point_lat_long_route.dart';
+import '../connection_google_maps/google_maps_route_point.dart';
 
 class IniciarRota extends StatefulWidget {
   final int idRoute;
+  final String nameRoute;
 
-  const IniciarRota({super.key, required this.idRoute});
+  const IniciarRota({super.key, required this.idRoute, required this.nameRoute});
 
   @override
   State<IniciarRota> createState() => _IniciarRotaState();
@@ -35,7 +36,7 @@ class _IniciarRotaState extends State<IniciarRota> {
       // // Recupera a instancia do bd
       var bdPoint = GetIt.I.get<ManipuTablePointInterest>();
       // captura as latitudes e longitudes dos pontos de interesse ligados a rota
-      List<PointOfInterestLatLong> pLatLong = await bdPoint.getPointInterestLatLog(widget.idRoute);
+      List<PointInterest> pLatLong = await bdPoint.getPointInterestLatLog(widget.idRoute);
       //
 
       // // captura a gelocalização do usuário
@@ -64,6 +65,7 @@ class _IniciarRotaState extends State<IniciarRota> {
       context,
       MaterialPageRoute(
         builder: (context) => PagePointsRoute(
+          nameRoute: widget.nameRoute,
           googleMapsGeolocationUser: googleMapsGeolocationUser,
           // pLatLong: pLatLong,
         ),

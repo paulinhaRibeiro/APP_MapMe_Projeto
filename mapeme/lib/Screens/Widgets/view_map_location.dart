@@ -23,7 +23,7 @@ class ViewMapLocation extends StatelessWidget {
         automaticallyImplyLeading: false,
         centerTitle: true,
 
-        title: const Text("Mapa"),
+        title: Text(point.name),
         actions: [
           IconButton(
             onPressed: () {

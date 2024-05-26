@@ -25,6 +25,8 @@ class PointInterest {
   // se ta sicronizado com o banco remoto ou não
   late int synced;
 
+  double distancia = 0;
+
 
   // Construtor da classe com parametros nomeados e campos opc 
   PointInterest({

@@ -246,7 +246,7 @@ class _DetailsRouteState extends State<DetailsRoute> {
                   // Botão de iniciar a Rota
                   SizedBox(
                     width: double.infinity,
-                    child: IniciarRota(idRoute: _updatedRoute.idRoute),),
+                    child: IniciarRota(idRoute: _updatedRoute.idRoute,nameRoute: _updatedRoute.nameRoute), ),
                     
                   //   ElevatedButton.icon(
                   //     onPressed: () {

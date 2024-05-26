@@ -3,9 +3,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mapeme/Localization/geolocation.dart';
 
 import '../Models/point_interest.dart';
-import '../Screens/Route/connection_google_maps/page_route_point.dart';
+import '../Screens/Route/connection_google_maps/google_maps_route_point.dart';
 import '../Screens/Route/connection_google_maps/point_details_google_maps.dart';
-import '../Screens/Route/iniciar_Rota/model_point_lat_long_route.dart';
 import '../Screens/Widgets/view_map_location.dart';
 
 class GeolocationUserGoogleMaps {
@@ -32,7 +31,7 @@ class GeolocationUserGoogleMaps {
 
   // função responsavel por carregar os marcadores
   loadPointsRoute(
-      {List<PointOfInterestLatLong>? pLatLong, PointInterest? point}) async {
+      {List<PointInterest>? pLatLong, PointInterest? point}) async {
     String iconImg = 'assets/images_geral/icons_route/point_inicio.png';
 
     if (pLatLong != null) {
@@ -65,7 +64,7 @@ class GeolocationUserGoogleMaps {
               showModalBottomSheet(
                 context: appKey.currentState!.context,
                 builder: (context) =>
-                    PointDetailsGoogleMaps(pLatLong: pLatLong[i]),
+                    PointDetailsGoogleMaps(point: pLatLong[i]),
               )
             },
           ),

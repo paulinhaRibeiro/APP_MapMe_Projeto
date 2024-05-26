@@ -6,8 +6,9 @@ final appKey = GlobalKey();
 
 class PagePointsRoute extends StatelessWidget {
   final GeolocationUserGoogleMaps googleMapsGeolocationUser;
+  final String nameRoute;
   const PagePointsRoute(
-      {super.key, required this.googleMapsGeolocationUser});
+      {super.key, required this.googleMapsGeolocationUser, required this.nameRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class PagePointsRoute extends StatelessWidget {
         automaticallyImplyLeading: false,
         centerTitle: true,
 
-        title: const Text("Mapa"),
+        title: Text(nameRoute),
         actions: [
           IconButton(
             onPressed: () {
