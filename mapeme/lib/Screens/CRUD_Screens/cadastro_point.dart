@@ -60,6 +60,13 @@ class _CadastroPoiState extends State<CadastroPoi>
   List<String> dropOpcoes = [];
   // para criar um novo tipo de ponto
   bool showOutroTextField = false;
+
+  // drop do status do point, salva a opc selecionada
+  final dropValueStatusPoint = ValueNotifier("");
+  // Se é inicio ou destino da rota
+  List<String> dropOpcoesStatusPoint = ["Início", "Destino", "Remover Escolha"];
+  //
+
   // id da rota
   int? routeId;
   //
@@ -91,6 +98,7 @@ class _CadastroPoiState extends State<CadastroPoi>
     // restartar a lista de tipos de pontos
     loadPointInterestTypes();
     dropValue.value = "";
+    dropValueStatusPoint.value = "";
     _tabController.animateTo(0);
 
     // para não aparecer o campo de nome e descrição do typo de point
@@ -304,6 +312,9 @@ class _CadastroPoiState extends State<CadastroPoi>
       typePointInterest: dropValue.value != "Novo Tipo de Ponto"
           ? dropValue.value.toUpperCase()
           : typePointController.text.toUpperCase(),
+      statusPoint: dropValueStatusPoint.value != dropOpcoesStatusPoint[2]
+          ? dropValueStatusPoint.value
+          : "",
       synced: 0,
     );
 
@@ -332,6 +343,9 @@ class _CadastroPoiState extends State<CadastroPoi>
         typePointInterest: dropValue.value != "Novo Tipo de Ponto"
             ? dropValue.value.toUpperCase()
             : typePointController.text.toUpperCase(),
+        statusPoint: dropValueStatusPoint.value != dropOpcoesStatusPoint[2]
+          ? dropValueStatusPoint.value
+          : "",
         // turisticPoint: isTouristPoint ? 1 : 0,
 
         // é zero pq sempre quando cadastrar via verificar se possui conexão com a internet, se tiver, vai mandar para o bd remoto e marcar com 1 (sincronizado)
@@ -618,6 +632,57 @@ class _CadastroPoiState extends State<CadastroPoi>
                         },
                       ),
                     ),
+                  if (widget.routePoint != null ||
+                      widget.idNameRoutePoint != null)
+                    ValueListenableBuilder(
+                        valueListenable: dropValueStatusPoint,
+                        builder: (BuildContext context, String value, _) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 10,
+                            ),
+                            child: DropdownButtonFormField<String>(
+                              // Borda fora da caixa
+                              borderRadius: BorderRadius.circular(10),
+                              // Define o tamanho do DropdownButtonFormField para preencher o espaço disponível horizontalmente
+                              isExpanded: true,
+                              // Reduz a altura do DropdownButtonFormField
+                              isDense: true,
+
+                              hint: const Text(
+                                  "Selecione um Status ao ponto"),
+                              decoration: InputDecoration(
+                                label: const Text(
+                                    "Status"),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              value: (value.isEmpty) ? null : value,
+                              onChanged: (escolha) => dropValueStatusPoint.value = escolha.toString(),
+                              items: dropOpcoesStatusPoint
+                                  .map(
+                                    (op) => DropdownMenuItem(
+                                      value: op,
+                                      child: Row(
+                                              children: [
+                                                 op != dropOpcoesStatusPoint[1] ?  const Icon(Icons
+                                                    .swap_horizontal_circle_rounded) : const Icon(Icons
+                                                    .flag_circle_rounded),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(op),
+                                              ],
+                                            ),
+                                      // child: Text(op),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          );
+                        }),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 15,

@@ -125,7 +125,7 @@ class _DropPageChoiceRouteState extends State<DropPageChoiceRoute> {
       img1: widget.addRoutePoint!.img1,
       img2: widget.addRoutePoint!.img2,
       typePointInterest: widget.addRoutePoint!.typePointInterest,
-
+      statusPoint: widget.addRoutePoint!.statusPoint,
       // receber o valor dela mesmo
       synced: widget.addRoutePoint!.synced,
     );

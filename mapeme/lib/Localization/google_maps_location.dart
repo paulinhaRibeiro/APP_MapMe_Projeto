@@ -21,25 +21,27 @@ class GeolocationUserGoogleMaps {
 
   List<LatLng> points = [];
 
-  
-  
-
   // pontos de interesse da rota
   // late List<PointOfInterestLatLong> pLatLong;
 
   get mapsController => _mapsController;
 
   // função responsavel por carregar os marcadores
-  loadPointsRoute(
-      {List<PointInterest>? pLatLong, PointInterest? point}) async {
+  loadPointsRoute({List<PointInterest>? pLatLong, PointInterest? point}) async {
     String iconImg = 'assets/images_geral/icons_route/point_inicio.png';
+    String distanceKm = "";
 
     if (pLatLong != null) {
       for (int i = 0; i < pLatLong.length; i++) {
-        if (i == 0) {
+        // Traforma a distancia em km -> (pLatLong[i].distancia / 1000)
+        distanceKm =
+            "${(double.parse((pLatLong[i].distancia).toStringAsFixed(2))).toString()} Metros do ponto inicial.";
+
+        if (pLatLong[i].statusPoint == "Início") {
           iconImg = 'assets/images_geral/icons_route/point_inicio.png';
-        } else if (i == (pLatLong.length - 1)) {
+        } else if (pLatLong[i].statusPoint == "Destino") {
           iconImg = 'assets/images_geral/icons_route/point_destino.png';
+          
         } else {
           if (pLatLong[i].typePointInterest != "TIPO NÃO IDENTIFICADO") {
             iconImg = 'assets/images_geral/icons_route/type_point.png';
@@ -58,8 +60,10 @@ class GeolocationUserGoogleMaps {
               iconImg,
             ),
             infoWindow: InfoWindow(
-                title: pLatLong[i].name,
-                snippet: pLatLong[i].typePointInterest.toLowerCase()),
+              title: pLatLong[i].name,
+              // snippet: pLatLong[i].typePointInterest.toLowerCase()),
+              snippet: pLatLong[i].statusPoint == "Início" ? "Início" : distanceKm,
+            ),
             onTap: () => {
               showModalBottomSheet(
                 context: appKey.currentState!.context,
@@ -73,21 +77,28 @@ class GeolocationUserGoogleMaps {
 
         // add os points para mostrar a linha ligando os pontos
         points.add(LatLng(pLatLong[i].latitude, pLatLong[i].longitude));
-
+        // Para se chegar no ponto de destino
+        if (pLatLong[i].statusPoint == "Destino") {
+          break;
+        }
       }
 
       polyline.add(
-          Polyline(
-            polylineId: PolylineId(pLatLong[0].id.toString()),
-            points: points,
-            color: const Color(0xFF220707),
-            width: 5,
-            patterns: [
-              PatternItem.dash(30), // Comprimento do traço
-              PatternItem.gap(10),  // Comprimento do espaço entre os traços
-            ],
-          ),
-        );
+        Polyline(
+          polylineId: PolylineId(pLatLong[0].id.toString()),
+          points: points,
+          color: const Color(0xFF333333),
+          width: 5,
+          zIndex: 1,
+          jointType: JointType.round,
+          startCap: Cap.roundCap,
+          endCap: Cap.roundCap,
+          patterns: [
+            PatternItem.dash(40), // Comprimento do traço
+            PatternItem.gap(20), // Comprimento do espaço entre os traços
+          ],
+        ),
+      );
     } else if (point != null) {
       markers.add(
         Marker(

@@ -50,6 +50,12 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
   // Para controlar a criação de um novo tipo
   bool showOutroTextField = false;
 
+  // drop do status do point, salva a opc selecionada
+  final dropValueStatusPoint = ValueNotifier("");
+  // Se é inicio ou destino da rota
+  List<String> dropOpcoesStatusPoint = ["Início", "Destino", "Remover Escolha"];
+  //
+
   // variaveis para pegar as imagem escolhidas
   File? _pickedImage1;
   File? _pickedImage2;
@@ -91,6 +97,8 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
     // para receber o valor fornecido anteriormente na escolha
     dropValue.value = widget.p.typePointInterest.substring(0, 1).toUpperCase() +
         widget.p.typePointInterest.substring(1).toLowerCase();
+
+    dropValueStatusPoint.value = widget.p.statusPoint;
 
     // Carrega os tipos de ponto de interesse ao inicializar o estado
     loadPointInterestTypes();
@@ -205,7 +213,9 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
       typePointInterest: dropValue.value != "Novo Tipo de Ponto"
           ? dropValue.value.toUpperCase()
           : typePointController.text.toUpperCase(),
-
+      statusPoint: dropValueStatusPoint.value != dropOpcoesStatusPoint[2]
+          ? dropValueStatusPoint.value
+          : "",
       // receber o valor dela mesmo
       synced: widget.p.synced,
     );
@@ -230,10 +240,10 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
       return;
     }
 
-    if (typePointController.text == "Tipo não identificado"){
+    if (typePointController.text == "Tipo não identificado") {
       Aviso.showSnackBar(context,
           'Por favor, digite outro valor ao campo "Tipo do ponto de interesse".');
-          return;
+      return;
     }
     try {
       posiLat = double.parse(latitudeController.text);
@@ -458,6 +468,69 @@ class _AtualizarCadastroPoiState extends State<AtualizarCadastroPoi>
                         },
                       ),
                     ),
+
+                  if (widget.p.foreignidRoute != null)
+                    ValueListenableBuilder(
+                        valueListenable: dropValueStatusPoint,
+                        builder: (BuildContext context, String value, _) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 10,
+                            ),
+                            child: DropdownButtonFormField<String>(
+                              // Borda fora da caixa
+                              borderRadius: BorderRadius.circular(10),
+                              // Define o tamanho do DropdownButtonFormField para preencher o espaço disponível horizontalmente
+                              isExpanded: true,
+                              // Reduz a altura do DropdownButtonFormField
+                              isDense: true,
+
+                              hint: const Text("Selecione um Status ao ponto"),
+                              decoration: InputDecoration(
+                                label: const Text("Status"),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              value: (value.isEmpty) ? null : value,
+                              onChanged: (escolha) => dropValueStatusPoint
+                                  .value = escolha.toString(),
+                              items: dropOpcoesStatusPoint
+                                  .map(
+                                    (op) => DropdownMenuItem(
+                                      value: op,
+                                      child: Row(
+                                        children: [
+                                          if (op == dropOpcoesStatusPoint[0])
+                                            const Icon(Icons
+                                                .swap_horizontal_circle_rounded),
+                                          if (op == dropOpcoesStatusPoint[1])
+                                            const Icon(
+                                                Icons.flag_circle_rounded),
+                                          if (op == dropOpcoesStatusPoint[2])
+                                            const Icon(
+                                                Icons.close_rounded),
+
+                                          // op != dropOpcoesStatusPoint[1]
+                                          //     ? const Icon(Icons
+                                          //         .swap_horizontal_circle_rounded)
+                                          //     : const Icon(
+                                          //         Icons.flag_circle_rounded),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(op),
+                                        ],
+                                      ),
+                                      // child: Text(op),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          );
+                        }),
+
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 15,

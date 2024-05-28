@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DataBaseHelper {
+  // ignore: prefer_typing_uninitialized_variables
   static late var database;
 
   Future<Database> getDB() async {
@@ -13,7 +14,7 @@ class DataBaseHelper {
     return await openDatabase(
       join(await getDatabasesPath(), 'bdprojeto.db'),
       onCreate: _onCreate,
-      version: 1,
+      version: 2,
     );
   }
 
@@ -28,6 +29,7 @@ class DataBaseHelper {
           img1 TEXT, 
           img2 TEXT, 
           typePointInterest TEXT, 
+          statusPoint TEXT,
           synced INTEGER, 
           FOREIGN KEY (foreignidRoute) REFERENCES tableroute (idRoute) ON DELETE CASCADE
       );''');

@@ -168,7 +168,7 @@ class _ListagemDadosState extends State<ListagemDados>
       centerTitle: true,
       title: isSearchClicked
           ? Container(
-              height: MediaQuery.of(context).size.height * 0.07,
+              height: MediaQuery.of(context).size.height * 0.06,
               decoration: BoxDecoration(
                 // color: const Color.fromARGB(255, 106, 53, 53),
                 borderRadius: BorderRadius.circular(30),
@@ -182,14 +182,14 @@ class _ListagemDadosState extends State<ListagemDados>
                 decoration: const InputDecoration(
                   hintText: "Buscar pelo nome...",
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.fromLTRB(16, 20, 16, 8),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
                 ),
               ),
             )
           : Image.asset(
               "assets/images_logo/MapME.png",
               height: MediaQuery.of(context).size.height *
-                  0.07, //7% da altura total da tela
+                  0.06, //7% da altura total da tela
             ), //Text('MapMe'),
 
       actions: [
@@ -205,7 +205,7 @@ class _ListagemDadosState extends State<ListagemDados>
           },
           icon: Icon(isSearchClicked ? Icons.close_rounded : Icons.search_rounded),
           iconSize: MediaQuery.of(context).size.height *
-              0.05, //5% da altura total da tela,
+              0.04, //5% da altura total da tela,
         ),
       ],
 

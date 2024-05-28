@@ -184,5 +184,22 @@ class ManipuTablePointInterest {
         maps.length, (index) => PointInterest.fromMap(maps[index]));
   }
 
+
+  // devolve o ponto que o status for início
+  Future<List<PointInterest>> getPointInterestStatus() async {
+    // Resgata a conexão com bd - instancia da classe DataBaseHelper que é gerenciada pelo getIt
+    var db = await GetIt.I.get<DataBaseHelper>().getDB();
+
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM tablepointInterest WHERE statusPoint = ?",
+        ["Início"]);
+    await db.close();
+
+    // Cria a lista - passa o tamanho e retorna para cada elemento desta lista um obj Map que vai ser convertido para obj Dart - fromMap da classe PointInterest - para cada elemento da lista
+    return List.generate(
+        maps.length, (index) => PointInterest.fromMap(maps[index]));
+  }
+
   //
 }

@@ -302,7 +302,7 @@ class _DetailsPointState extends State<DetailsPoint> {
                     children: [
                       Expanded(
                         child: Text(
-                          'Descrição',
+                          _updatedPoint.statusPoint == "" ? "Descrição" : 'Descrição - ${_updatedPoint.statusPoint}',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,

@@ -8,11 +8,14 @@ import '../../Widgets/text_button.dart';
 import '../../Widgets/utils/informativo.dart';
 import '../connection_google_maps/google_maps_route_point.dart';
 
+import 'package:geolocator/geolocator.dart';
+
 class IniciarRota extends StatefulWidget {
   final int idRoute;
   final String nameRoute;
 
-  const IniciarRota({super.key, required this.idRoute, required this.nameRoute});
+  const IniciarRota(
+      {super.key, required this.idRoute, required this.nameRoute});
 
   @override
   State<IniciarRota> createState() => _IniciarRotaState();
@@ -20,13 +23,12 @@ class IniciarRota extends StatefulWidget {
 
 class _IniciarRotaState extends State<IniciarRota> {
   bool isLoading = false;
-  
 
   //
   Future<void> carregarPontosDeInteresse() async {
-
     // Recebe a intancia da classe GeolocationUserGoogleMaps
-    GeolocationUserGoogleMaps googleMapsGeolocationUser = GeolocationUserGoogleMaps();
+    GeolocationUserGoogleMaps googleMapsGeolocationUser =
+        GeolocationUserGoogleMaps();
     // Muda o valor da variavel para aparecer o circularProgress
     setState(() {
       isLoading = true;
@@ -36,12 +38,37 @@ class _IniciarRotaState extends State<IniciarRota> {
       // // Recupera a instancia do bd
       var bdPoint = GetIt.I.get<ManipuTablePointInterest>();
       // captura as latitudes e longitudes dos pontos de interesse ligados a rota
-      List<PointInterest> pLatLong = await bdPoint.getPointInterestLatLog(widget.idRoute);
+      List<PointInterest> pLatLong =
+          await bdPoint.getPointInterestLatLog(widget.idRoute);
       //
+
+      // Ponto de inicio
+      List<PointInterest> pointInicio =
+          await bdPoint.getPointInterestStatus();
 
       // // captura a gelocalização do usuário
       // Chama a função responsavel pela a geolocalização
       await googleMapsGeolocationUser.getPosition();
+
+      for (int i = 0; i < pLatLong.length; i++) {
+        // if (pointInicio[0].latitude != pLatLong[i].latitude && pointInicio[0].longitude != pLatLong[i].longitude){
+
+        // }
+        double distanceInMeters = Geolocator.distanceBetween(
+            pointInicio[0].latitude,
+            pointInicio[0].longitude,
+            pLatLong[i].latitude,
+            pLatLong[i].longitude);
+
+        pLatLong[i].distancia = distanceInMeters;
+        debugPrint(
+            "distancia da localização do usuario ao ponto ${pLatLong[i].name} é : ${pLatLong[i].distancia}");
+      }
+
+      // Ordenar a lista por distancia em ordem crescente
+      pLatLong.sort((a, b) => a.distancia.compareTo(b.distancia));
+
+      
       // Chama a função para carregar os pontos de interesse da rota
       googleMapsGeolocationUser.loadPointsRoute(pLatLong: pLatLong);
 

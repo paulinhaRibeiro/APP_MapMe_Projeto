@@ -20,6 +20,9 @@ class PointInterest {
   late String img2;
   // tipo do ponto de interesse
   late String typePointInterest;
+
+  // status se é inicio, meio ou fim
+  late String statusPoint;
   // para add se o ponto de interesse é um ponto turístico ou faz parte da rota
   // late int turisticPoint;
   // se ta sicronizado com o banco remoto ou não
@@ -39,7 +42,7 @@ class PointInterest {
     required this.img1, 
     required this.img2, 
     required this.typePointInterest, 
-    // required this.turisticPoint, 
+    required this.statusPoint, 
     required this.synced, 
   });
   
@@ -55,7 +58,7 @@ class PointInterest {
       'img1': img1,
       'img2': img2,
       'typePointInterest': typePointInterest,
-      // 'turisticPoint': turisticPoint,
+      'statusPoint': statusPoint,
       'synced': synced,
       if (id != 0) 'id': id}; // se o id for diferente de zero passa um campo id com o valor do id - (Atualizar)
   }
@@ -71,7 +74,7 @@ class PointInterest {
     img1 = map['img1'];
     img2 = map['img2'];
     typePointInterest = map['typePointInterest'];
-    // turisticPoint = map['turisticPoint'];
+    statusPoint = map['statusPoint'];
     synced = map['synced'];
     id = map['id'];
   }
