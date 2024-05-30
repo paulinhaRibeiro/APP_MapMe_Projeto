@@ -344,8 +344,8 @@ class _CadastroPoiState extends State<CadastroPoi>
             ? dropValue.value.toUpperCase()
             : typePointController.text.toUpperCase(),
         statusPoint: dropValueStatusPoint.value != dropOpcoesStatusPoint[2]
-          ? dropValueStatusPoint.value
-          : "",
+            ? dropValueStatusPoint.value
+            : "",
         // turisticPoint: isTouristPoint ? 1 : 0,
 
         // é zero pq sempre quando cadastrar via verificar se possui conexão com a internet, se tiver, vai mandar para o bd remoto e marcar com 1 (sincronizado)
@@ -650,32 +650,37 @@ class _CadastroPoiState extends State<CadastroPoi>
                               // Reduz a altura do DropdownButtonFormField
                               isDense: true,
 
-                              hint: const Text(
-                                  "Selecione um Status ao ponto"),
+                              hint: const Text("Selecione um Status ao ponto"),
                               decoration: InputDecoration(
-                                label: const Text(
-                                    "Status"),
+                                label: const Text("Status"),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
                               value: (value.isEmpty) ? null : value,
-                              onChanged: (escolha) => dropValueStatusPoint.value = escolha.toString(),
+                              onChanged: (escolha) => dropValueStatusPoint
+                                  .value = escolha.toString(),
                               items: dropOpcoesStatusPoint
                                   .map(
                                     (op) => DropdownMenuItem(
                                       value: op,
                                       child: Row(
-                                              children: [
-                                                 op != dropOpcoesStatusPoint[1] ?  const Icon(Icons
-                                                    .swap_horizontal_circle_rounded) : const Icon(Icons
-                                                    .flag_circle_rounded),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Text(op),
-                                              ],
-                                            ),
+                                        children: [
+                                          if (op == dropOpcoesStatusPoint[0])
+                                            const Icon(Icons
+                                                .swap_horizontal_circle_rounded),
+                                          if (op == dropOpcoesStatusPoint[1])
+                                            const Icon(
+                                                Icons.flag_circle_rounded),
+                                          if (op == dropOpcoesStatusPoint[2])
+                                            const Icon(Icons.close_rounded),
+                                          
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(op),
+                                        ],
+                                      ),
                                       // child: Text(op),
                                     ),
                                   )

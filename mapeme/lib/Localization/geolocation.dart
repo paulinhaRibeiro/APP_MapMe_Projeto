@@ -5,13 +5,6 @@ class GeolocationUser {
   double? long;
   String erro = "";
 
-  // GeolocationUser() {
-  //   _init();
-  // }
-
-  // Future<void> _init() async {
-  //   await getPosition();
-  // }
 
   Future<void> getPosition() async {
     // Seção de obtenção de posição

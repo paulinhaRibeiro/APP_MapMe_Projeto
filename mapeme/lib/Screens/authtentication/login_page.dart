@@ -41,7 +41,7 @@ class _PageLoginState extends State<PageLogin> {
                   // --------------- LOGO -------------
                   Image.asset(
                     "assets/images_logo/logo1.png",
-                    height: MediaQuery.of(context).size.height * 0.2, //20% da altura total da tela //height: 130,
+                    height: MediaQuery.of(context).size.height * 0.17, //17% da altura total da tela //height: 130,
                   ),
 
                   const SizedBox(

@@ -39,7 +39,7 @@ class _PageSignUpState extends State<PageSignUp> {
                   // --------------- LOGO -------------
                   Image.asset(
                     "assets/images_logo/logo1.png",
-                    height: MediaQuery.of(context).size.height * 0.2,
+                    height: MediaQuery.of(context).size.height * 0.17,
                   ),
 
                   const SizedBox(

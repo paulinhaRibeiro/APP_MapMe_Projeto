@@ -21,9 +21,6 @@ class GeolocationUserGoogleMaps {
 
   List<LatLng> points = [];
 
-  // pontos de interesse da rota
-  // late List<PointOfInterestLatLong> pLatLong;
-
   get mapsController => _mapsController;
 
   // função responsavel por carregar os marcadores
@@ -41,7 +38,6 @@ class GeolocationUserGoogleMaps {
           iconImg = 'assets/images_geral/icons_route/point_inicio.png';
         } else if (pLatLong[i].statusPoint == "Destino") {
           iconImg = 'assets/images_geral/icons_route/point_destino.png';
-          
         } else {
           if (pLatLong[i].typePointInterest != "TIPO NÃO IDENTIFICADO") {
             iconImg = 'assets/images_geral/icons_route/type_point.png';
@@ -62,7 +58,8 @@ class GeolocationUserGoogleMaps {
             infoWindow: InfoWindow(
               title: pLatLong[i].name,
               // snippet: pLatLong[i].typePointInterest.toLowerCase()),
-              snippet: pLatLong[i].statusPoint == "Início" ? "Início" : distanceKm,
+              snippet:
+                  pLatLong[i].statusPoint == "Início" ? "Início" : distanceKm,
             ),
             onTap: () => {
               showModalBottomSheet(
@@ -119,16 +116,22 @@ class GeolocationUserGoogleMaps {
           },
         ),
       );
+      // add os points para mostrar a linha ligando os pontos
+      points.add(LatLng(point.latitude, point.longitude));
     }
   }
 
   onMapCreated(GoogleMapController gmc) async {
     _mapsController = gmc;
-    _init();
+    // _init();
   }
 
-  Future<void> _init() async {
-    await getPosition();
+  void moveToFirstMarker() {
+    if (points.isNotEmpty) {
+      // Move a câmera para o ponto inicial da rota
+      _mapsController.animateCamera(CameraUpdate.newLatLng(
+          LatLng(points[0].latitude, points[0].longitude)));
+    }
   }
 
   Future<void> getPosition() async {
@@ -136,8 +139,8 @@ class GeolocationUserGoogleMaps {
     try {
       await geolocationUser.getPosition();
 
-      _mapsController.animateCamera(CameraUpdate.newLatLng(
-          LatLng(geolocationUser.lat!, geolocationUser.long!)));
+      // _mapsController.animateCamera(CameraUpdate.newLatLng(
+      //     LatLng(geolocationUser.lat!, geolocationUser.long!)));
     } catch (e) {
       erro = e.toString();
     }
