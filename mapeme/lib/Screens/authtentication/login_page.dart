@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mapeme/Screens/Widgets/text_button.dart';
 
 // arquivos
-import 'package:mapeme/Screens/authtentication/signup_page.dart';
+// import 'package:mapeme/Screens/authtentication/signup_page.dart';
 import 'package:mapeme/Screens/CRUD_Screens/tab_listagens.dart';
 import 'package:mapeme/Screens/authtentication/recuperar_senha.dart';
 
@@ -18,6 +18,7 @@ class PageLogin extends StatefulWidget {
 
 class _PageLoginState extends State<PageLogin> {
   // variaveis do formulario
+  final nameControllerSignUp = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -26,6 +27,58 @@ class _PageLoginState extends State<PageLogin> {
 
   //para o formulario
   final formKey = GlobalKey<FormState>();
+
+  bool isLogin = true;
+  // nome do botão
+  late String actionButton;
+  // texto junto do botão
+  late String textButton;
+  // texto do botao
+  late String toggleButton;
+  bool loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Mudar de login para registro
+    setFormAction(true);
+  }
+
+  setFormAction(bool acao) {
+    setState(() {
+      isLogin = acao;
+      debugPrint(isLogin.toString());
+      if (isLogin) {
+        actionButton = 'Entrar';
+        textButton = "Ainda não tem conta?";
+        toggleButton = 'Cadastre-se.';
+      } else {
+        actionButton = 'Criar Conta';
+        textButton = "Já tem uma conta?";
+        toggleButton = 'Voltar ao Login.';
+      }
+    });
+  }
+
+  // login() async {
+  //   setState(() => loading = true);
+  //   try {
+  //     await context.read<AuthService>().login(email.text, senha.text);
+  //   } on AuthException catch (e) {
+  //     setState(() => loading = false);
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+  //   }
+  // }
+
+  // registrar() async {
+  //   setState(() => loading = true);
+  //   try {
+  //     await context.read<AuthService>().registrar(email.text, senha.text);
+  //   } on AuthException catch (e) {
+  //     setState(() => loading = false);
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +91,44 @@ class _PageLoginState extends State<PageLogin> {
               key: formKey,
               child: Column(
                 children: [
+                  
                   // --------------- LOGO -------------
                   Image.asset(
                     "assets/images_logo/logo1.png",
-                    height: MediaQuery.of(context).size.height * 0.17, //17% da altura total da tela //height: 130,
+                    height: MediaQuery.of(context).size.height *
+                        0.17, //17% da altura total da tela //height: 130,
                   ),
 
                   const SizedBox(
                     height: 30,
                   ),
+
+                  if (!isLogin)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+                      child: TextFormField(
+                        controller: nameControllerSignUp,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Informa um nome de Usuário!";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          label: const Text("Nome de Usuário"),
+                          prefixIcon: const Icon(
+                            Icons.person_rounded,
+                          ),
+                          // suffixIcon: const Icon(
+                          //   FontAwesomeIcons.envelope, //person
+                          //   size: 20,
+                          // ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                    ),
 
                   // --------------- EMAIL -------------
                   TextFormField(
@@ -56,12 +138,12 @@ class _PageLoginState extends State<PageLogin> {
                     validator: (value) {
                       // se o campo for vazio
                       if (value!.isEmpty) {
-                        return "Campo Obrigatório!";
+                        return "Informe o email corretamente!";
                       }
                       return null;
                     },
                     decoration: InputDecoration(
-                      label: const Text("Email"),
+                      labelText: 'Email',
 
                       prefixIcon: const Icon(
                         Icons.email_rounded,
@@ -93,14 +175,16 @@ class _PageLoginState extends State<PageLogin> {
                     // validar o que foi passado no formulario
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return "Campo Obrigatório!";
+                        return 'Informa sua senha!';
+                      } else if (value.length < 6) {
+                        return 'Sua senha deve ter no mínimo 6 caracteres';
                       }
                       return null;
                     },
                     //visibilidade da senha
                     obscureText: !isVisible,
                     decoration: InputDecoration(
-                      label: const Text("Senha"),
+                      labelText: 'Senha',
                       prefixIcon: const Icon(
                         Icons.key_rounded,
                         // size: 2,
@@ -127,10 +211,10 @@ class _PageLoginState extends State<PageLogin> {
                   ),
 
                   // --------------- Botão de esqueceu a senha -----------------
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: 
-                      TextButton(
+                  if (isLogin)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
                         onPressed: () {
                           Navigator.push(
                               context,
@@ -142,17 +226,21 @@ class _PageLoginState extends State<PageLogin> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
-                    
-                  ),
+                    ),
 
-                  const SizedBox(
-                    height: 10,
+                  SizedBox(
+                    height: (isLogin) ? 10 : 25,
                   ),
 
                   // --------------- BOTÂO DE LOGIN -------------
                   ElevatedButton(
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
+                        // if (isLogin) {
+                        //   login();
+                        // } else {
+                        //   registrar();
+                        // }
                         // Se os dados passado no formulario de login forem validos chama a tela "ListagemDados"
                         // Navega para a segunda tela e remove todas as telas na pilha
                         Navigator.pushAndRemoveUntil(
@@ -173,7 +261,7 @@ class _PageLoginState extends State<PageLogin> {
                       elevation: 10,
                       minimumSize: const Size.fromHeight(50),
                     ),
-                    child: const ScreenTextButtonStyle(text: "Entrar"),
+                    child: ScreenTextButtonStyle(text: actionButton),
                   ),
 
                   const SizedBox(
@@ -212,20 +300,21 @@ class _PageLoginState extends State<PageLogin> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              "Não tem uma conta?",
-              style: TextStyle(fontWeight: FontWeight.w700),
+            Text(
+              textButton,
+              style: const TextStyle(fontWeight: FontWeight.w700),
             ),
             TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const PageSignUp()),
-                );
-              },
-              child: const Text(
-                "Cadastre-se.",
-                style: TextStyle(fontWeight: FontWeight.w700),
+              // onPressed: () {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => const PageSignUp()),
+              //   );
+              // },
+              onPressed: () => setFormAction(!isLogin),
+              child: Text(
+                toggleButton,
+                style: const TextStyle(fontWeight: FontWeight.w700),
               ),
             ),
           ],

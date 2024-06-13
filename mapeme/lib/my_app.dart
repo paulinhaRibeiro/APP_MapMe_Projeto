@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mapeme/Screens/authtentication/login_page.dart';
+// import 'package:mapeme/Screens/authtentication/login_page.dart';
+
+import 'Screens/authtentication/auth_check.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -55,7 +57,7 @@ class MyApp extends StatelessWidget {
           background: Colors.grey[50]!,
         ),
       ),
-      home: const PageLogin(),
+      home: const AuthCheck(),//PageLogin(),
     );
   }
 }

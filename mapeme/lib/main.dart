@@ -6,6 +6,9 @@ import 'package:mapeme/my_app.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mapeme/BD/database_helper.dart';
 import 'package:mapeme/BD/table_point_interest.dart';
+import 'package:mapeme/services/auth_service.dart';
+// import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 
 import 'BD/table_route.dart';
 
@@ -20,7 +23,6 @@ void setConfiguration() {
   getIt.registerLazySingleton(() => ManipuTablePointInterest());
   // Registra a tabela Route  no GetIt
   getIt.registerLazySingleton(() => ManipuTableRoute());
-
 }
 
 void main() async {
@@ -33,5 +35,11 @@ void main() async {
   await FlutterConfig.loadEnvVariables();
   setConfiguration();
 
-  runApp(const MyApp());
+  // runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AuthService(),
+      child: const MyApp(),
+    ),
+  );
 }

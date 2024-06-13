@@ -15,6 +15,7 @@ import 'package:mapeme/Screens/Widgets/text_button.dart';
 // rota
 import '../../BD/table_route.dart';
 import '../../Models/route.dart';
+import '../Widgets/drawerUser/menu_drawer_user.dart';
 
 // Tela responsavel por listar todas as rotas e pontos de interesse cadastrados
 class ListagemDados extends StatefulWidget {
@@ -164,7 +165,7 @@ class _ListagemDadosState extends State<ListagemDados>
   Widget build(BuildContext context) {
     var appBar = AppBar(
       // retirar o icone da seta que é gerado automaticamente
-      automaticallyImplyLeading: false,
+      // automaticallyImplyLeading: false,
       centerTitle: true,
       title: isSearchClicked
           ? Container(
@@ -199,11 +200,12 @@ class _ListagemDadosState extends State<ListagemDados>
               isSearchClicked = !isSearchClicked;
               if (!isSearchClicked) {
                 searchController.clear();
-                myFilterItems();
+                atualizarDados();
               }
             });
           },
-          icon: Icon(isSearchClicked ? Icons.close_rounded : Icons.search_rounded),
+          icon: Icon(
+              isSearchClicked ? Icons.close_rounded : Icons.search_rounded),
           iconSize: MediaQuery.of(context).size.height *
               0.04, //5% da altura total da tela,
         ),
@@ -225,6 +227,7 @@ class _ListagemDadosState extends State<ListagemDados>
     );
     return Scaffold(
       appBar: appBar,
+      drawer: const MenuDrawerUser(),
       body: LayoutBuilder(
         builder: (_, constraints) {
           return Center(
